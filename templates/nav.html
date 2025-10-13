@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Asimovian&family=Bruno+Ace+SC&family=Comfortaa:wght@350&family=EB+Garamond:ital@0;1&family=Kode+Mono:wght@400..700&family=Lexend+Giga:wght@149&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="../static/img/favicon.ico">
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+    <h1 class = "title">Rekomendacje książek</h1>
+    <nav class = "sidebar">
+        <a href="\">Home</a><br>
+        <a href="/recommend">Rekomendacje</a><br>
+        <a href="/wishlist">Lista życzeń</a><br>
+    </nav>
+
+<main>
+</main>
+
+<footer>
+    {% block content %}
+    <p>&copy; 2025 Rekomendacje książek</p>
+    {% endblock %}
+</footer>
+
+{% block scripts %}{% endblock %}
+
+</body>
+</html>
