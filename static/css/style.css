@@ -1,9 +1,10 @@
 
-*{
+*, body{
     font-family: Lexenga Giga, sans-serif;
+    background-color: #ffe0f8;
 }
 
-h1{
+h1, p{
     font-family: Lexend Giga, sans-serif;
 }
 
@@ -14,20 +15,31 @@ h1{
     letter-spacing: 3px;
 }
 
+hr.solid {
+    border-top: 3px solid #5d2b5e;
+}
+
+hr.solid2 {
+    border-top: 2px solid #5d2b5e;
+}
+
+.dot {
+    letter-spacing: 15vw;
+    text-align: center;
+    
+}
+
 .subtitle{
     text-align: center;
     font-size: 30px;
     font-family: Lexend Giga, sans-serif;
-    /* background: -webkit-linear-gradient(red, yellow);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent; */
-
 }
 
 .container{
   max-width: 400px;
   margin: 0 auto;
 }
+
 .signature{
   position: relative;
   overflow: auto;
@@ -42,7 +54,7 @@ h1{
     height: 100%;
   }
 }
-    window.signature =
+  /*  window.signature =
     initialize: ->
         $('.signature svg').each ->
             paths = $('path, circle, rect', this)
@@ -76,3 +88,82 @@ $('button').on 'click', ->
 
 $(window).load ->
     window.signature.animate()
+*/
+
+/* .nav-container{
+    /* display: flex; */
+
+.sidebar{
+    
+    line-height: 30px;
+    /* margin-left: 30px; */
+    background-color: #b38db5;
+}    
+
+
+.nav-button{
+    background-color: #9e70a1;
+    margin-top: 2%;
+    margin-left: 20vw;
+    position: fixed;
+    border: #0b0b0b 2px solid;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1000;
+    box-sizing: border-box;
+    display: inline-block;
+    font-weight: bold;
+}
+
+.menu:hover{
+    background-color: #5d2b5e;
+    color: white;
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.22);
+}
+
+.nav-button .line{
+
+    background-color: #5d2b5e;
+    display: block;
+    width: 20px;
+    height: 5px;
+    margin: 10px auto 0 auto;
+    border-radius: 2px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    overflow: visible;
+    content: "";
+}
+
+.topnav a {
+  float: left;
+  display: block;
+  color: black;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 20px;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Style the "active" element to highlight the current page */
+.topnav a.active {
+  background-color: #2196F3;
+  color: white;
+}
+
+/* Style the search box inside the navigation bar */
+.topnav input[type=text] {
+  float: right;
+  padding: 6px;
+  border: none;
+  margin-top: 8px;
+  margin-right: 16px;
+  font-size: 20px;
+
+}

@@ -11,22 +11,51 @@
 </head>
 <body>
     <h1 class = "title">Rekomendacje książek</h1>
-    <nav class = "sidebar">
-        <a href="\">Home</a><br>
-        <a href="/recommend">Rekomendacje</a><br>
-        <a href="/wishlist">Lista życzeń</a><br>
-    </nav>
-
-<main>
-</main>
+    <hr class="solid">
+    <div class = "nav-container">
+        <button id = "btn-nav-bar" class = "nav-button" onclick="toggleNavBar">
+            <a class="menu">
+                <span class = "line"></span>
+            </a>
+        </button>
+        <nav id = "nav-bar" class = "sidebar" style="visibility: hidden">
+            <a href="\">Home</a><br>
+            <a href="/recommend">Rekomendacje</a><br>
+            <a href="/wishlist">Lista życzeń</a><br>
+        </nav>
+        <input type="text" style="width: 400px; margin-left: 40%; margin-top: -20px" placeholder="Wyszukaj książkę..." id="search-bar">
+    <p class="dot">••••••</p>    
+        <h3 class = "subtitle">{% block page_title %}{% endblock %}</h3>
+    </div>
 
 <footer>
-    {% block content %}
+    <hr class="solid2">
     <p>&copy; 2025 Rekomendacje książek</p>
-    {% endblock %}
 </footer>
 
 {% block scripts %}{% endblock %}
 
 </body>
 </html>
+
+<script>
+    var button_flag = false;
+    document.querySelector('#btn-nav-bar').addEventListener('click', toggleNavBar);
+
+    function toggleNavBar(){
+        const button = document.querySelector('#btn-nav-bar');
+        const navBar = document.querySelector('#nav-bar');
+        button_flag = !button_flag;
+        if(button_flag == true){
+            navBar.style.visibility = "visible";
+        }
+        else if(button_flag == false){
+            navBar.style.visibility = "hidden";
+        }
+    }
+
+    document.getElementById('btn-nav-bar').addEventListener('click', function(){
+        this.classList.toggle('open');
+    });
+
+</script>
