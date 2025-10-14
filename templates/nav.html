@@ -14,7 +14,7 @@
     <hr class="solid">
     <div class = "nav-container">
         <div class="top-bar">
-            <button id = "btn-nav-bar" class = "nav-button" onclick="toggleNavBar">
+            <button id = "btn-nav-bar" class = "nav-button">
                 <a class="menu">
                     <span class = "line"></span>
                 </a>
@@ -23,15 +23,15 @@
             <div class="profile-icon" title="Profile">⚙️</div>
         </div>
 
-        <nav id = "nav-bar" class = "sidebar" style="visibility: hidden">
-            <a href="\">Menu</a><br>
-            <a href="/recommend">Rekomendacje</a><br>
-            <a href="/wishlist">Lista życzeń</a><br>
-        </nav>
     </div>
     <p class="dot">••••••</p>    
     <h3 class = "subtitle">{% block page_title %}{% endblock %}</h3>
 
+        <nav id = "nav-bar" class = "sidebar" /*style="visibility: hidden"*/>
+            <button href="\">Menu</button><br>
+            <button href="/recommend">Rekomendacje</button><br>
+            <button href="/wishlist">Lista życzeń</button><br>
+        </nav>
 <footer>
     <hr class="solid2">
     <p>&copy; 2025 Rekomendacje książek</p>
@@ -48,14 +48,14 @@
     function toggleNavBar(){
         const navBar = document.querySelector('#nav-bar');
         button_flag = !button_flag;
-        /*
+
         if(button_flag == true){
             navBar.style.visibility = "visible";
         }
         else if(button_flag == false){
             navBar.style.visibility = "hidden";
-        }*/
-       navBar.classList.toggle('visible');
+        }
+    //    navBar.classList.toggle('visible');
     }
 
     document.querySelector('#btn-nav-bar').addEventListener('click', function(){
