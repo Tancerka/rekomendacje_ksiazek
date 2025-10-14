@@ -90,15 +90,40 @@ $(window).load ->
     window.signature.animate()
 */
 
-/* .nav-container{
-    /* display: flex; */
+
+.nav-container{
+    position: relative; 
+}
 
 .sidebar{
     
     line-height: 30px;
-    /* margin-left: 30px; */
     background-color: #b38db5;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 200px;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 999;
 }    
+
+.sidebar.visible{
+    transform: translateX(0);
+}
+
+.top-bar{
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 40px;
+    position: relative;
+    z-index: 1001;
+}
 
 
 .nav-button{
@@ -114,6 +139,7 @@ $(window).load ->
     box-sizing: border-box;
     display: inline-block;
     font-weight: bold;
+
 }
 
 .menu:hover{
@@ -135,35 +161,19 @@ $(window).load ->
     content: "";
 }
 
-.topnav a {
-  float: left;
-  display: block;
-  color: black;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 20px;
+#search-bar{
+
+    width: 400px;
+    margin: 0 20px;
+    padding: 5px;
+    font-size: 20px;
+    border: 1px solid #ccc;
 }
 
-/* Change the color of links on hover */
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
+.profile-icon{
 
-/* Style the "active" element to highlight the current page */
-.topnav a.active {
-  background-color: #2196F3;
-  color: white;
-}
-
-/* Style the search box inside the navigation bar */
-.topnav input[type=text] {
-  float: right;
-  padding: 6px;
-  border: none;
-  margin-top: 8px;
-  margin-right: 16px;
-  font-size: 20px;
-
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+    margin-left: auto;
 }

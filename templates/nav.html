@@ -13,20 +13,24 @@
     <h1 class = "title">Rekomendacje książek</h1>
     <hr class="solid">
     <div class = "nav-container">
-        <button id = "btn-nav-bar" class = "nav-button" onclick="toggleNavBar">
-            <a class="menu">
-                <span class = "line"></span>
-            </a>
-        </button>
+        <div class="top-bar">
+            <button id = "btn-nav-bar" class = "nav-button" onclick="toggleNavBar">
+                <a class="menu">
+                    <span class = "line"></span>
+                </a>
+            </button>
+            <input type="text" style="width: 400px; margin-left: 40%; margin-top: -20px" placeholder="Wyszukaj książkę..." id="search-bar">
+            <div class="profile-icon" title="Profile">⚙️</div>
+        </div>
+
         <nav id = "nav-bar" class = "sidebar" style="visibility: hidden">
-            <a href="\">Home</a><br>
+            <a href="\">Menu</a><br>
             <a href="/recommend">Rekomendacje</a><br>
             <a href="/wishlist">Lista życzeń</a><br>
         </nav>
-        <input type="text" style="width: 400px; margin-left: 40%; margin-top: -20px" placeholder="Wyszukaj książkę..." id="search-bar">
-    <p class="dot">••••••</p>    
-        <h3 class = "subtitle">{% block page_title %}{% endblock %}</h3>
     </div>
+    <p class="dot">••••••</p>    
+    <h3 class = "subtitle">{% block page_title %}{% endblock %}</h3>
 
 <footer>
     <hr class="solid2">
@@ -40,21 +44,22 @@
 
 <script>
     var button_flag = false;
-    document.querySelector('#btn-nav-bar').addEventListener('click', toggleNavBar);
 
     function toggleNavBar(){
-        const button = document.querySelector('#btn-nav-bar');
         const navBar = document.querySelector('#nav-bar');
         button_flag = !button_flag;
+        /*
         if(button_flag == true){
             navBar.style.visibility = "visible";
         }
         else if(button_flag == false){
             navBar.style.visibility = "hidden";
-        }
+        }*/
+       navBar.classList.toggle('visible');
     }
 
-    document.getElementById('btn-nav-bar').addEventListener('click', function(){
+    document.querySelector('#btn-nav-bar').addEventListener('click', function(){
+        toggleNavBar();
         this.classList.toggle('open');
     });
 
