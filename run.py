@@ -13,3 +13,7 @@ def recommend():
 @app.route('/wishlist')
 def wishlist():
     return render_template('wishlist.html')
+
+@app.route('/profile')
+def profile():
+    return render_template('profile.html')

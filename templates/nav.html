@@ -28,9 +28,9 @@
     <h3 class = "subtitle">{% block page_title %}{% endblock %}</h3>
 
         <nav id = "nav-bar" class = "sidebar" /*style="visibility: hidden"*/>
-            <button href="\">Menu</button><br>
-            <button href="/recommend">Rekomendacje</button><br>
-            <button href="/wishlist">Lista życzeń</button><br>
+            <button class = "sidebar-btn" onclick="location.href='/';" style="margin-top: 50px;">Menu</button><br>
+            <button class = "sidebar-btn" onclick="location.href='/recommend';">Rekomendacje</button><br>
+            <button class = "sidebar-btn" onclick="location.href='/wishlist';">Lista życzeń</button><br>
         </nav>
 <footer>
     <hr class="solid2">
@@ -43,24 +43,28 @@
 </html>
 
 <script>
-    var button_flag = false;
+    const navBar = document.querySelector('#nav-bar');
+    const toggleButton = document.querySelector('#btn-nav-bar');
+    let navVisible = false;
 
-    function toggleNavBar(){
-        const navBar = document.querySelector('#nav-bar');
-        button_flag = !button_flag;
-
-        if(button_flag == true){
-            navBar.style.visibility = "visible";
-        }
-        else if(button_flag == false){
-            navBar.style.visibility = "hidden";
-        }
-    //    navBar.classList.toggle('visible');
+    function toggleNavBar() {
+        navVisible = !navVisible;
+        navBar.classList.toggle('active', navVisible);
     }
 
-    document.querySelector('#btn-nav-bar').addEventListener('click', function(){
+    toggleButton.addEventListener('click', function () {
         toggleNavBar();
         this.classList.toggle('open');
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (e.clientX <= 10 && !navVisible) {
+            navVisible = true;
+            navBar.classList.add('active');
+        } else if (e.clientX > 300 && navVisible && !toggleButton.classList.contains('open')) {
+            navVisible = false;
+            navBar.classList.remove('active');
+        }
     });
 
 </script>
