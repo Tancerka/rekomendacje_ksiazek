@@ -1,7 +1,14 @@
 
 *, body{
     font-family: Lexenga Giga, sans-serif;
-    background-color: #ffe0f8;
+    background-color: #fae8ff;
+    font-weight: 450;
+}
+
+.montecarlo-regular {
+  font-family: "MonteCarlo", cursive;
+  font-weight: 400;
+  /* font-style: normal; */
 }
 
 h1, p{
@@ -9,10 +16,11 @@ h1, p{
 }
 
 .title{
-    text-align: center;
+
     margin-top: 20px;
-    font-size: 40px;
-    letter-spacing: 3px;
+    font-size: 60px;
+    letter-spacing: 4px;
+    text-align: center;
 }
 
 hr.solid {
@@ -54,41 +62,7 @@ hr.solid2 {
     height: 100%;
   }
 }
-  /*  window.signature =
-    initialize: ->
-        $('.signature svg').each ->
-            paths = $('path, circle, rect', this)
-            delay = 0
-            for path in paths
-            length = path.getTotalLength()
-            previousStrokeLength = speed || 0
-            speed = if length < 100 theb 20 else Math.floor(length)
-            delay +=previousStrokeLength +100
-            $(path).css('transition', 'none')
-                    .attr('data-lenth', length)
-                    .attr('data-speed', speed)
-                    .attr('data-delay', delay)
-                    .attr('stroke-dashoffset', length)
-                    .attr('stroke-dasharray', length + ',' + length)
-    animate: ->
-        $('.signature svg').each ->
-            paths = $('path, circle, rect', this)
-            for path in paths
-                length = $(path).attr('data-lenth')
-                speed = $(path).attr('data-speed')
-                delay = $(path).attr('data-delay')
-                $(path).css('transition', 'stroke-dashoffset ' + speed + 'ms ' + delay + 'ms ease-in-out')
-                        .attr('stroke-dashoffset', '0')
-$(document).ready ->
-    window.signature.initialize()
 
-$('button').on 'click', ->
-    window.signature.initialize()
-    setTimeout (-> window.signature.animate()), 500)
-
-$(window).load ->
-    window.signature.animate()
-*/
 
 
 .nav-container{
@@ -109,7 +83,7 @@ $(window).load ->
     transition: transform 0.3s ease;
     z-index: 2000;
     border:  1px solid  #896883; 
-    background-image: linear-gradient(to bottom,  rgba(179, 141, 181, 1), 70%, rgba(179, 141, 181, 0));
+    background-image: linear-gradient(to bottom,  #3d0931, 85%, rgba(179, 141, 181, 0));
 
     transform: translateX(-100%);
 }    
@@ -123,18 +97,18 @@ $(window).load ->
 
 .sidebar-btn{
 
-    border: 1px solid  #896883;
+    border: 1px solid   #3d0931;
     width: 250px;
     height: 70px;
     font-size: 22px;
-    background-color: rgba(179, 141, 181, 1);
+    background-color: #3d0931;
     font-family: Lexenga Giga, sans-serif;
+    color: white;
 }
 
 
 
 .nav-button{
-    background-color: #9e70a1;
     margin-top: 2%;
     margin-left: 20vw;
     position: fixed;
@@ -147,6 +121,7 @@ $(window).load ->
     display: inline-block;
     font-weight: bold;
     cursor: pointer !important;
+    font-family: 'Courier New';
 
 }
 
