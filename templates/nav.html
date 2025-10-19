@@ -19,16 +19,16 @@
                     <span class = "line"></span>
                 </a>
             </button>
-            <input type="text" style="width: 400px; margin-left: 40%; margin-top: -20px" placeholder="Wyszukaj książkę..." id="search-bar">
-            <div class="profile-icon" title="Profile">⚙️</div>
+            <input type="text" style="width: 500px; margin-left: 33%; margin-top: 2%" placeholder="Wyszukaj książkę..." id="search-bar">
+            <input type="image" src="../static/img/settings_24dp_E3E3E3.png" style="margin-right: 26%; margin-top: 2%; width= 35px; height: 35px" id="settings-icon"/>
         </div>
 
     </div>
-    <p class="dot">••••••</p>    
+    <p class="dot">•••••••</p>    
     <h3 class = "subtitle">{% block page_title %}{% endblock %}</h3>
 
         <nav id = "nav-bar" class = "sidebar" /*style="visibility: hidden"*/>
-            <button class = "sidebar-btn" onclick="location.href='/';" style="margin-top: 50px;">Menu</button><br>
+            <button class = "sidebar-btn" onclick="location.href='/';" style="margin-top: 100px;">Menu</button><br>
             <button class = "sidebar-btn" onclick="location.href='/recommend';">Rekomendacje</button><br>
             <button class = "sidebar-btn" onclick="location.href='/wishlist';">Lista życzeń</button><br>
         </nav>
@@ -66,5 +66,11 @@
             navBar.classList.remove('active');
         }
     });
+
+    document.getElementById("settings-icon").addEventListener('click', (e) => {
+
+        window.location.pathname="profile";
+        console.debug(window.location.pathname);
+    })
 
 </script>
