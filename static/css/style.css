@@ -32,10 +32,12 @@ hr.solid2 {
     border-top: 2px solid #5d2b5e;
 }
 
-.dot {
-    letter-spacing: 15vw;
+.line {
+    /* letter-spacing: 15vw; */
     text-align: center;
-    
+    width: 15%;
+    margin-top: 3vw;
+    border: 1px solid #896883;
 }
 
 .subtitle{
@@ -107,6 +109,10 @@ hr.solid2 {
     color: white;
 }
 
+.sidebar-btn:hover{
+    background-color: #613961;
+}
+
 
 
 .nav-button{
@@ -171,10 +177,31 @@ hr.solid2 {
     border: 1px solid #896883;
 }
 
+#search-bar:hover{
+
+    outline: none;
+    border: 2px solid #723b72;
+}
+
+
+
 .profile-icon{
 
     font-size: 24px;
     cursor: pointer;
     padding: 5px;
     margin-left: auto;
+}
+
+.form-label{
+
+    font-size: 18px;
+    font-family: Lexend Giga, sans-serif;
+}
+
+.form-control{
+
+    margin-top: 1vw;
+    margin-bottom: 1vw;
+    font-family: Lexend Giga, sans-serif;
 }
