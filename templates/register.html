@@ -3,7 +3,7 @@
 {% block page_title %} Rejestracja {% endblock %}
 {% block content %}
 
-<form method="POST" action="{{ url_for('register') }}" style="text-align: center;">
+<form method="post" action="{{ url_for('register') }}" style="text-align: center;">
     <div><br>
         <label for="username" class="form-label">Nazwa użytkownika</label><br>
         <input type="text" class="form-control" id="username" name="username" required>

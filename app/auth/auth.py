@@ -3,9 +3,12 @@ from flask_login import login_user, logout_user, login_required, current_user
 from flask import jsonify
 from ..database.users import create_user, find_user_by_username, check_password
 from bson import ObjectId
-from bcrypt import login_manager, mongo
+#from bcrypt import login_manager, mongo
+from app import mongo
 
-auth_bp = Blueprint('auth', __name__)
+
+
+auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 class User:
     def __init__(self, user_id, username, email):
@@ -13,35 +16,36 @@ class User:
         self.username = username
         self.email = email
 
-@login_manager.user_loader
-def load_user(user_id):
-    user_data = mongo.db.users.find_one({'_id': ObjectId(user_id)})
-    if user_data:
-        return User(str(user_data['_id']), user_data['username'], user_data['email'])
-    return None
 
-# @auth_bp.route('/register', methods=['GET', 'POST'])
-# def register():
-#     if request.method == 'POST':
-#         username = request.form.get['username']
-#         email = request.form.get['email']
-#         password = request.form.get['password']
-#     existing_user = find_user_by_username(username)
-#     if existing_user:
-#         return None
-#     user_id = create_user(username, email, password)
-#     # return User(user_id, username, email)
-#     return render_template('register.html')
+#@login_manager.user_loader
+#def load_user(user_id):
+#    user_data = mongo.db.users.find_one({'_id': ObjectId(user_id)})
+#    if user_data:
+#        return User(str(user_data['_id']), user_data['username'], user_data['email'])
+#    return None 
 
-# @auth_bp.route('/login', methods=['GET', 'POST'])
-# def login(username, password):
-#     if check_password(username, password):
-#         user_data = find_user_by_username(username)
-#         user = User(str(user_data['_id']), user_data['username'], user_data['email'])
-#         login_user(user)
-#         return render_template('index.html')
-#     # return None
-#     return render_template('login.html')
+@auth_bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        return redirect(url_for('auth.login'))
+        if existing_user:
+            return None
+        user_id = mongo.db.users.insert_one({'username':username, 'email':email, 'password':password})
+#    return User(user_id, username, email)
+    return render_template('register.html')
+
+@auth_bp.route('/login', methods=['GET', 'POST'])
+def login(username, password):
+    if check_password(username, password):
+        user_data = find_user_by_username(username)
+        user = User(str(user_data['_id']), user_data['username'], user_data['email'])
+        login_user(user)
+        return redirect('index.html')
+     # return None
+    return render_template('login.html')
 
 # @auth_bp.route('/logout', methods=['GET', 'POST'])
 # @login_required

@@ -1,8 +1,18 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for, flash
+from pymongo import MongoClient
+from app import create_app
 
-app = Flask(__name__)
+app = create_app()
 
-app.config["MONGO_URI"] = "mongodb://localhost:27017/database"
+#app = Flask(__name__)
+
+if __name__ == "_main_":
+    app.run(debug=True)
+
+client = MongoClient('localhost', 27017)
+db = client['database']
+users_collection = db['users']
+
 
 @app.route('/')
 def index():
