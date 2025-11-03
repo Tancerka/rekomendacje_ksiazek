@@ -1,25 +1,26 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
-from flask_login import login_user, logout_user, login_required, current_user
+from flask_login import login_user, logout_user, login_required, current_user, UserMixin
 from flask import jsonify
 from app.database.users import find_user_by_username, check_password
 from bson import ObjectId
-#from bcrypt import login_manager, mongo
+from app.extensions import mongo, login_manager
+
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-class User:
+class User(UserMixin):
     def __init__(self, user_id, username, email):
         self.id = user_id
         self.username = username
         self.email = email
 
-
-#@login_manager.user_loader
-#def load_user(user_id):
-#    user_data = mongo.db.users.find_one({'_id': ObjectId(user_id)})
-#    if user_data:
-#        return User(str(user_data['_id']), user_data['username'], user_data['email'])
-#    return None 
+@login_manager.user_loader
+def load_user(user_id):
+    from app import mongo
+    user_data = mongo.db.users.find_one({'_id': ObjectId(user_id)})
+    if user_data:
+        return User(str(user_data['_id']), user_data['username'], user_data['email'])
+    return None 
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -44,7 +45,7 @@ def login():
             user_data = find_user_by_username(username)
             user = User(str(user_data['_id']), user_data['username'], user_data['email'])
             login_user(user)
-            return redirect('index.html')
+            return redirect(url_for('index'))
      # return None
     return render_template('login.html')
 
