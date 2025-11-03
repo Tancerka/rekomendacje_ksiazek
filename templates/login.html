@@ -3,7 +3,7 @@
 {% block page_title %} Login {% endblock %}
 {% block content %}
 
-<!-- <form method="POST" action="{{ url_for('login') }}" style="text-align: center;">
+<form method="post" action="{{ url_for('auth.login') }}" style="text-align: center;">
     <div>
         <label for="username" class="form-label">Nazwa użytkownika</label><br>
         <input type="text" class="form-control" id="username" name="username" required>
@@ -11,9 +11,11 @@
     <div>
         <label for="password" class="form-label">Hasło</label><br>
         <input type="password" class="form-control" id="password" name="password" required>
-    </div><br>
-    <button type="submit" class="btn btn-primary">Zaloguj się</button>
-</form> -->
+    </div>
+    <span>Nie masz konta? <a href="{{ url_for('auth.register') }}">Zarejestruj się</a></span><br>
+    <br><button type="submit" class="btn btn-primary">Zaloguj się</button>
+</form>
+
 
 
 {% endblock %}

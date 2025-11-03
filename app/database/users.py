@@ -1,5 +1,3 @@
-from app import mongo, bcrypt
-from bson import objectId
 from flask import app
 
 # @app.route("/initialize_db", methods=['GET', 'POST'])
@@ -13,12 +11,14 @@ from flask import app
 #    return str(user_id)
 
 def find_user_by_username(username):
+    from app import mongo 
     user = mongo.db.users.find_one({'username': username})
     if user:
         user['_id'] = str(user['_id'])
     return user
 
 def check_password(username, password):
+    from app import mongo 
     user = mongo.db.users.find_one({'username': username})
-    if user and bcrypt.check_password_hash(user['password'], password):
+    if user and (user['password'] == password):
         return True

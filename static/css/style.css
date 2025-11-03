@@ -22,6 +22,14 @@ h1, p{
     letter-spacing: 4px;
     text-align: center;
     color: #3d0931;
+    border: none;
+    display: block;
+    margin: auto;
+}
+
+.title:hover{
+    cursor: pointer;
+/*     color: #5d2b5e; */
 }
 
 hr.solid {
@@ -111,6 +119,7 @@ hr.solid2 {
 
 .sidebar-btn:hover{
     background-color: #613961;
+    cursor: pointer;
 }
 
 
@@ -204,4 +213,22 @@ hr.solid2 {
     margin-top: 1vw;
     margin-bottom: 1vw;
     font-family: Lexend Giga, sans-serif;
+}
+
+.login{
+
+    margin-right: 26%; 
+    margin-top: 2%; 
+    width: 150px; 
+    height: 35px;
+    font-size: 18px;
+    border-radius: 4px;
+}
+
+.login:hover{
+
+    background-color: #613961;
+    color: white;
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.22);
+    cursor: pointer;
 }

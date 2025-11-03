@@ -1,12 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 from flask import jsonify
-from ..database.users import create_user, find_user_by_username, check_password
+from app.database.users import find_user_by_username, check_password
 from bson import ObjectId
 #from bcrypt import login_manager, mongo
-from app import mongo
-
-
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -30,26 +27,30 @@ def register():
         username = request.form.get('username')
         email = request.form.get('email')
         password = request.form.get('password')
+        from app import mongo
+        user_id = mongo.db.users.insert_one({'username':username, 'email':email, 'password':password})
         return redirect(url_for('auth.login'))
         if existing_user:
             return None
-        user_id = mongo.db.users.insert_one({'username':username, 'email':email, 'password':password})
 #    return User(user_id, username, email)
     return render_template('register.html')
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
-def login(username, password):
-    if check_password(username, password):
-        user_data = find_user_by_username(username)
-        user = User(str(user_data['_id']), user_data['username'], user_data['email'])
-        login_user(user)
-        return redirect('index.html')
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        if check_password(username, password):
+            user_data = find_user_by_username(username)
+            user = User(str(user_data['_id']), user_data['username'], user_data['email'])
+            login_user(user)
+            return redirect('index.html')
      # return None
     return render_template('login.html')
 
-# @auth_bp.route('/logout', methods=['GET', 'POST'])
-# @login_required
-# def logout():
-#     logout_user()
-#     # return redirect(url_for('main.index'))
-#     return render_template('login.html')
+@auth_bp.route('/logout', methods=['GET', 'POST'])
+@login_required
+def logout():
+    logout_user()
+    # return redirect(url_for('main.index'))
+    return render_template('login.html')

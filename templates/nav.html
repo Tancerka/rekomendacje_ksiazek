@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="../static/css/style.css">
 </head>
 <body>
-    <h1 class = "title montecarlo-regular">Rekomendacje książek</h1>
+    <button class = "title montecarlo-regular title" onclick="window.location.pathname='/'">Rekomendacje książek</button>
     <hr class="solid">
     <div class = "nav-container">
         <div class="top-bar">
@@ -20,7 +20,8 @@
                 </a>
             </button>
             <input type="text" style="width: 500px; margin-left: 33%; margin-top: 2%" placeholder="Wyszukaj książkę..." id="search-bar">
-            <input type="image" src="../static/img/Windows_Settings_app_icon.png" style="margin-right: 26%; margin-top: 2%; width: 35px; height: 35px" id="settings-icon"/>
+            <!-- <input type="image" src="../static/img/Windows_Settings_app_icon.png" style="margin-right: 26%; margin-top: 2%; width: 35px; height: 35px" id="settings-icon"/> -->
+             <button class="login" onclick="window.location.pathname='/login'">Zaloguj się</button>
         </div>
 
     </div>
@@ -45,6 +46,7 @@
 </html>
 
 <script>
+    // console.debug(location.pathname);
     const navBar = document.querySelector('#nav-bar');
     const toggleButton = document.querySelector('#btn-nav-bar');
     let navVisible = false;
@@ -69,10 +71,10 @@
         }
     });
 
-    document.getElementById("settings-icon").addEventListener('click', (e) => {
+    // document.getElementById("settings-icon").addEventListener('click', (e) => {
 
-        window.location.pathname="profile";
-        console.debug(window.location.pathname);
-    })
+    //     window.location.pathname="profile";
+    //     console.debug(window.location.pathname);
+    // })
 
 </script>
