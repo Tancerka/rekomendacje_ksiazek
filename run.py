@@ -1,13 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from pymongo import MongoClient
 from app import create_app
+from flask_login import current_user
 
 app = create_app()
 
-#app = Flask(__name__)
-
 if __name__ == "_main_":
-    app.run(debug=True)
+    app.run()
 
 client = MongoClient('localhost', 27017)
 db = client['database']
@@ -28,7 +27,9 @@ def wishlist():
 
 @app.route('/profile')
 def profile():
-    return render_template('profile.html')
+    if current_user.is_authenticated:
+        return render_template('profile.html')
+    return redirect(url_for("auth.login"))
 
 @app.route('/register')
 def register():
@@ -38,6 +39,6 @@ def register():
 def login():
     return render_template('login.html')
 
-# @app.route('/initialize_db')
-# def init():
-#     return render_template('login.html')
+@app.route('/logout')
+def logout():
+    return redirect(url_for("auth.logout"))

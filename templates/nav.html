@@ -19,9 +19,14 @@
                     <span class = "line"></span>
                 </a>
             </button>
-            <input type="text" style="width: 500px; margin-left: 33%; margin-top: 2%" placeholder="Wyszukaj książkę..." id="search-bar">
+            <input type="text" style="width: 500px; margin-left: 33%; margin-top: 2%; background-color: transparent;" placeholder="Wyszukaj książkę..." id="search-bar">
             <!-- <input type="image" src="../static/img/Windows_Settings_app_icon.png" style="margin-right: 26%; margin-top: 2%; width: 35px; height: 35px" id="settings-icon"/> -->
-             <button class="login" onclick="window.location.pathname='/login'">Zaloguj się</button>
+             {% if current_user.is_authenticated %}
+                <button class="login" style="width: 10vw" onclick="window.location.pathname='/profile'">Profil</button>
+                <button class="login" style="width: 10vw" onclick="window.location.pathname='/logout'">Wyloguj się</button>
+            {% else %}
+                <button class="login" onclick="window.location.pathname='/login'">Zaloguj się</button>
+            {% endif %}
         </div>
 
     </div>
@@ -46,7 +51,6 @@
 </html>
 
 <script>
-    // console.debug(location.pathname);
     const navBar = document.querySelector('#nav-bar');
     const toggleButton = document.querySelector('#btn-nav-bar');
     let navVisible = false;

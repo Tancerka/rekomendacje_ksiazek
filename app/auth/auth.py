@@ -31,9 +31,6 @@ def register():
         from app import mongo
         user_id = mongo.db.users.insert_one({'username':username, 'email':email, 'password':password})
         return redirect(url_for('auth.login'))
-        if existing_user:
-            return None
-#    return User(user_id, username, email)
     return render_template('register.html')
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
@@ -46,12 +43,10 @@ def login():
             user = User(str(user_data['_id']), user_data['username'], user_data['email'])
             login_user(user)
             return redirect(url_for('index'))
-     # return None
     return render_template('login.html')
 
 @auth_bp.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
-    # return redirect(url_for('main.index'))
     return render_template('login.html')

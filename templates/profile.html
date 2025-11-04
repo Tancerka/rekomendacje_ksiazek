@@ -3,7 +3,24 @@
 {% block page_title %} Profil {% endblock %}
 {% block content %}
 
+<div style="text-align: center;">
+    <h2>Witaj, {{ current_user.username }}!</h2>
+    <br>
+    <div style="text-align: left; margin-left: 40%;">
+        <span id="username">Nazwa użytkownika: {{ current_user.username }}</span><br><br>
+        <span id="email">Email: {{ current_user.email }}</span>
+    </div>
+    <button class = "login" style="margin-left:25%" onclick="edit()">Edytuj</button>
+</div>
+</body>
+</html>
+<script>
 
-
+function edit() {
+    document.getElementById("username").innerHTML = 'Nazwa użytkownika: <input type="text" id="new-username" value="{{ current_user.username }}">';
+    document.getElementById("email").innerHTML = 'Email: <input type="text" id="new-email" value="{{ current_user.email }}">';
+}
+    
+</script>
 
 {% endblock %}
