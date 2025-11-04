@@ -232,6 +232,26 @@ hr.solid2 {
     cursor: pointer;
 }
 
+.logout{
+
+    width: 10vw; 
+    margin: 0; 
+    margin-top: 2vw; 
+    height: 35px;
+    font-size: 18px;
+    border: 2px solid #630913;
+     border-radius: 4px;
+/*     border-color: #630913;  */
+    color: #630913;
+}
+
+.logout:hover{
+    background-color: #630913;
+    color: white;
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.22);
+    cursor: pointer;
+}
+
 input{
     background-color: #fdf5ff;
 }

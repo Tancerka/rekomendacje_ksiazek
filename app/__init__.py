@@ -1,5 +1,6 @@
 from flask import Flask
 from app.auth.auth import auth_bp
+from app.main.routes import main_bp
 from app.extensions import mongo, login_manager
 
 def create_app():
@@ -10,5 +11,6 @@ def create_app():
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
 
+    app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
     return app
