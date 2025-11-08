@@ -1,0 +1,27 @@
+{% extends "nav.html" %}
+{% block title %}Rekomendacje książek {% endblock %}
+{% block page_title %} Wyniki wyszukiwania dla "{{ query }}"{% endblock %}
+{% block content %}
+
+
+{% if results %}
+    <ul>
+    {% for book in results %}
+        <button class="book-item" onclick="window.location.href='/main/book?id={{ book._id }}'">
+
+            <h3 style="font-weight: bold;">{{ book.Title }}</h3>
+            <span style="font-weight: bold;">ID: </span>{{ book._id }} <br><br>
+            <span style="font-weight: bold;">Autor: </span>{{ book.Author }} <br><br>
+            <span style="font-weight: bold;">Kategoria: </span>{{ book.Category }} <br><br>
+            <span style="font-weight: bold;">Wynik: </span>{{ book.Score }} <br><br>
+<!--             <button>Dodaj do ulubionych</button>
+            <button>Dodaj do listy życzeń</button>
+            <button>Dodaj do przeczytanych</button> -->
+        </button>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Brak wyników dla podanego zapytania.</p>
+{% endif %}
+
+{% endblock %}

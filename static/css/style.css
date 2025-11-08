@@ -255,3 +255,33 @@ hr.solid2 {
 input{
     background-color: #fdf5ff;
 }
+
+.book-item{
+
+    border: 1px solid #896883;
+    border-radius: 8px;
+    padding: 8px;
+    margin: 10px 0;
+    margin-left: 10vw;
+    margin-right: 10vw;
+    display:block;
+    width: 80%;
+    /*  text-align: left;*/
+}
+
+.book-item:hover, .book-item:hover > * {
+    background-color: #613961;
+    color: white;
+    cursor: pointer;
+}
+
+.book-details{
+    padding: 20px;
+    margin: 20px 10vw;
+    display:block;
+    width: 80%;
+}
+
+.book-details > span{
+    margin-left: 30%;
+}

@@ -21,6 +21,10 @@ def index():
 def recommend():
     return render_template('recommend.html')
 
+@app.route('/favorites')
+def favorites():
+    return render_template('favorites.html')
+
 @app.route('/wishlist')
 def wishlist():
     return render_template('wishlist.html')
@@ -42,3 +46,11 @@ def login():
 @app.route('/logout')
 def logout():
     return redirect(url_for("auth.logout"))
+
+@app.route('/search_results')
+def search_results():
+    return redirect(url_for("main.search"))
+
+@app.route('/book')
+def book():
+    return redirect(url_for("main.book"))

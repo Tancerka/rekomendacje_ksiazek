@@ -33,15 +33,11 @@ def register():
         dot = email.count('@')
         point = email.count('.')
         user_data = find_user_by_username(username)
-        print("username after split: ", domain)
-        print("dot count: ", dot)
-        print("point count: ", point)
-        print("local-part", domain[0])
-        print("user data", user_data.get('email'))
         if dot != 0 and point != 0 and domain[1] != None:
-            if user_data.get('email') == email:
-                message = "Taki użytkownik już istnieje."
-                return render_template('register.html', message = message)
+            if user_data != None:
+                if user_data.get('email') == email:
+                    message = "Taki użytkownik już istnieje."
+                    return render_template('register.html', message = message)
             else:
                 from app import mongo
                 user_id = mongo.db.users.insert_one({'username':username, 'email':email, 'password':password})
@@ -58,11 +54,13 @@ def login():
         password = request.form.get('password')
         if check_password(username, password):
             user_data = find_user_by_username(username)
-            #if user_data
                 
             user = User(str(user_data['_id']), user_data['username'], user_data['email'])
             login_user(user)
             return redirect(url_for('index'))
+        else:
+            message = "Nieprawidłowa nazwa użytkownika lub hasło."
+            return render_template('login.html', message=message)
     return render_template('login.html')
 
 @auth_bp.route('/logout', methods=['GET', 'POST'])

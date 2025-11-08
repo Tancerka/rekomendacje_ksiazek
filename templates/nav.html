@@ -20,6 +20,8 @@
                 </a>
             </button>
             <input type="text" style="width: 500px; margin-top: 2%; background-color: transparent;" placeholder="Wyszukaj książkę..." id="search-bar">
+<!--             <button class="login" style="width: 10vw; margin: 0;margin-top: 2vw;" onclick="searchBook()">Wyszukaj</button> -->
+            <input id="search-icon" type="image" onclick="searchBook()" src="../static/img/search_icon.png" style="background-color: transparent; width: 3%; height: 2%; margin-top: 2vw; margin-right: 5vw;" id="search-icon"></button>
             <!-- <input type="image" src="../static/img/Windows_Settings_app_icon.png" style="margin-right: 26%; margin-top: 2%; width: 35px; height: 35px" id="settings-icon"/> -->
              {% if current_user.is_authenticated %}
                 <button class="login" style="width: 10vw; margin: 0;margin-top: 2vw;" onclick="window.location.pathname='/profile'">Profil</button>
@@ -36,6 +38,7 @@
         <nav id = "nav-bar" class = "sidebar" /*style="visibility: hidden"*/>
             <button class = "sidebar-btn" onclick="location.href='/';" style="margin-top: 100px;">Menu</button><br>
             <button class = "sidebar-btn" onclick="location.href='/recommend';">Rekomendacje</button><br>
+            <button class = "sidebar-btn" onclick="location.href='/favorites';">Ulubione</button><br>
             <button class = "sidebar-btn" onclick="location.href='/wishlist';">Lista życzeń</button><br>
         </nav>
     <div class="content">
@@ -74,6 +77,28 @@
             navBar.classList.remove('active');
         }
     });
+
+    function searchBook() {
+        const q = document.getElementById("search-bar").value;
+        if (q.trim() !== "") {
+            window.location.href = `/main/search?q=${encodeURIComponent(q)}`;
+        }
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            searchBook();
+        }
+    });
+
+    document.getElementById("search-icon").addEventListener('mouseover', (e) =>{
+        document.getElementById("search-icon").src = "../static/img/search_icon_hover.png";
+    })
+    document.getElementById("search-icon").addEventListener('mouseout', (e) =>{
+        document.getElementById("search-icon").src = "../static/img/search_icon.png";
+    })
+
+
 
     // document.getElementById("settings-icon").addEventListener('click', (e) => {
 
