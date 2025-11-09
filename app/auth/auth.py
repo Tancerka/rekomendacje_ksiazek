@@ -9,17 +9,18 @@ from app.extensions import mongo, login_manager
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 class User(UserMixin):
-    def __init__(self, user_id, username, email):
+    def __init__(self, user_id, username, email, favorites):
         self.id = user_id
         self.username = username
         self.email = email
+        self.favorites = favorites
 
 @login_manager.user_loader
 def load_user(user_id):
     from app import mongo
     user_data = mongo.db.users.find_one({'_id': ObjectId(user_id)})
     if user_data:
-        return User(str(user_data['_id']), user_data['username'], user_data['email'])
+        return User(str(user_data['_id']), user_data['username'], user_data['email'], user_data['favorites'])
     return None 
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
@@ -58,7 +59,7 @@ def register():
                         return render_template('register.html', message = message)
             else:
                 from app import mongo
-                user_id = mongo.db.users.insert_one({'username':username, 'email':email, 'password':password})
+                user_id = mongo.db.users.insert_one({'username':username, 'email':email, 'password':password, 'favorites': []})
                 return redirect(url_for('auth.login'))
         else:
             message = "Podany email jest niepoprawny."
@@ -73,7 +74,7 @@ def login():
         if check_password(username, password):
             user_data = find_user_by_username(username)
                 
-            user = User(str(user_data['_id']), user_data['username'], user_data['email'])
+            user = User(str(user_data['_id']), user_data['username'], user_data['email'], user_data['favorites'])
             login_user(user)
             return redirect(url_for('index'))
         else:
@@ -86,3 +87,32 @@ def login():
 def logout():
     logout_user()
     return render_template('login.html')
+
+@auth_bp.route('/favorites', methods=['GET'])
+@login_required
+def get_favorites():
+    user_id = current_user.id
+    user_data = mongo.db.users.find_one({'_id': ObjectId(user_id)})
+    favorite_books = []
+    if 'favorites' in user_data:
+        favorite_ids = user_data['favorites']
+        for book_id in favorite_ids:
+            book = mongo.db.books.find_one({'_id': ObjectId(book_id)})
+            print(book)
+            if book:
+                favorite_books.append(book)
+    print(favorite_books)
+    return render_template('favorites.html', favorites=favorite_books)
+
+@auth_bp.route('/add_favorite', methods=['POST'])
+@login_required
+def add_favorite():
+    user_id = current_user.id
+    book_id = request.get_json().get('book_id')
+    print(book_id)
+    print("Adding book to favorites:", book_id)
+    mongo.db.users.update_one(
+        {'_id': ObjectId(user_id)},
+        {'$addToSet': {'favorites': book_id}}
+    )
+    return jsonify({"message: Book added to favorites"})

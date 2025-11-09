@@ -14,14 +14,45 @@
             <span style="font-weight: bold;">Autor: </span>{{ book.Author }} <br><br>
             <span style="font-weight: bold;">Kategoria: </span>{{ book.Category }} <br><br>
             <span style="font-weight: bold;">Wynik: </span>{{ book.Score }} <br><br>
-<!--             <button>Dodaj do ulubionych</button>
-            <button>Dodaj do listy życzeń</button>
-            <button>Dodaj do przeczytanych</button> -->
+<!--             <button>Dodaj do przeczytanych</button> -->
         </button>
+        <input type="image" id="favorites-icon" src="../static/img/favorites_icon.png" style="background-color: transparent; width: 3%; height: 3%; margin-left:48%" onclick="addFavorite('{{book._id}}')"></input>
+        <input type="image" id="wishlist-icon" src="../static/img/wishlist_icon.png" style="background-color: transparent; width: 3%; height: 3%"></input>
     {% endfor %}
     </ul>
 {% else %}
     <p>Brak wyników dla podanego zapytania.</p>
 {% endif %}
+
+<script>
+
+    document.getElementById("favorites-icon").addEventListener("mouseover", (e) => {
+        document.getElementById("favorites-icon").src = "../static/img/favorites_icon_hover.png";
+    });
+
+    document.getElementById("favorites-icon").addEventListener("mouseout", (e) => {
+        document.getElementById("favorites-icon").src = "../static/img/favorites_icon.png";
+    });
+
+    document.getElementById("wishlist-icon").addEventListener("mouseover", (e) => {
+        document.getElementById("wishlist-icon").src = "../static/img/wishlist_icon_hover.png";
+    });
+
+    document.getElementById("wishlist-icon").addEventListener("mouseout", (e) => {
+        document.getElementById("wishlist-icon").src = "../static/img/wishlist_icon.png";
+    });
+
+    async function addFavorite(bookId) {
+        const response = await fetch("/auth/add_favorite", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 'book_id': bookId })
+        });
+    }
+
+
+</script>
 
 {% endblock %}

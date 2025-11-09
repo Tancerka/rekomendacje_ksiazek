@@ -3,6 +3,20 @@
 {% block page_title %} Ulubione {% endblock %}
 {% block content %}
 
+{% if favorites %}
+    <ul>
+    {% for book in favorites %}
+        <button class="book-item" onclick="window.location.href='/main/book?id={{ book._id }}'">
+            <h3 style="font-weight: bold;">{{ book.Title }}</h3>
+            <span style="font-weight: bold;">ID: </span>{{ book._id }} <br><br>
+            <span style="font-weight: bold;">Autor: </span>{{ book.Author }} <br><br>
+            <span style="font-weight: bold;">Kategoria: </span>{{ book.Category }} <br><br>
+        </button>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Brak ulubionych książek.</p>
+{% endif %}
 
 
 

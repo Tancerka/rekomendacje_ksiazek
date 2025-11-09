@@ -23,7 +23,12 @@ def recommend():
 
 @app.route('/favorites')
 def favorites():
-    return render_template('favorites.html')
+    return redirect(url_for('auth.get_favorites'))
+
+
+@app.route('/add_favorite')
+def add_favorite():
+    return redirect(url_for('auth.add_favorite'))
 
 @app.route('/wishlist')
 def wishlist():
