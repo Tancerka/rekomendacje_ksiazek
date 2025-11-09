@@ -8,6 +8,13 @@ def find_user_by_username(username):
         user['_id'] = str(user['_id'])
     return user
 
+def find_user_by_email(email):
+    from app import mongo 
+    user = mongo.db.users.find_one({'email': email})
+    if user:
+        user['_id'] = str(user['_id'])
+    return user
+
 def check_password(username, password):
     from app import mongo 
     user = mongo.db.users.find_one({'username': username})

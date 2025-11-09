@@ -33,7 +33,10 @@ def search():
     query = request.args.get('q', '')
     results = []
     if query:
-        results = list(mongo.db.books.find({'Title': {'$regex': query, '$options': 'i'}}, {"Title":1, "Author":1, "Category":1, "Score":1}))
+        title_results = list(mongo.db.books.find({'Title': {'$regex': query, '$options': 'i'}}, {"Title":1, "Author":1, "Category":1, "Score":1}))
+        author_results = list(mongo.db.books.find({'Author': {'$regex': query, '$options': 'i'}}, {"Title":1, "Author":1, "Category":1, "Score":1}))
+        category_results = list(mongo.db.books.find({'Category': {'$regex': query, '$options': 'i'}}, {"Title":1, "Author":1, "Category":1, "Score":1}))
+        results = title_results + author_results + category_results
     return render_template('search_results.html', query=query, results=results)
 
 @main_bp.route('/book', methods=['GET'])

@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user, UserMixin
 from flask import jsonify
-from app.database.users import find_user_by_username, check_password
+from app.database.users import find_user_by_username, find_user_by_email,  check_password
 from bson import ObjectId
 from app.extensions import mongo, login_manager
 
@@ -28,16 +28,34 @@ def register():
         username = request.form.get('username')
         email = request.form.get('email')
         password = request.form.get('password')
+        repeat_password = request.form.get('repeat-password')
         domain = email.split('@')
         #check if the email has at least 1 @, the part before the last @ is non-empty, domain contains at least one .
         dot = email.count('@')
         point = email.count('.')
-        user_data = find_user_by_username(username)
-        if dot != 0 and point != 0 and domain[1] != None:
-            if user_data != None:
-                if user_data.get('email') == email:
-                    message = "Taki użytkownik już istnieje."
+        username_data = find_user_by_username(username)
+        email_data = find_user_by_email(email)
+        print(username_data)
+        print(email_data)
+        if password != repeat_password:
+                    message = "Podane hasła nie są identyczne."
                     return render_template('register.html', message = message)
+        if dot != 0 and point != 0 and domain[1] != None:
+            if username_data != None or email_data != None:
+                if username_data != None:
+                    if username_data.get('email') == email:
+                        message = "Taki użytkownik już istnieje."
+                        return render_template('register.html', message = message)
+                    if username == username_data.get('username'):
+                        message = "Taka nazwa użytkownika jest już zajęta."
+                        return render_template('register.html', message = message)
+                if email_data != None:
+                    if email_data.get('username') == username:
+                        message = "Taki użytkownik już istnieje."
+                        return render_template('register.html', message = message)
+                    if email == email_data.get('email'):
+                        message = "Taki email jest już zajęty."
+                        return render_template('register.html', message = message)
             else:
                 from app import mongo
                 user_id = mongo.db.users.insert_one({'username':username, 'email':email, 'password':password})
