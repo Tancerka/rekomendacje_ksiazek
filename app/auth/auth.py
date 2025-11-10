@@ -115,4 +115,6 @@ def add_favorite():
         {'_id': ObjectId(user_id)},
         {'$addToSet': {'favorites': book_id}}
     )
-    return jsonify({"message: Book added to favorites"})
+    message="Dodano książkę do ulubionych."
+    print(message)
+    return message

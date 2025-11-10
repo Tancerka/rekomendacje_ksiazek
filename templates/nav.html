@@ -24,7 +24,7 @@
             <input id="search-icon" type="image" onclick="searchBook()" src="../static/img/search_icon.png" style="background-color: transparent; width: 3%; height: 2%; margin-top: 2vw; margin-right: 5vw;" id="search-icon"></button>
             <!-- <input type="image" src="../static/img/Windows_Settings_app_icon.png" style="margin-right: 26%; margin-top: 2%; width: 35px; height: 35px" id="settings-icon"/> -->
              {% if current_user.is_authenticated %}
-                <button class="login" style="width: 10vw; margin: 0;margin-top: 2vw;" onclick="window.location.pathname='/profile'">Profil</button>
+                <button class="login" style="width: 10vw; margin: 0;margin-top: 2vw;" onclick="window.location.pathname='/profile'">{{current_user.username}}</button>
                 <button class="logout" onclick="window.location.pathname='/logout'">Wyloguj się</button>
             {% else %}
                 <button class="login" onclick="window.location.pathname='/login'">Zaloguj się</button>

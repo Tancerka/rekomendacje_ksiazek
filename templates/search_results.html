@@ -3,6 +3,25 @@
 {% block page_title %} Wyniki wyszukiwania dla "{{ query }}"{% endblock %}
 {% block content %}
 
+<form method="get" id ="filter-form" action="{{ url_for('main.search')}}">
+    <input type="hidden" name="q" value="{{ query }}">
+    <label style="margin-left: 40%;">Liczba wyników: {{ results|length }}</label><br><br>
+    <label for="filter" style="margin-left: 30%;">Filtry:</label>
+    <select id="filter" name="sort" onchange="newSort()">
+        <option value="all" {% if request.args.get('filter') == 'all' %}selected{% endif %}>Wszystko</option>
+        <option value="books" {% if request.args.get('filter') == 'books' %}selected{% endif %}>Książki</option>
+        <option value="authors"  {% if request.args.get('filter') == 'authors' %}selected{% endif %}>Autorzy</option>
+        <option value="categories"  {% if request.args.get('filter') == 'categories' %}selected{% endif %}>Kategorie</option>
+    </select>
+    <label for="sort" style="margin-left: 10%;">Sortuj:</label>
+    <select id="sort" name="sort" onchange="newSort()">
+        <option value="asc" {% if request.args.get('sort') == 'asc' %}selected{% endif %}>A-Z</option>
+        <option value="desc" {% if request.args.get('sort') == 'desc' %}selected{% endif %}>Z-A</option>
+        <option value="score_desc" {% if request.args.get('sort') == 'score_desc' %}selected{% endif %}>Od najlepszych</option>
+        <option value="score_asc" {% if request.args.get('sort') == 'score_asc' %}selected{% endif %}>Od najgorszych</option>
+    </select>
+</form>
+
 
 {% if results %}
     <ul>
@@ -10,14 +29,14 @@
         <button class="book-item" onclick="window.location.href='/main/book?id={{ book._id }}'">
 
             <h3 style="font-weight: bold;">{{ book.Title }}</h3>
-            <span style="font-weight: bold;">ID: </span>{{ book._id }} <br><br>
             <span style="font-weight: bold;">Autor: </span>{{ book.Author }} <br><br>
             <span style="font-weight: bold;">Kategoria: </span>{{ book.Category }} <br><br>
-            <span style="font-weight: bold;">Wynik: </span>{{ book.Score }} <br><br>
+            <span style="font-weight: bold;">Ocena: </span>{{ book.Score }} <br><br>
 <!--             <button>Dodaj do przeczytanych</button> -->
         </button>
         <input type="image" id="favorites-icon" src="../static/img/favorites_icon.png" style="background-color: transparent; width: 3%; height: 3%; margin-left:48%" onclick="addFavorite('{{book._id}}')"></input>
         <input type="image" id="wishlist-icon" src="../static/img/wishlist_icon.png" style="background-color: transparent; width: 3%; height: 3%"></input>
+        <p> {{ message }}</p>
     {% endfor %}
     </ul>
 {% else %}
@@ -26,21 +45,29 @@
 
 <script>
 
-    document.getElementById("favorites-icon").addEventListener("mouseover", (e) => {
-        document.getElementById("favorites-icon").src = "../static/img/favorites_icon_hover.png";
-    });
+        elements = document.getElementsByTagName("input")
+        for(let i = 0; i<elements.length; i++) {
+            elements[i].addEventListener("mouseover", (e) => {
+            if(elements[i].id == "favorites-icon") {
+                elements[i].src = "../static/img/favorites_icon_hover.png";
+            } else if (elements[i].id == "wishlist-icon") {
+                elements[i].src = "../static/img/wishlist_icon_hover.png";
+            }
+        });
+    }
 
-    document.getElementById("favorites-icon").addEventListener("mouseout", (e) => {
-        document.getElementById("favorites-icon").src = "../static/img/favorites_icon.png";
-    });
+        elements = document.getElementsByTagName("input")
+        for(let i = 0; i<elements.length; i++) {
+            elements[i].addEventListener("mouseout", (e) => {
+            if(elements[i].id == "favorites-icon") {
+                elements[i].src = "../static/img/favorites_icon.png";
+            } else if (elements[i].id == "wishlist-icon") {
+                elements[i].src = "../static/img/wishlist_icon.png";
+            }
+        });
+    }
 
-    document.getElementById("wishlist-icon").addEventListener("mouseover", (e) => {
-        document.getElementById("wishlist-icon").src = "../static/img/wishlist_icon_hover.png";
-    });
-
-    document.getElementById("wishlist-icon").addEventListener("mouseout", (e) => {
-        document.getElementById("wishlist-icon").src = "../static/img/wishlist_icon.png";
-    });
+    
 
     async function addFavorite(bookId) {
         const response = await fetch("/auth/add_favorite", {
@@ -50,6 +77,14 @@
             },
             body: JSON.stringify({ 'book_id': bookId })
         });
+    }
+
+    function newSort(){
+        const query = new URLSearchParams(window.location.search).get("q");
+        const filter = document.getElementById("filter").value;
+        const sort = document.getElementById("sort").value;
+        window.location.href = `/main/search?q=${query}&filter=${filter}&sort=${sort}`;
+        console.debug(window.location.href);
     }
 
 
