@@ -1,0 +1,36 @@
+import React, { useState } from "react";
+import Layout from "../components/Layout"
+
+export default function Login() {
+  const [form, setForm] = useState({ username: "", password: "" });
+  const [error, setError] = useState("");
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const res = await fetch("/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form)
+    });
+
+    if (res.ok) {
+      window.location.href = "/";
+    } else {
+      setError("Nieprawidłowe dane logowania");
+    }
+  };
+
+  return (
+  <Layout pageTitle = "Logowanie">
+    <form onSubmit={handleLogin} style={{ textAlign: "center" }}>
+      <span style={{ color: "crimson" }}>{error}</span><br/><br/>
+      <label>Nazwa użytkownika</label><br/><br/>
+      <input type="text" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} /><br/><br/>
+      <label>Hasło</label><br/><br/>
+      <input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /><br/><br/>
+      <span>Nie masz konta? <a href='/register'>Zarejestruj się</a></span><br></br>
+      <button className="login" style={{marginLeft: "26%"}}type="submit">Zaloguj się</button>
+    </form>
+  </Layout>
+  );
+}

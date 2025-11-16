@@ -1,12 +1,17 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user, UserMixin
-from flask import jsonify
-from app.database.users import find_user_by_username, find_user_by_email,  check_password
 from bson import ObjectId
 from app.extensions import mongo, login_manager
-
+from app.database.users import (
+    find_user_by_username,
+    find_user_by_email,
+    check_password
+)
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
+
+
+# ---------------- USER CLASS ----------------
 
 class User(UserMixin):
     def __init__(self, user_id, username, email, favorites):
@@ -15,106 +20,129 @@ class User(UserMixin):
         self.email = email
         self.favorites = favorites
 
+
 @login_manager.user_loader
 def load_user(user_id):
-    from app import mongo
     user_data = mongo.db.users.find_one({'_id': ObjectId(user_id)})
     if user_data:
-        return User(str(user_data['_id']), user_data['username'], user_data['email'], user_data['favorites'])
-    return None 
+        return User(
+            str(user_data['_id']),
+            user_data['username'],
+            user_data['email'],
+            user_data.get('favorites', [])
+        )
+    return None
 
-@auth_bp.route('/register', methods=['GET', 'POST'])
+
+# ---------------- REGISTER ----------------
+
+@auth_bp.route('/register', methods=['POST'])
 def register():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        email = request.form.get('email')
-        password = request.form.get('password')
-        repeat_password = request.form.get('repeat-password')
-        domain = email.split('@')
-        #check if the email has at least 1 @, the part before the last @ is non-empty, domain contains at least one .
-        dot = email.count('@')
-        point = email.count('.')
-        username_data = find_user_by_username(username)
-        email_data = find_user_by_email(email)
-        print(username_data)
-        print(email_data)
-        if password != repeat_password:
-                    message = "Podane hasła nie są identyczne."
-                    return render_template('register.html', message = message)
-        if dot != 0 and point != 0 and domain[1] != None:
-            if username_data != None or email_data != None:
-                if username_data != None:
-                    if username_data.get('email') == email:
-                        message = "Taki użytkownik już istnieje."
-                        return render_template('register.html', message = message)
-                    if username == username_data.get('username'):
-                        message = "Taka nazwa użytkownika jest już zajęta."
-                        return render_template('register.html', message = message)
-                if email_data != None:
-                    if email_data.get('username') == username:
-                        message = "Taki użytkownik już istnieje."
-                        return render_template('register.html', message = message)
-                    if email == email_data.get('email'):
-                        message = "Taki email jest już zajęty."
-                        return render_template('register.html', message = message)
-            else:
-                from app import mongo
-                user_id = mongo.db.users.insert_one({'username':username, 'email':email, 'password':password, 'favorites': []})
-                return redirect(url_for('auth.login'))
-        else:
-            message = "Podany email jest niepoprawny."
-            return render_template('register.html', message = message)
-    return render_template('register.html')
+    data = request.json
 
-@auth_bp.route('/login', methods=['GET', 'POST'])
+    username = data.get("username")
+    email = data.get("email")
+    password = data.get("password")
+    repeat_password = data.get("repeat_password")
+
+    # Validate password
+    if password != repeat_password:
+        return jsonify({"error": "Podane hasła nie są identyczne."}), 400
+
+    # Validate email
+    if '@' not in email or '.' not in email.split('@')[1]:
+        return jsonify({"error": "Podany email jest niepoprawny."}), 400
+
+    # Check if username/email taken
+    if find_user_by_username(username):
+        return jsonify({"error": "Taka nazwa użytkownika jest już zajęta."}), 400
+
+    if find_user_by_email(email):
+        return jsonify({"error": "Taki email jest już zajęty."}), 400
+
+    # Insert user
+    mongo.db.users.insert_one({
+        "username": username,
+        "email": email,
+        "password": password,
+        "favorites": []
+    })
+
+    return jsonify({"message": "Zarejestrowano pomyślnie."}), 201
+
+
+# ---------------- LOGIN ----------------
+
+@auth_bp.route('/login', methods=['POST'])
 def login():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        if check_password(username, password):
-            user_data = find_user_by_username(username)
-                
-            user = User(str(user_data['_id']), user_data['username'], user_data['email'], user_data['favorites'])
-            login_user(user)
-            return redirect(url_for('index'))
-        else:
-            message = "Nieprawidłowa nazwa użytkownika lub hasło."
-            return render_template('login.html', message=message)
-    return render_template('login.html')
+    data = request.json
 
-@auth_bp.route('/logout', methods=['GET', 'POST'])
+    username = data.get("username")
+    password = data.get("password")
+
+    if not check_password(username, password):
+        return jsonify({"error": "Nieprawidłowa nazwa użytkownika lub hasło."}), 400
+
+    user_data = find_user_by_username(username)
+
+    user = User(
+        str(user_data['_id']),
+        user_data['username'],
+        user_data['email'],
+        user_data.get('favorites', [])
+    )
+    login_user(user)
+
+    return jsonify({"message": "Zalogowano pomyślnie.", "user": {
+        "id": user.id,
+        "username": user.username,
+        "email": user.email
+    }}), 200
+
+
+# ---------------- LOGOUT ----------------
+
+@auth_bp.route('/logout', methods=['POST'])
 @login_required
 def logout():
     logout_user()
-    return render_template('login.html')
+    return jsonify({"message": "Wylogowano."}), 200
+
+
+# ---------------- GET FAVORITES ----------------
 
 @auth_bp.route('/favorites', methods=['GET'])
 @login_required
 def get_favorites():
     user_id = current_user.id
+
     user_data = mongo.db.users.find_one({'_id': ObjectId(user_id)})
+
     favorite_books = []
-    if 'favorites' in user_data:
-        favorite_ids = user_data['favorites']
-        for book_id in favorite_ids:
-            book = mongo.db.books.find_one({'_id': ObjectId(book_id)})
-            print(book)
-            if book:
-                favorite_books.append(book)
-    print(favorite_books)
-    return render_template('favorites.html', favorites=favorite_books)
+    for book_id in user_data.get("favorites", []):
+        book = mongo.db.books.find_one({'_id': ObjectId(book_id)})
+        if book:
+            # Convert MongoDB ObjectId to string for JSON
+            book["_id"] = str(book["_id"])
+            favorite_books.append(book)
+
+    return jsonify(favorite_books), 200
+
+
+# ---------------- ADD FAVORITE ----------------
 
 @auth_bp.route('/add_favorite', methods=['POST'])
 @login_required
 def add_favorite():
-    user_id = current_user.id
-    book_id = request.get_json().get('book_id')
-    print(book_id)
-    print("Adding book to favorites:", book_id)
+    data = request.json
+    book_id = data.get("book_id")
+
+    if not book_id:
+        return jsonify({"error": "Brak ID książki."}), 400
+
     mongo.db.users.update_one(
-        {'_id': ObjectId(user_id)},
+        {'_id': ObjectId(current_user.id)},
         {'$addToSet': {'favorites': book_id}}
     )
-    message="Dodano książkę do ulubionych."
-    print(message)
-    return message
+
+    return jsonify({"message": "Dodano książkę do ulubionych."}), 200

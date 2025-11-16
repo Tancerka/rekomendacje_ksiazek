@@ -1,7 +1,7 @@
 
 *, body{
     font-family: Lexend Giga, sans-serif;
-    background-color: #fae8ff;
+    background-color: #F1EFEC;
     font-weight: 450;
 }
 
@@ -20,10 +20,10 @@ h1, p{
     font-size: 60px;
     letter-spacing: 4px;
     text-align: center;
-    color: #3d0931;
+    color: #123458;
     border: none;
-    display: block;
     margin: auto;
+    background-color: transparent;
 }
 
 .title:hover{
@@ -32,11 +32,8 @@ h1, p{
 }
 
 hr.solid {
-    border-top: 3px solid #5d2b5e;
-}
-
-hr.solid2 {
-    border-top: 2px solid #5d2b5e;
+    border-top: 3px solid #123458;
+    margin: 0;
 }
 
 .line {
@@ -44,7 +41,7 @@ hr.solid2 {
     text-align: center;
     width: 15%;
     margin-top: 3vw;
-    border: 1px solid #896883;
+    border: 1px solid #D4C9BE;
 }
 
 .subtitle{
@@ -84,7 +81,7 @@ hr.solid2 {
 .sidebar{
     
     line-height: 30px;
-    background-color: rgba(179, 141, 181, 1);
+    background-color: #D4C9BE;
     position: fixed;
     top: 0;
     left: 0;
@@ -92,8 +89,8 @@ hr.solid2 {
     box-shadow: 2px 0 5px rgba(0,0,0,0.1);
     transition: transform 0.3s ease;
     z-index: 2000;
-    border:  1px solid  #896883; 
-    background-image: linear-gradient(to bottom,  #3d0931, 85%, rgba(179, 141, 181, 0));
+    border:  1px solid  transparent; 
+    background-image: linear-gradient(to bottom,  #0c243d, 70%, rgba(212, 201, 190, 0));
 
     transform: translateX(-100%);
 }    
@@ -107,7 +104,7 @@ hr.solid2 {
 
 .sidebar-btn{
 
-    border: 1px solid   #3d0931;
+    border: 1px solid   transparent;
     width: 250px;
     height: 70px;
     font-size: 22px;
@@ -117,32 +114,8 @@ hr.solid2 {
 }
 
 .sidebar-btn:hover{
-    background-color: #613961;
+    background-color: #D4C9BE;
     cursor: pointer;
-}
-
-
-
-.nav-button{
-    margin-top: 2%;
-    margin-left: 25vw;
-
-    border: #0b0b0b 2px solid;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    z-index: 1000;
-    box-sizing: border-box;
-    display: inline-block;
-    font-weight: bold;
-    cursor: pointer !important;
-    font-family: 'Courier New';
-
-}
-
-.nav-button:hover{
-    background-color: #3d0931 ;
-
 }
 
 
@@ -158,14 +131,14 @@ hr.solid2 {
 
 
 .menu:hover{
-    background-color: #5d2b5e;
+    background-color: #123458;
     color: white;
     box-shadow: 0 1px 3px 0 rgba(0,0,0,0.22);
 }
 
 .nav-button .line{
 
-    background-color: #5d2b5e;
+    background-color: #123458;
     display: block;
     width: 20px;
     height: 5px;
@@ -182,13 +155,13 @@ hr.solid2 {
     margin: 0 20px;
     padding: 5px;
     font-size: 20px;
-    border: 1px solid #896883;
+    border: 1px solid #123458;
 }
 
 #search-bar:hover{
 
     outline: none;
-    border: 2px solid #723b72;
+    border: 2px solid #123458;
 }
 
 
@@ -215,9 +188,6 @@ hr.solid2 {
 }
 
 .login{
-
-    margin-right: 26%; 
-    margin-top: 2%; 
     width: 12vw; 
     height: 35px;
     font-size: 18px;
@@ -226,7 +196,7 @@ hr.solid2 {
 
 .login:hover{
 
-    background-color: #613961;
+    background-color: #123458;
     color: white;
     box-shadow: 0 1px 3px 0 rgba(0,0,0,0.22);
     cursor: pointer;
@@ -285,3 +255,38 @@ input{
 .book-details > span{
     margin-left: 30%;
 }
+
+/****************** Animated list *******************/
+
+.scroll-list-container {
+  position: relative;
+  width: 50%;
+  margin-left: 25%;
+  margin-right:20%
+}
+
+.item {
+  padding: 16px;
+  background-color: #123458;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.item.selected {
+  background-color: #123458;
+}
+
+.item-text {
+  color: white;
+  margin: 0;
+}
+
+footer{
+    border-top: 2px solid #123458;
+    margin-top: 1vw;
+}
+
+footer > *, footer{
+    background-color: #D4C9BE   ;
+}
+

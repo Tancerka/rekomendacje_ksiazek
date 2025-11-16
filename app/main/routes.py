@@ -1,87 +1,106 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
-from flask_login import login_user, logout_user, login_required, current_user, UserMixin
-from flask import jsonify
-from app.database.users import update_user_username, update_user_email, update_user_password
+from flask import Blueprint, request, jsonify
+from flask_login import login_required, current_user
 from bson import ObjectId
-from app.extensions import mongo, login_manager
+from app.extensions import mongo
+from app.database.users import (
+    update_user_username,
+    update_user_email,
+    update_user_password
+)
 
 main_bp = Blueprint('main', __name__, url_prefix='/main')
+
+# ---------------- UPDATE PROFILE ----------------
 
 @main_bp.route('/update_profile', methods=['POST'])
 @login_required
 def update_profile():
-    data = request.get_json()
-    new_username = request.form.get('username')
-    new_email = request.form.get('email')
+    data = request.json
 
-   # new_password = request.form.get('password')
-    
-    print("Updating profile with:", data, request, new_username, new_email);
+    new_username = data.get("username")
+    new_email = data.get("email")
+    new_password = data.get("password")
 
     user_id = current_user.id
 
     if new_username:
         update_user_username(user_id, new_username)
+
     if new_email:
         update_user_email(user_id, new_email)
-    #if new_password:
-     #   update_user_password(user_id, new_password)
-    return redirect(url_for('profile'))
+
+    if new_password:
+        update_user_password(user_id, new_password)
+
+    return jsonify({"message": "Profil zaktualizowany"}), 200
+
+
+
+# ---------------- SEARCH ----------------
 
 @main_bp.route('/search', methods=['GET'])
 def search():
-    query = request.args.get('q', '')
-    filter_option = request.args.get('filter', 'all')
-    sort_option = request.args.get('sort', 'asc')
-    results = []
-
-    print("=== DEBUG START ===")
-    print(f"Query: '{query}'")
-    print(f"Filter option: '{filter_option}'")
-    print(f"Sort option: '{sort_option}'")
+    print(f"query")
+    query = request.args.get("q", "").strip()
+    filter_option = request.args.get("filter", "all")
+    sort_option = request.args.get("sort", "asc")
 
     if not query:
-        return render_template('search_results.html', query=query, results=[])
+        return jsonify({"query": "", "results": []}), 200
 
-    if filter_option == 'books':
-        filters = {'Title': {'$regex': query, '$options': 'i'}}
-        print(f"Books filter: Title contains '{query}'")
-    elif filter_option == 'authors':
-        filters = {'Author': {'$regex': query, '$options': 'i'}}
-        print(f"Authors filter: Author contains '{query}'")
-    elif filter_option == 'categories':
-        filters = {"Category":{"$regex": query, '$options': 'i'}}
-        print(f"Categories filter: Category contains '{query}'")
-    elif filter_option == 'all':
+    if filter_option == "books":
+        filters = {"Title": {"$regex": query, "$options": "i"}}
+
+    elif filter_option == "authors":
+        filters = {"authors": {"$regex": query, "$options": "i"}}
+
+    elif filter_option == "categories":
+        filters = {"categories": {"$regex": query, "$options": "i"}}
+
+    else: 
         filters = {
-           '$or': [
-        {'Title': {'$regex': query, '$options': 'i'}},
-        {'Author': {'$regex': query, '$options': 'i'}},
-        {"Category":{"$regex": query, '$options': 'i'}}
+            "$or": [
+                {"Title": {"$regex": query, "$options": "i"}},
+                {"authors": {"$regex": query, "$options": "i"}},
+                {"categories": {"$regex": query, "$options": "i"}},
             ]
         }
-        print(f"All filter: Title/Author/Category contains '{query}'")
 
-    print(f"Final filters: {filters}")
-
-    sort_field = 'Title'
+    sort_field = "Title"
     sort_direction = 1
-    if sort_option == 'desc':
+
+    if sort_option == "desc":
         sort_direction = -1
-    elif sort_option == 'score_desc':
-        sort_field = 'Score'
-        sort_direction = -1
-    elif sort_option == 'score_asc':
-        sort_field = 'Score'
-        sort_direction = 1
-    results = list(mongo.db.books.find(filters, {"Title":1, "Author":1, "Category":1, "Score":1}).sort(sort_field, sort_direction))
-    return render_template('search_results.html', query=query, results=results)
+
+    books = list(
+        mongo.db.books.find(
+            filters,
+            {"Title": 1, "authors": 1, "categories": 1, "image":1}
+        ).sort(sort_field, sort_direction)
+    )
+
+    for book in books:
+        book["_id"] = str(book["_id"])
+
+    return jsonify({
+        "query": query,
+        "results": books
+    }), 200
+
+
+
+# ---------------- GET BOOK BY ID ----------------
 
 @main_bp.route('/book', methods=['GET'])
 def book():
-    book_id = request.args.get('id', '')
-    print(book_id)
-    book = None
-    if book_id:
-        book = mongo.db.books.find_one({'_id': ObjectId(book_id)})
-    return render_template('book.html', book=book)
+    book_id = request.args.get("id")
+    if not book_id:
+        return jsonify({"error": "Brak ID książki"}), 400
+
+    book = mongo.db.books.find_one({"_id": ObjectId(book_id)})
+    if not book:
+        return jsonify({"error": "Nie znaleziono książki"}), 404
+
+    book["_id"] = str(book["_id"])
+
+    return jsonify(book), 200
