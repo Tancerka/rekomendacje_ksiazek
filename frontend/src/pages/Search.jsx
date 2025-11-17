@@ -6,6 +6,10 @@ import AnimatedList from "../components/AnimatedList";
 export default function Search() {
   const [results, setResults] = useState([]);
   const [queryParams, setQueryParams] = useSearchParams();
+  const [page, setPage] = useState(1);
+  const limit = 50;
+  const [totalPages, setTotalPages] = useState(1);
+  const [resultsCount, setCount] = useState(0);
   const navigate = useNavigate();
 
   const query = queryParams.get("q") || "";
@@ -14,12 +18,16 @@ export default function Search() {
 
   useEffect(() => {
     if (query.trim() !== "") {
-      fetch(`/main/search?q=${query}&filter=${filter}&sort=${sort}`)
+      fetch(`/main/search?q=${query}&filter=${filter}&sort=${sort}&page=${page}&limit=${limit}`)
         .then((res) => res.json())
-        .then((data) => setResults(data.results || []))
+        .then((data) => {
+          setResults(data.results || [])
+          setTotalPages(Math.ceil(data.total_count / limit))
+          setCount(data.total_count)
+        })
         .catch((err) => console.error(err));
     }
-  }, [query, filter, sort]);
+  }, [query, filter, sort, page]);
 
   const handleFilterChange = (e) => {
     queryParams.set("filter", e.target.value);
@@ -39,11 +47,12 @@ export default function Search() {
     });
   };
 
+
   return (
     <Layout pageTitle={`Wyniki wyszukiwania dla „${query}”`}>
       <div className="search-page">
         <form id="filter-form" style={{ marginBottom: "2rem", marginLeft: "40%"}}>
-          <label>Liczba wyników: {results.length}</label><br/>
+          <label>Liczba wyników: {resultsCount}</label><br/>
           <br />
           <label>Filtry: </label>
           <select value={filter} onChange={handleFilterChange}>
@@ -67,7 +76,8 @@ export default function Search() {
             enableArrowNavigation={true}
             displayScrollbar={false}
             onItemSelect={(book, index) => navigate(`/book/${book._id}`)}
-            renderItem={(book, index, selected) => (
+            renderItem={
+              (book, index, selected) => (
               <div style={{ display: "flex", gap: "1rem", backgroundColor: "#123458" }}>
                 
                 <img
@@ -85,10 +95,13 @@ export default function Search() {
                     {index + 1} / {results.length}
                   </p>
 
-                  <p className="item-text" style={{ whiteSpace: "pre-line", backgroundColor: "#123458"  }}>
-                    {book.Title + "\n" +
-                    "Autor: " + book.authors + "\n" +
-                    "Kategoria: " + book.categories}
+                  <p className="item-text" style={{ whiteSpace: "pre-line", backgroundColor: "#123458", textAlign: "center", fontSize: "20px", paddingBottom: "20px"}}>
+                    {book.Title + "\n"}
+                  </p>
+                  <p className="item-text" style={{ whiteSpace: "pre-line", backgroundColor: "#123458", textAlign: "center"  }}>
+                    {
+                    "Autor: " +  String(book.authors).replace(/\[/g, '').replace(/\]/g, '').replace(/'/g, '') + "\n" +
+                    "Kategoria: " + String(book.categories).replace(/\[/g, '').replace(/\]/g, '').replace(/'/g, '')}
                   </p>
 
                   <div style={{ display: "flex", backgroundColor: "#123458"  }}>
@@ -120,6 +133,31 @@ export default function Search() {
           <p>Brak wyników dla podanego zapytania.</p>
         )}
       </div>
+
+      <div style={{ marginTop: "2rem", textAlign: "center" }}>
+  {totalPages > 1 && Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
+    <button
+      key={num}
+      onClick={() => setPage(num)}
+      style={{
+        margin: "0 5px",
+        padding: "5px 10px",
+        backgroundColor: num === page ? "#5555ff" : "#eee",
+        color: num === page ? "white" : "black",
+        border: "none",
+        borderRadius: "4px",
+        cursor: "pointer"
+      }}
+    >
+      {num}
+    </button>
+  ))}
+</div>
+
+<div style={{ marginTop: "1rem", textAlign: "center" }}>
+  <button onClick={() => setPage(p => Math.max(p - 1, 1))} disabled={page === 1} class="login" style={{marginRight: "20px"}}>Poprzednia</button>
+  <button onClick={() => setPage(p => Math.min(p + 1, totalPages))} disabled={page === totalPages} class="login">Następna</button>
+</div>
     </Layout>
   );
 }

@@ -42,8 +42,13 @@ def update_profile():
 def search():
     print(f"query")
     query = request.args.get("q", "").strip()
+    page = int(request.args.get("page", 1))
+    limit = int(request.args.get("limit", 50))
+    skip = (page-1)*limit
     filter_option = request.args.get("filter", "all")
     sort_option = request.args.get("sort", "asc")
+
+    print("Skip:", skip, "Limit:", limit)
 
     if not query:
         return jsonify({"query": "", "results": []}), 200
@@ -72,19 +77,23 @@ def search():
     if sort_option == "desc":
         sort_direction = -1
 
-    books = list(
-        mongo.db.books.find(
+    results = mongo.db.books.find(
             filters,
             {"Title": 1, "authors": 1, "categories": 1, "image":1}
         ).sort(sort_field, sort_direction)
-    )
+
+    books = list(results.skip(skip).limit(limit))
+    total_count = mongo.db.books.count_documents(filters)
 
     for book in books:
         book["_id"] = str(book["_id"])
 
     return jsonify({
         "query": query,
-        "results": books
+        "results": books,
+        "page":page, 
+        "limit":limit,
+        "total_count": total_count
     }), 200
 
 
@@ -93,7 +102,10 @@ def search():
 
 @main_bp.route('/book', methods=['GET'])
 def book():
+    print(request.args)
+    print(request.args.get("id"))
     book_id = request.args.get("id")
+    print(book_id)
     if not book_id:
         return jsonify({"error": "Brak ID książki"}), 400
 

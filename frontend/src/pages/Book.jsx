@@ -9,7 +9,7 @@ export default function Book(){
 
     useEffect(() =>{
 
-        fetch(`/main/book/${id}`)
+        fetch(`/main/book/id=?${id}`)
         .then((res)=>res.json())
         .then((data) => setBook(data))
         .catch((err)=>console.error(err))
