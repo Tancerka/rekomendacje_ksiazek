@@ -109,6 +109,21 @@ def logout():
     return jsonify({"message": "Wylogowano."}), 200
 
 
+# ---------------- GET CURRENT USER ----------------
+
+@auth_bp.route("/me", methods=["GET"])
+def get_current_user():
+    if not current_user.is_authenticated:
+        return jsonify({"user":None})
+    return jsonify({
+        "user": {
+            "id": current_user.id,
+            "username": current_user.username, 
+            "email": current_user.email
+        }
+    })
+
+
 # ---------------- GET FAVORITES ----------------
 
 @auth_bp.route('/favorites', methods=['GET'])
@@ -122,7 +137,6 @@ def get_favorites():
     for book_id in user_data.get("favorites", []):
         book = mongo.db.books.find_one({'_id': ObjectId(book_id)})
         if book:
-            # Convert MongoDB ObjectId to string for JSON
             book["_id"] = str(book["_id"])
             favorite_books.append(book)
 
@@ -146,3 +160,5 @@ def add_favorite():
     )
 
     return jsonify({"message": "Dodano książkę do ulubionych."}), 200
+
+

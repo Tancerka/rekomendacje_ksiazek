@@ -78,7 +78,7 @@ export default function Search() {
             onItemSelect={(book, index) => navigate(`/book/${book._id}`)}
             renderItem={
               (book, index, selected) => (
-              <div style={{ display: "flex", gap: "1rem", backgroundColor: "#123458" }}>
+              <div style={{ display: "flex", gap: "1rem", backgroundColor: "#123458", alignItems: "center", justifyContent: "space-between" }}>
                 
                 <img
                   src={book.image}
@@ -87,13 +87,13 @@ export default function Search() {
                     width: "60px",
                     height: "90px",
                     objectFit: "cover",
-                    borderRadius: "6px"
+                    borderRadius: "6px", 
+/*                     paddingRight: "1rem" */
                   }}
                 />
                 <div>
-                  <p style={{ margin: 0, color: "white", backgroundColor: "#123458"  }}>
-                    {index + 1} / {results.length}
-                  </p>
+
+                  <div style={{textAlign: "center", color: "white", backgroundColor: "#123458"}}>
 
                   <p className="item-text" style={{ whiteSpace: "pre-line", backgroundColor: "#123458", textAlign: "center", fontSize: "20px", paddingBottom: "20px"}}>
                     {book.Title + "\n"}
@@ -103,25 +103,30 @@ export default function Search() {
                     "Autor: " +  String(book.authors).replace(/\[/g, '').replace(/\]/g, '').replace(/'/g, '') + "\n" +
                     "Kategoria: " + String(book.categories).replace(/\[/g, '').replace(/\]/g, '').replace(/'/g, '')}
                   </p>
+                  </div>
 
-                  <div style={{ display: "flex", backgroundColor: "#123458"  }}>
+                  <div style={{ display: "flex", backgroundColor: "#123458", flexDirection: "column", alignItems: "flex-end", gap: "10px", justifyContent:"center", paddingLeft: "1rem"}}>
                     <img
                       src="../img/favorites_icon.png"
                       alt="favorites"
-                      style={{ width: "30px", cursor: "pointer", backgroundColor: "#123458", marginLeft:"90%" }}
+                      style={{cursor: "pointer", backgroundColor: "#123458", width: "45px", height: "7%"}}
                       onMouseOver={(e) => (e.currentTarget.src = "../../img/favorites_icon_hover.png")}
                       onMouseOut={(e) => (e.currentTarget.src = "../../img/favorites_icon.png")}
-                      onClick={() => addFavorite(book._id)}
-            
-                    />
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        await addFavorite(book._id)
+                        alert("Dodano książkę do ulubionych.");
+                      }}
+                      
+                      />
 
                     <img
                       src="../img/wishlist_icon.png"
                       alt="wishlist"
-                      style={{ width: "30px", cursor: "pointer", backgroundColor: "#123458", marginLeft: "20%"  }}
+                      style={{ cursor: "pointer", backgroundColor: "#123458", width: "45px", height: "7%"}}
                       onMouseOver={(e) => (e.currentTarget.src = "../../img/wishlist_icon_hover.png")}
                       onMouseOut={(e) => (e.currentTarget.src = "../../img/wishlist_icon.png")}
-                    />
+                      />
                   </div>
                 </div>
 
@@ -135,19 +140,19 @@ export default function Search() {
       </div>
 
       <div style={{ marginTop: "2rem", textAlign: "center" }}>
-  {totalPages > 1 && Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
-    <button
-      key={num}
-      onClick={() => setPage(num)}
-      style={{
-        margin: "0 5px",
-        padding: "5px 10px",
-        backgroundColor: num === page ? "#5555ff" : "#eee",
-        color: num === page ? "white" : "black",
-        border: "none",
-        borderRadius: "4px",
-        cursor: "pointer"
-      }}
+        {totalPages > 1 && Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
+          <button
+            key={num}
+            onClick={() => setPage(num)}
+            style={{
+              margin: "0 5px",
+              padding: "5px 10px",
+              backgroundColor: num === page ? "#5555ff" : "#eee",
+              color: num === page ? "white" : "black",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer"
+            }}
     >
       {num}
     </button>

@@ -48,8 +48,6 @@ def search():
     filter_option = request.args.get("filter", "all")
     sort_option = request.args.get("sort", "asc")
 
-    print("Skip:", skip, "Limit:", limit)
-
     if not query:
         return jsonify({"query": "", "results": []}), 200
 
@@ -102,10 +100,7 @@ def search():
 
 @main_bp.route('/book', methods=['GET'])
 def book():
-    print(request.args)
-    print(request.args.get("id"))
     book_id = request.args.get("id")
-    print(book_id)
     if not book_id:
         return jsonify({"error": "Brak ID książki"}), 400
 

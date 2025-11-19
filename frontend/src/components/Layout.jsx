@@ -1,11 +1,13 @@
 import React, {useState, useEffect, use} from 'react';
 import Sidebar from "./Sidebar";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify"
 
-export default function Layout({ pageTitle, children, user }) {
+export default function Layout({ pageTitle, children}) {
 
     const [navVisible, setNavVisible] = useState(false);
     const [query, setQuery] = useState("");
+    const [user, setUser] = useState();
     const navigate = useNavigate();
 
     const toggleNav = () => setNavVisible((v) => !v);
@@ -27,6 +29,15 @@ export default function Layout({ pageTitle, children, user }) {
         };
     }, [navVisible]);
 
+    useEffect(() => {
+        fetch("http://localhost:5000/auth/me", {
+            credentials: "include"
+        })
+        .then(res => res.json())
+        .then(data => setUser(data.user))
+        .catch(err => console.error(err));
+    }, []);
+
     return (
         <div>
             <div class = "top-bar" style={{ backgroundColor: "#D4C9BE"}}>
@@ -35,11 +46,18 @@ export default function Layout({ pageTitle, children, user }) {
                     <input id="search-icon" type="image" onClick={searchBook} src="../img/search_icon.png" style={{backgroundColor: "transparent", width: "3%", height: "2%", marginTop: "1vw", marginRight: "5vw"}} onMouseOver={(e)=> (e.target.src = "../img/search_icon_hover.png")} onMouseOut={(e)=>(e.target.src = "/img/search_icon.png")} />
                     { user ? (
                         <>
-                            <button className="login" style={{width: "10vw", margin: "0", marginTop: "2vw"}} onClick={() => window.location.pathname = '/profile'}>{user.username}</button>
-                            <button className="logout" onClick={() => window.location.pathname = '/logout'}>Wyloguj się</button>
+                            <button className="login" style={{width: "10vw", margin: "0", marginTop: "2vw"}} onClick={() => navigate('/profile')}>{user.username}</button>
+                            <button className="logout" onClick={async () => {
+                                const data = await fetch("/auth/logout", {
+                                    method: "POST", 
+                                    credentials: "include"
+                                });
+                                toast.success(data.message);
+                                navigate("/login")
+                            }}>Wyloguj się</button>
                         </>
                     ) : (
-                        <button className="login" onClick={() => window.location.pathname = '/login'}>Zaloguj się</button>
+                        <button className="login" onClick={() => navigate('/login')}>Zaloguj się</button>
                     )}
             </div>
             <hr className="solid" />

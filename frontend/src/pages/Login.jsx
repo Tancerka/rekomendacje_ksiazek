@@ -29,7 +29,7 @@ export default function Login() {
       <label>Hasło</label><br/><br/>
       <input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /><br/><br/>
       <span>Nie masz konta? <a href='/register'>Zarejestruj się</a></span><br></br>
-      <button className="login" style={{marginLeft: "26%"}}type="submit">Zaloguj się</button>
+      <button className="login" style={{marginTop: "2vw"}}type="submit">Zaloguj się</button>
     </form>
   </Layout>
   );
