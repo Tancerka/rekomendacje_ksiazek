@@ -22,17 +22,17 @@ export default function Book(){
 <Layout pageTitle = {book.Title}>
 
     <div style={{display: "flex"}}>
-    <input type="image" src={book.image} style={{width: "10%", height: "10%", marginTop: "2vw", position: "relative", left: "30vw"}} ></input>    
+    <input type="image" src={book.image} style={{width: "10%", height: "10%", marginTop: "1vw", position: "relative", left: "30vw", float: "left"}} ></input>    
     <div className = "book-details">
         <span style={{fontWeight: "bold"}}>Autor: </span>{ String(book.authors).replace(/\[/g, '').replace(/\]/g, '').replace(/'/g, '') }<br/><br/>
         <span style={{fontWeight: "bold"}}>Wydawnictwo: </span>{ book.publisher } <br/><br/>
         <span style={{fontWeight: "bold"}}>Kategoria: </span>{String(book.categories).replace(/\[/g, '').replace(/\]/g, '').replace(/'/g, '') }<br/><br/>
         <span style={{fontWeight: "bold"}}>Ocena: </span>{ book.ratingsCount } <br/><br/>
         <span style={{fontWeight: "bold"}}>Data wydania: </span>{ book.publishedDate ? (typeof book.publishedDate === 'object' && book.publishedDate.$date ? new Date(book.publishedDate.$date).toLocaleDateString() : book.publishedDate) : 'Brak daty'} <br/><br/>
-        <span style={{fontWeight: "bold"}}>Opis fabuły: </span><div/>
-        <div style={{width: "50vw", marginLeft: "33%"}}>
+        <span style={{fontWeight: "bold"}}>Opis fabuły: </span><div/><br/>
+{/*         <div style={{width: "40vw", marginLeft: "33%"}}> */}
             { book.description }
-        </div>
+{/*         </div> */}
     </div>
     </div>
 </Layout>  

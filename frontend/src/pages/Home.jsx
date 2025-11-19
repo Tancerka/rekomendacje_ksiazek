@@ -6,7 +6,7 @@ export default function Home(){
     return(
 
         <Layout pageTitle = "Strona główna">
-            <div>Here will be the main site</div>
+            <div style={{marginLeft: "41%"}}> Tu będą się wyświetlać fajne rzeczy</div>
         </Layout>
     )
 }

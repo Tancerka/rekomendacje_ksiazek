@@ -228,7 +228,7 @@ input{
 
 .book-item{
 
-    border: 1px solid #896883;
+    border: 1px solid #123458;
     border-radius: 8px;
     padding: 8px;
     margin: 10px 0;
@@ -240,7 +240,7 @@ input{
 }
 
 .book-item:hover, .book-item:hover > * {
-    background-color: #613961;
+    background-color: #123458;
     color: white;
     cursor: pointer;
 }

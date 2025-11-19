@@ -44,7 +44,7 @@ export default function Register() {
             <label for="repeatPassword" className="form-label">Powtórz hasło</label><br/>
             <input type="password" className="form-control" id="repeat-password" name="repeat_password" value={form.repeat_password} onChange={handleChange} required/>
         </div><br/>
-        <button type="submit" className="btn login" style={{marginLeft: "27%"}}>Zarejestruj</button>
+        <button type="submit" className="btn login">Zarejestruj</button>
     </form>
   </Layout>
   );

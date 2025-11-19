@@ -130,9 +130,8 @@ def get_current_user():
 @login_required
 def get_favorites():
     user_id = current_user.id
-
     user_data = mongo.db.users.find_one({'_id': ObjectId(user_id)})
-
+    print(user_data)
     favorite_books = []
     for book_id in user_data.get("favorites", []):
         book = mongo.db.books.find_one({'_id': ObjectId(book_id)})
