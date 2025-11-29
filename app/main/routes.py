@@ -38,7 +38,7 @@ def update_profile():
 
 # ---------------- SEARCH ----------------
 
-@main_bp.route('/search', methods=['GET'])
+""" @main_bp.route('/search', methods=['GET'])
 def search():
     print(f"query")
     query = request.args.get("q", "").strip()
@@ -78,6 +78,87 @@ def search():
     results = mongo.db.books.find(
             filters,
             {"Title": 1, "authors": 1, "categories": 1, "image":1}
+        ).sort(sort_field, sort_direction)
+
+    books = list(results.skip(skip).limit(limit))
+    total_count = mongo.db.books.count_documents(filters)
+
+    for book in books:
+        book["_id"] = str(book["_id"])
+
+    return jsonify({
+        "query": query,
+        "results": books,
+        "page":page, 
+        "limit":limit,
+        "total_count": total_count
+    }), 200
+
+
+
+# ---------------- GET BOOK BY ID ----------------
+
+@main_bp.route('/book', methods=['GET'])
+def book():
+    book_id = request.args.get("id")
+    if not book_id:
+        return jsonify({"error": "Brak ID książki"}), 400
+
+    book = mongo.db.books.find_one({"_id": ObjectId(book_id)})
+    if not book:
+        return jsonify({"error": "Nie znaleziono książki"}), 404
+
+    book["_id"] = str(book["_id"])
+
+    return jsonify(book), 200 """
+
+
+@main_bp.route('/search', methods=['GET'])
+def search():
+    print(f"query")
+    query = request.args.get("q", "").strip()
+    page = int(request.args.get("page", 1))
+    limit = int(request.args.get("limit", 50))
+    skip = (page-1)*limit
+    filter_option = request.args.get("filter", "all")
+    sort_option = request.args.get("sort", "asc")
+
+    if not query:
+        return jsonify({"query": "", "results": []}), 200
+
+    if filter_option == "books":
+        filters = {"title": {"$regex": query, "$options": "i"}}
+
+    elif filter_option == "authors":
+        filters = {"authors": {"$regex": query, "$options": "i"}}
+
+    elif filter_option == "category":
+        filters = {"category": {"$regex": query, "$options": "i"}}
+
+    else: 
+        filters = {
+            "$or": [
+                {"title": {"$regex": query, "$options": "i"}},
+                {"authors": {"$regex": query, "$options": "i"}},
+                {"category": {"$regex": query, "$options": "i"}},
+            ]
+        }
+
+    sort_field = "title"
+    sort_direction = 1
+
+    if sort_option == "desc":
+        sort_direction = -1
+    elif sort_option == 'score_desc':
+        sort_field = 'rating'
+        sort_direction = -1
+    elif sort_option == 'score_asc':
+        sort_field = 'rating'
+        sort_direction = 1
+
+    results = mongo.db.books.find(
+            filters,
+            {"title": 1, "authors": 1, "category": 1, "coverImage":1, "rating":1, "shortDescription":1 }
         ).sort(sort_field, sort_direction)
 
     books = list(results.skip(skip).limit(limit))

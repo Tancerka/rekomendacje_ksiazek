@@ -66,6 +66,8 @@ export default function Search() {
           <select value={sort} onChange={handleSortChange}>
             <option value="asc">A-Z</option>
             <option value="desc">Z-A</option>
+            <option value="score_desc">Od najlepszych</option>
+            <option value="score_asc">Od najgorszych</option>
           </select>
         </form>
 
@@ -78,38 +80,86 @@ export default function Search() {
             onItemSelect={(book, index) => navigate(`/book/${book._id}`)}
             renderItem={
               (book, index, selected) => (
-              <div style={{ display: "flex", gap: "1rem", backgroundColor: "#123458", alignItems: "center", justifyContent: "space-between" }}>
-                
+              <div style={{ 
+                display: "flex", 
+                gap: "1rem", 
+                backgroundColor: "#123458", 
+                alignItems: "center", 
+                padding: "1rem",
+                justifyContent: "space-between" }}>
+              <div style={{ display: "flex", gap: "1rem", alignItems: "center", flex:1, backgroundColor: "#123458",}}>
+                <div style={{
+                  display: "flex", 
+                  flexDirection: "column",
+                  alignItems: "center",
+                  backgroundColor: "#123458",
+                  gap: "0.5rem",
+                  justifyContent: "center"
+                  }}>
+
                 <img
-                  src={book.image}
+                  src={book.coverImage}
                   alt={book.Title}
                   style={{
-                    width: "60px",
-                    height: "90px",
+                    width: "100px",
+                    height: "150px",
                     objectFit: "cover",
                     borderRadius: "6px", 
-/*                     paddingRight: "1rem" */
+                    /*                     paddingRight: "1rem" */
                   }}
-                />
+                  />
+                  <div style={{ 
+                    color: "white",
+                    backgroundColor: "#123458",
+                    fontSize: "18px",
+                    textAlign: "center"}}>
+                    {book.rating}
+                    <img
+                      src="../img/wishlist_icon_hover.png"
+                      alt="wishlist"
+                      style={{ 
+                        paddingLeft: "8px",
+                        cursor: "pointer", 
+                        backgroundColor: "#123458",
+                        width: "10%", 
+                        height: "10%"}}
+                        />
+                  </div>
+
+                  </div>
                 <div>
 
                   <div style={{textAlign: "center", color: "white", backgroundColor: "#123458"}}>
 
                   <p className="item-text" style={{ whiteSpace: "pre-line", backgroundColor: "#123458", textAlign: "center", fontSize: "20px", paddingBottom: "20px"}}>
-                    {book.Title + "\n"}
+                    {book.title + "\n"}
                   </p>
                   <p className="item-text" style={{ whiteSpace: "pre-line", backgroundColor: "#123458", textAlign: "center"  }}>
                     {
-                    "Autor: " +  String(book.authors).replace(/\[/g, '').replace(/\]/g, '').replace(/'/g, '') + "\n" +
-                    "Kategoria: " + String(book.categories).replace(/\[/g, '').replace(/\]/g, '').replace(/'/g, '')}
+                    "Autor: " + book.authors.map(author => author.name)+ "\n\n" +
+                    "Kategoria: " + String(book.category).replace(/\[/g, '').replace(/\]/g, '').replace(/'/g, '') + "\n\n"+
+                    (book.shortDescription ? "Krótki opis: " + book.shortDescription + "\n\n": "")
+                    }
                   </p>
                   </div>
+                </div>
 
-                  <div style={{ display: "flex", backgroundColor: "#123458", flexDirection: "column", alignItems: "flex-end", gap: "10px", justifyContent:"center", paddingLeft: "1rem"}}>
+                  <div style={{ 
+                    display: "flex", 
+                    backgroundColor: "#123458", 
+                    flexDirection: "column", 
+                    gap: "0.5rem",
+                    alignItems: "center"
+                    }}>
+
                     <img
                       src="../img/favorites_icon.png"
                       alt="favorites"
-                      style={{cursor: "pointer", backgroundColor: "#123458", width: "45px", height: "7%"}}
+                      style={{
+                        cursor: "pointer", 
+                        backgroundColor: "#123458", 
+                        width: "45px", 
+                        height: "7%"}}
                       onMouseOver={(e) => (e.currentTarget.src = "../../img/favorites_icon_hover.png")}
                       onMouseOut={(e) => (e.currentTarget.src = "../../img/favorites_icon.png")}
                       onClick={async (e) => {
@@ -123,7 +173,11 @@ export default function Search() {
                     <img
                       src="../img/wishlist_icon.png"
                       alt="wishlist"
-                      style={{ cursor: "pointer", backgroundColor: "#123458", width: "45px", height: "7%"}}
+                      style={{ 
+                        cursor: "pointer", 
+                        backgroundColor: "#123458",
+                        width: "45px", 
+                        height: "7%"}}
                       onMouseOver={(e) => (e.currentTarget.src = "../../img/wishlist_icon_hover.png")}
                       onMouseOut={(e) => (e.currentTarget.src = "../../img/wishlist_icon.png")}
                       />

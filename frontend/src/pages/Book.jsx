@@ -19,19 +19,21 @@ export default function Book(){
     if(!book) return <Layout pageTitle = "Ładowanie..."></Layout>  ;
 
     return(
-<Layout pageTitle = {book.Title}>
+<Layout pageTitle = {book.title}>
 
     <div style={{display: "flex"}}>
-    <input type="image" src={book.image} style={{width: "10%", height: "10%", marginTop: "1vw", position: "relative", left: "30vw", float: "left"}} ></input>    
+    <input type="image" src={book.coverImage} style={{width: "10%", height: "10%", marginTop: "3vw", position: "relative", left: "30vw", float: "left"}} ></input>    
     <div className = "book-details">
-        <span style={{fontWeight: "bold"}}>Autor: </span>{ String(book.authors).replace(/\[/g, '').replace(/\]/g, '').replace(/'/g, '') }<br/><br/>
+        <span style={{fontWeight: "bold"}}>Autor: </span>{ String(book.authors.map(author=> author.name)).replace(/\[/g, '').replace(/\]/g, '').replace(/'/g, '') }<br/><br/>
         <span style={{fontWeight: "bold"}}>Wydawnictwo: </span>{ book.publisher } <br/><br/>
-        <span style={{fontWeight: "bold"}}>Kategoria: </span>{String(book.categories).replace(/\[/g, '').replace(/\]/g, '').replace(/'/g, '') }<br/><br/>
-        <span style={{fontWeight: "bold"}}>Ocena: </span>{ book.ratingsCount } <br/><br/>
-        <span style={{fontWeight: "bold"}}>Data wydania: </span>{ book.publishedDate ? (typeof book.publishedDate === 'object' && book.publishedDate.$date ? new Date(book.publishedDate.$date).toLocaleDateString() : book.publishedDate) : 'Brak daty'} <br/><br/>
+        <span style={{fontWeight: "bold"}}>Kategoria: </span>{String(book.category).replace(/\[/g, '').replace(/\]/g, '').replace(/'/g, '') }<br/><br/>
+        <span style={{fontWeight: "bold"}}>Ilość stron: </span>{ book.pages } <br/><br/>
+        <span style={{fontWeight: "bold"}}>Ocena: </span>{ book.rating} <br/><br/>
+        <span style={{fontWeight: "bold"}}>Ilość ocen: </span>{ book.ratingsCount } <br/><br/>
+        <span style={{fontWeight: "bold"}}>Data wydania: </span>{ book.releaseDate ? (typeof book.releaseDate === 'object' && book.releaseDate.$date ? new Date(book.releaseDate.$date).toLocaleDateString() : book.releaseDate) : 'Brak daty'} <br/><br/>
         <span style={{fontWeight: "bold"}}>Opis fabuły: </span><div/><br/>
 {/*         <div style={{width: "40vw", marginLeft: "33%"}}> */}
-            { book.description }
+            { book.longDescription }
 {/*         </div> */}
     </div>
     </div>

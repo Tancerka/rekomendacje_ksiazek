@@ -6,7 +6,7 @@ export default function Recommend(){
     return(
 
         <Layout pageTitle = "Rekomendacje">
-            <div>Tutaj będą twoje rekomendacje</div>
+            <div style={{marginLeft: "41%"}}>Tutaj będą fajne rekomendacje</div>
         </Layout>
     )
 }
