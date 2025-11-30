@@ -13,12 +13,17 @@ export default function Search() {
   const navigate = useNavigate();
 
   const query = queryParams.get("q") || "";
+  const emotion = queryParams.get("emotion") || "";
   const filter = queryParams.get("filter") || "all";
   const sort = queryParams.get("sort") || "asc";
 
   useEffect(() => {
-    if (query.trim() !== "") {
-      fetch(`/main/search?q=${query}&filter=${filter}&sort=${sort}&page=${page}&limit=${limit}`)
+    if (query.trim() !== "" || emotion) {
+      const url = `/main/search?` +
+      (query ? `q=${encodeURIComponent(query)}&` : '') +
+      (emotion ? `emotion=${encodeURIComponent(emotion)}&` : '') +
+      `filter=${filter}&sort=${sort}&page=${page}&limit=${limit}`;
+      fetch(url)
         .then((res) => res.json())
         .then((data) => {
           setResults(data.results || [])
@@ -27,7 +32,7 @@ export default function Search() {
         })
         .catch((err) => console.error(err));
     }
-  }, [query, filter, sort, page]);
+  }, [query, emotion, filter, sort, page]);
 
   const handleFilterChange = (e) => {
     queryParams.set("filter", e.target.value);
@@ -49,7 +54,7 @@ export default function Search() {
 
 
   return (
-    <Layout pageTitle={`Wyniki wyszukiwania dla „${query}”`}>
+    <Layout pageTitle={emotion ? `Książki dla emocji: „${emotion}”`:`Wyniki wyszukiwania dla „${query}”`}>
       <div className="search-page">
         <form id="filter-form" style={{ marginBottom: "2rem", marginLeft: "40%"}}>
           <label>Liczba wyników: {resultsCount}</label><br/>
@@ -84,17 +89,17 @@ export default function Search() {
                 display: "flex", 
                 gap: "1rem", 
                 backgroundColor: "#123458", 
-                alignItems: "center", 
+                alignItems: "flex-start", 
                 padding: "1rem",
-                justifyContent: "space-between" }}>
-              <div style={{ display: "flex", gap: "1rem", alignItems: "center", flex:1, backgroundColor: "#123458",}}>
+                justifyContent: "space-between", }}>
+              <div style={{ display: "flex", gap: "1rem", alignItems: "flex-start", flex:1, backgroundColor: "#123458", textAlign: "center"}}>
                 <div style={{
                   display: "flex", 
                   flexDirection: "column",
                   alignItems: "center",
                   backgroundColor: "#123458",
                   gap: "0.5rem",
-                  justifyContent: "center"
+                  justifyContent: "center",
                   }}>
 
                 <img
@@ -121,20 +126,20 @@ export default function Search() {
                         paddingLeft: "8px",
                         cursor: "pointer", 
                         backgroundColor: "#123458",
-                        width: "10%", 
-                        height: "10%"}}
+                        width: "20px", 
+                        height: "20px"}}
                         />
                   </div>
 
                   </div>
                 <div>
 
-                  <div style={{textAlign: "center", color: "white", backgroundColor: "#123458"}}>
+                  <div style={{color: "white", backgroundColor: "#123458", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "flex-start", flex:1}}>
 
-                  <p className="item-text" style={{ whiteSpace: "pre-line", backgroundColor: "#123458", textAlign: "center", fontSize: "20px", paddingBottom: "20px"}}>
+                  <p className="item-text" style={{ whiteSpace: "pre-line", backgroundColor: "#123458", textAlign: "center", fontSize: "20px", paddingBottom: "20px", width: "100%"}}>
                     {book.title + "\n"}
                   </p>
-                  <p className="item-text" style={{ whiteSpace: "pre-line", backgroundColor: "#123458", textAlign: "center"  }}>
+                  <p className="item-text" style={{ whiteSpace: "pre-line", backgroundColor: "#123458", textAlign: "center", width: "100%"  }}>
                     {
                     "Autor: " + book.authors.map(author => author.name)+ "\n\n" +
                     "Kategoria: " + String(book.category).replace(/\[/g, '').replace(/\]/g, '').replace(/'/g, '') + "\n\n"+
@@ -214,8 +219,8 @@ export default function Search() {
 </div>
 
 <div style={{ marginTop: "1rem", textAlign: "center" }}>
-  <button onClick={() => setPage(p => Math.max(p - 1, 1))} disabled={page === 1} class="login" style={{marginRight: "20px"}}>Poprzednia</button>
-  <button onClick={() => setPage(p => Math.min(p + 1, totalPages))} disabled={page === totalPages} class="login">Następna</button>
+  <button onClick={() => setPage(p => Math.max(p - 1, 1))} disabled={page === 1} class="light-btn" style={{marginRight: "20px"}}>Poprzednia</button>
+  <button onClick={() => setPage(p => Math.min(p + 1, totalPages))} disabled={page === totalPages} class="light-btn">Następna</button>
 </div>
     </Layout>
   );

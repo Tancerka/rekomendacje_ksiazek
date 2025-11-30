@@ -122,11 +122,26 @@ def search():
     skip = (page-1)*limit
     filter_option = request.args.get("filter", "all")
     sort_option = request.args.get("sort", "asc")
+    emotion = request.args.get("emotion", None)
+    print(f"Emotion filter: {emotion}")
 
-    if not query:
+    if not query and not emotion:
         return jsonify({"query": "", "results": []}), 200
-
-    if filter_option == "books":
+    
+    if emotion is not None:
+        filters = {
+            "$and": [
+                {
+                    "$or": [
+                        {"title": {"$regex": query, "$options": "i"}},
+                        {"authors": {"$regex": query, "$options": "i"}},
+                        {"category": {"$regex": query, "$options": "i"}},
+                    ]
+                },
+                {"dominant_emotion": {"$elemMatch": {"$regex": f"^{emotion}$", "$options": "i"}}}
+            ]
+        }
+    elif filter_option == "books":
         filters = {"title": {"$regex": query, "$options": "i"}}
 
     elif filter_option == "authors":
