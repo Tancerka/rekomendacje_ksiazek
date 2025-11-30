@@ -131,15 +131,17 @@ def get_current_user():
 def get_favorites():
     user_id = current_user.id
     user_data = mongo.db.users.find_one({'_id': ObjectId(user_id)})
-    print(user_data)
     favorite_books = []
     for book_id in user_data.get("favorites", []):
+        print(book_id)
         book = mongo.db.books.find_one({'_id': ObjectId(book_id)})
         if book:
+            print((book["_id"]))
             book["_id"] = str(book["_id"])
             favorite_books.append(book)
-
-    return jsonify(favorite_books), 200
+            print(book)
+        print(favorite_books)
+    return jsonify({"favorites": favorite_books}), 200
 
 
 # ---------------- ADD FAVORITE ----------------

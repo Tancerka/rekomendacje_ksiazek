@@ -123,7 +123,6 @@ def search():
     filter_option = request.args.get("filter", "all")
     sort_option = request.args.get("sort", "asc")
     emotion = request.args.get("emotion", None)
-    print(f"Emotion filter: {emotion}")
 
     if not query and not emotion:
         return jsonify({"query": "", "results": []}), 200
