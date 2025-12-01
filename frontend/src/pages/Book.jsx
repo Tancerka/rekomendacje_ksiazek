@@ -31,10 +31,9 @@ export default function Book(){
         <span style={{fontWeight: "bold"}}>Ocena: </span>{ book.rating} <br/><br/>
         <span style={{fontWeight: "bold"}}>Ilość ocen: </span>{ book.ratingsCount } <br/><br/>
         <span style={{fontWeight: "bold"}}>Data wydania: </span>{ book.releaseDate ? (typeof book.releaseDate === 'object' && book.releaseDate.$date ? new Date(book.releaseDate.$date).toLocaleDateString() : book.releaseDate) : 'Brak daty'} <br/><br/>
-        <span style={{fontWeight: "bold"}}>Opis fabuły: </span><div/><br/>
-{/*         <div style={{width: "40vw", marginLeft: "33%"}}> */}
+        <span style={{fontWeight: "bold"}}>{(book.longDescription ? "Opis fabuły:" : "")}</span><div/><br/>
             { book.longDescription }
-{/*         </div> */}
+        
     </div>
     </div>
 </Layout>  

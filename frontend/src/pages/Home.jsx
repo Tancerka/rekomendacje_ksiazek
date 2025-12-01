@@ -31,6 +31,16 @@ export default function Home(){
         {name: "Wyrzuty sumienia", emoji: "😔", color: "#BC8F8F"},
         {name: "Smutek", emoji: "😢", color: "#ADD8E6"},
         {name: "Troska", emoji: "😔", color: "#E0FFFF"},
+        {name: "Gniew", emoji: "😠", color: "#ff5764"},
+        {name: "Zakłopotanie", emoji: "😳", color: "#ffbfc4"},
+        {name: "Ekscytacja", emoji: "😲", color: "#d99177"},
+        {name: "Wdzięczność", emoji: "🤗", color: "#e8c7ff"},
+        {name: "Żal", emoji: "😔", color: "#929af7"},
+        {name: "Nerwowość", emoji: "🫥", color: "#edbf82"},
+        {name: "Optymizm", emoji: "😀", color: "#a6ffdd"},
+        {name: "Duma", emoji: "🥹", color: "#c9a287"},
+        {name: "Ulga", emoji: "😮‍💨", color: "#d6ffd4"}
+
     ]
 
     return(
@@ -85,16 +95,6 @@ export default function Home(){
                 ))}
                 </div>
                 
-
-
-                <Section title="Najwyżej notowane książki po emocjach" description="Lista książek o najwyższych ocenach w danej emocji." />
-
-                <Section title="Książki na każdy nastrój" description="Wybierz książkę na każdy humor" />
-
-                <Section title="Najwyżej ocenione" description ="Książki o najwyższych ocenach"/>
-
-                <Section title="Na zimowy wieczór" description="Książki idealne na długie, zimowe wieczory"/> 
-
                 <div style={{backgroundColor: "#D4C9BE", padding: "40px", borderRadius: "12px", marginTop:"60px", marginBottom:"40px"}}>
                     <h3 style={{fontSize: "28px", textAlign: "center", color: "#123578", marginBottom: "20px", backgroundColor: "#D4C9BE", fontWeight: "bold"}}> Jak to działa? </h3>
                     <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "30px", marginTop: "30px", backgroundColor: "#D4C9BE"}}>
@@ -120,6 +120,16 @@ export default function Home(){
                             />
                     </div>
                 </div>
+
+
+                <Section title="Najwyżej notowane książki po emocjach" description="Lista książek o najwyższych ocenach w danej emocji." />
+
+                <Section title="Książki na każdy nastrój" description="Wybierz książkę na każdy humor" />
+
+                <Section title="Najwyżej ocenione" description ="Książki o najwyższych ocenach"/>
+
+                <Section title="Na zimowy wieczór" description="Książki idealne na długie, zimowe wieczory"/> 
+
         </Layout>
     )
 }

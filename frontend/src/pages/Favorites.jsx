@@ -37,7 +37,7 @@ export default function Favorites() {
 
   const removeFromFavorites = async (bookId) => {
     try{
-      const response = await fetch(`/auth/favorites/${bookId}`, {
+      const response = await fetch(`/auth/remove_favorite/${bookId}`, {
         method: "DELETE",
         credentials: "include"
       });
@@ -52,6 +52,17 @@ export default function Favorites() {
 
   return (
   <Layout pageTitle = "Moje ulubione książki">
+
+    <div style={{
+      color: "#123578",
+      textAlign: "center",
+      fontSize: "20px",
+      marginTop: "20px",
+      marginBottom: "40px",
+      fontWeight: "500"
+    }}>
+      Liczba ulubionych książek: {favorites.length}
+    </div>
 
     {error && (
       <div style={{
@@ -161,7 +172,9 @@ function BookCard({book, onRemove}){
             transition: "all 0.3s ease",
             cursor: "pointer",
             transform: isHovered ? "translateY(-4px)" : "none",
-            boxShadow: isHovered ? "0 8px 16px rgba(0,0,0,0.15)" : "none"
+            boxShadow: isHovered ? "0 8px 16px rgba(0,0,0,0.15)" : "none",
+            display: "flex",
+            flexDirection: "column"
             
         }}
         onMouseEnter={() => setIsHovered(true)}
@@ -183,7 +196,7 @@ function BookCard({book, onRemove}){
             }}>
                 {!book.coverImage && <span>Brak okładki</span>}
             </div>
-            <div style={{ padding: "15px" }}>
+            <div style={{ padding: "15px", flexGrow: 1 }}>
                 <h4 style={{
                     fontSize: "18px",
                     color: "#123578",
@@ -251,34 +264,40 @@ function BookCard({book, onRemove}){
                 fontSTyle: "italic",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
-                whiteSpace: "nowrap"
+                whiteSpace: "nowrap",
+                marginLeft: "5px"
               }}>
                 {book.category}
               </p>
             )}
 
             <button 
+                key = {showConfirm}
                 onClick={handleRemove}
                 style={{
                     width: "100%",
                     padding: "10px",
-                    backgroundColor: "#FF6B6B",
+                    backgroundColor: "#BF092F",
                     border: "none",
                     borderRadius: "8px",
-                    color: showConfirm ? "white" : "#5A4A42",
+                    color: showConfirm ? "white" : "#D4C9BE",
                     fontSize: "16px",
                     fontWeight: "500",
                     cursor: "pointer",
+                    marginTop: "auto",
+/*                     marginBottom: "10px" */
                 }}
                 onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = "#FF9AA2";  
+                    e.currentTarget.style.backgroundColor = showConfirm ? "#ff5764" : "#FF9AA2"; 
+                    e.currentTarget.style.color = "black" 
                 }}
 
                 onMouseOut={(e) => {
-                    e.currentTarget.style.backgroundColor = "#FFB6C1";
+                    e.currentTarget.style.backgroundColor = showConfirm ? "#800f27" : "#BF092F";
+                    e.currentTarget.style.color = "#D4C9BE" 
                 }}
                 >
-                   {showConfirm ? "Kliknij, by usunąć." : "Usuń z ulubionych."}
+                   {showConfirm ? "Kliknij, by usunąć" : "Usuń z ulubionych"}
                 </button>
             </div>
     );

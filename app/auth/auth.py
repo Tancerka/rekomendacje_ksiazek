@@ -162,4 +162,15 @@ def add_favorite():
 
     return jsonify({"message": "Dodano książkę do ulubionych."}), 200
 
+# ---------------- DELETE FAVORITE ----------------
 
+@auth_bp.route('/remove_favorite/<book_id>', methods=['DELETE'])
+@login_required
+def remove_favorite(book_id):
+    user_id = current_user.id
+    mongo.db.users.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$pull": {"favorites":book_id}}
+    )
+
+    return jsonify({"message": "removed"}), 200
