@@ -108,7 +108,6 @@ def logout():
     logout_user()
     return jsonify({"message": "Wylogowano."}), 200
 
-
 # ---------------- GET CURRENT USER ----------------
 
 @auth_bp.route("/me", methods=["GET"])
@@ -124,6 +123,50 @@ def get_current_user():
     })
 
 
+# ---------------- GET PROFILE ----------------
+
+@auth_bp.route("/profile", methods=['GET'])
+@login_required
+def get_profile():
+    user = mongo.db.users.find_one({"_id": ObjectId(current_user.id)})
+    user["_id"] = str(user["_id"])
+    return jsonify(user), 200
+
+# ---------------- CHANGE PROFILE ----------------
+
+@auth_bp.route("/profile", methods=['PUT'])
+@login_required
+def update_profile():
+    data = request.json()
+    mongo.db.users.update_one(
+        {"_id": ObjectId(current_user.id)},
+        {"$set": {
+            "username": data.get("username"),
+            "email": data.get("email")
+        }}
+    )
+    return jsonify({"message": "updated"}), 200
+
+# ---------------- CHANGE PASSWORD ----------------
+
+@auth_bp.route("/change_password", methods=['POST'])
+@login_required
+def change_password():
+    data = request.json()
+    old_pswd = data.get("oldPassword")
+    new_pswd = data.get("newPassword")
+
+    if not current_user.check_password(old_pswd):
+        return jsonify({"error": "Wrong password"}), 400
+    
+    current_user.set_password(new_pswd)
+    mongo.db.users.update_one(
+        {"_id": current_user.id},
+        {"$set": {"password": current_user.password}}
+    )
+    return jsonify({"message": "Password changed"}), 200
+
+
 # ---------------- GET FAVORITES ----------------
 
 @auth_bp.route('/favorites', methods=['GET'])
@@ -133,14 +176,10 @@ def get_favorites():
     user_data = mongo.db.users.find_one({'_id': ObjectId(user_id)})
     favorite_books = []
     for book_id in user_data.get("favorites", []):
-        print(book_id)
         book = mongo.db.books.find_one({'_id': ObjectId(book_id)})
         if book:
-            print((book["_id"]))
             book["_id"] = str(book["_id"])
             favorite_books.append(book)
-            print(book)
-        print(favorite_books)
     return jsonify({"favorites": favorite_books}), 200
 
 

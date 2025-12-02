@@ -42,7 +42,7 @@ export default function Layout({ pageTitle, children}) {
         <div>
             <div class = "top-bar" style={{ backgroundColor: "#D4C9BE"}}>
             <button className="title montecarlo-regular title" onClick={() => window.location.pathname = '/'} style={{ marginLeft: "5%", marginRight: "10%"}}>Rekomendacje książek</button>
-                    <input type="text" style={{width: "300px", marginTop: "2%", backgroundColor: "transparent"}} placeholder="Wyszukaj książkę..." id="search-bar" value={query} onChange={(e)=>setQuery(e.target.value)} onKeyDown={(e)=> e.key === "Enter" && searchBook()} />
+                    <input type="text" style={{width: "300px", marginTop: "1%", backgroundColor: "transparent"}} placeholder="Wyszukaj książkę..." id="search-bar" value={query} onChange={(e)=>setQuery(e.target.value)} onKeyDown={(e)=> e.key === "Enter" && searchBook()} />
                     <input id="search-icon" type="image" onClick={searchBook} src="../img/search_icon.png" style={{backgroundColor: "transparent", width: "3%", height: "2%", marginTop: "1vw", marginRight: "5vw"}} onMouseOver={(e)=> (e.target.src = "../img/search_icon_hover.png")} onMouseOut={(e)=>(e.target.src = "/img/search_icon.png")} />
                     { user ? (
                         <>
