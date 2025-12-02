@@ -153,32 +153,8 @@ export default function BookCard({book,
                 {book.category}
               </p>
             )}
-            {onAction && (
-            <button 
-                key = {showConfirm}
-                onClick={handleAction}
-                style={{
-                    width: "100%",
-                    padding: "10px",
-                    backgroundColor: "#BF092F",
-                    border: "none",
-                    borderRadius: "8px",
-                    color: showConfirm ? "white" : "#D4C9BE",
-                    fontSize: "16px",
-                    fontWeight: "500",
-                    cursor: "pointer",
-                    marginTop: "auto",
-                }}
-                onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = showConfirm ? "#ff5764" : "#FF9AA2"; 
-                    e.currentTarget.style.color = "black" 
-                }}
 
-                onMouseOut={handleMouOut}
-                >
-                </button>
-            )}
-                   {showRemove &&(
+                {showRemove ? (
                     <button
                         key={showConfirm}
                         onClick={handleRemove}
@@ -203,7 +179,36 @@ export default function BookCard({book,
                         >
                    {showConfirm ? "Kliknij, by usunąć" : removeLabel}
                 </button>
-            )}
+            
+
+                    ): ( onAction && (
+            <button 
+                key = {showConfirm}
+                onClick={handleAction}
+                style={{
+                    width: "100%",
+                    padding: "10px",
+                    backgroundColor: "#BF092F",
+                    border: "none",
+                    borderRadius: "8px",
+                    color: showConfirm ? "white" : "#D4C9BE",
+                    fontSize: "16px",
+                    fontWeight: "500",
+                    cursor: "pointer",
+                    marginTop: "auto",
+                }}
+                onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = showConfirm ? "#ff5764" : "#FF9AA2"; 
+                    e.currentTarget.style.color = "black" 
+                }}
+
+                onMouseOut={handleMouOut}
+                >
+                    {showConfirm ? actionConfirmLabel : actionLabel}
+                </button>
+            )
+        )}
+                   
             </div>
     );
     }

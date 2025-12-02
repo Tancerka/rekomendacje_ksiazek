@@ -45,13 +45,15 @@ export default function Search() {
   };
 
   const addFavorite = async (bookId) => {
-    await fetch("/auth/add_favorite", {
+    const response = await fetch("/auth/add_favorite", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ book_id: bookId }),
-    });
+    }).then(response => response.json())
+    .then((data) => {
+      alert(data.message);
+    })
   };
-
 
   return (
     <Layout pageTitle={emotion ? `Książki dla emocji: „${emotion}”`:`Wyniki wyszukiwania dla „${query}”`}>
@@ -170,7 +172,6 @@ export default function Search() {
                       onClick={async (e) => {
                         e.stopPropagation();
                         await addFavorite(book._id)
-                        alert("Dodano książkę do ulubionych.");
                       }}
                       
                       />

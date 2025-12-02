@@ -39,8 +39,8 @@ export default function Home(){
         {name: "Nerwowość", emoji: "🫥", color: "#edbf82"},
         {name: "Optymizm", emoji: "😀", color: "#a6ffdd"},
         {name: "Duma", emoji: "🥹", color: "#c9a287"},
-        {name: "Ulga", emoji: "😮‍💨", color: "#d6ffd4"}
-
+        {name: "Ulga", emoji: "😮‍💨", color: "#d6ffd4"},
+        {name: "Bez recenzji", emoji: "📜", color: "#ffe5d4ff"}
     ]
 
     return(

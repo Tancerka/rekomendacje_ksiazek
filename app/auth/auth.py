@@ -14,11 +14,12 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 # ---------------- USER CLASS ----------------
 
 class User(UserMixin):
-    def __init__(self, user_id, username, email, favorites):
+    def __init__(self, user_id, username, email, favorites, wishlist):
         self.id = user_id
         self.username = username
         self.email = email
         self.favorites = favorites
+        self.wishlist = wishlist
 
 
 @login_manager.user_loader
@@ -29,7 +30,8 @@ def load_user(user_id):
             str(user_data['_id']),
             user_data['username'],
             user_data['email'],
-            user_data.get('favorites', [])
+            user_data.get('favorites', []),
+            user_data.get('wishlist', [])
         )
     return None
 
@@ -65,7 +67,8 @@ def register():
         "username": username,
         "email": email,
         "password": password,
-        "favorites": []
+        "favorites": [],
+        "wishlist": []
     })
 
     return jsonify({"message": "Zarejestrowano pomyślnie."}), 201
@@ -89,7 +92,8 @@ def login():
         str(user_data['_id']),
         user_data['username'],
         user_data['email'],
-        user_data.get('favorites', [])
+        user_data.get('favorites', []),
+        user_data.get('wishlist', [])
     )
     login_user(user)
 
@@ -193,6 +197,15 @@ def add_favorite():
 
     if not book_id:
         return jsonify({"error": "Brak ID książki."}), 400
+    
+    user = mongo.db.users.find_one(
+        {'_id': ObjectId(current_user.id)}
+    )
+    print(book_id)
+    print(user.get('favorites', []))
+
+    if book_id in user.get('favorites', []): 
+        return jsonify({"message": "Książka jest już w ulubionych."}), 200
 
     mongo.db.users.update_one(
         {'_id': ObjectId(current_user.id)},
@@ -212,4 +225,60 @@ def remove_favorite(book_id):
         {"$pull": {"favorites":book_id}}
     )
 
-    return jsonify({"message": "removed"}), 200
+    return jsonify({"message": "Usunięto."}), 200
+
+# ---------------- GET WISHLIST ----------------
+
+@auth_bp.route('/wishlist', methods=['GET'])
+@login_required
+def get_wishlist():
+    user_id = current_user.id
+    user_data = mongo.db.users.find_one({'_id': ObjectId(user_id)})
+    wishlist_books = []
+    for book_id in user_data.get("wishlist", []):
+        book = mongo.db.books.find_one({'_id': ObjectId(book_id)})
+        if book:
+            book["_id"] = str(book["_id"])
+            wishlist_books.append(book)
+    return jsonify({"wishlist": wishlist_books}), 200
+
+
+# ---------------- ADD WISHLIST ----------------
+
+@auth_bp.route('/add_wishlist', methods=['POST'])
+@login_required
+def add_favorite():
+    data = request.json
+    book_id = data.get("book_id")
+
+    if not book_id:
+        return jsonify({"error": "Brak ID książki."}), 400
+    
+    user = mongo.db.users.find_one(
+        {'_id': ObjectId(current_user.id)}
+    )
+    print(book_id)
+    print(user.get('wishlist', []))
+
+    if book_id in user.get('wishlist', []): 
+        return jsonify({"message": "Książka jest już w ulubionych."}), 200
+
+    mongo.db.users.update_one(
+        {'_id': ObjectId(current_user.id)},
+        {'$addToSet': {'wishlist': book_id}}
+    )
+
+    return jsonify({"message": "Dodano książkę do ulubionych."}), 200
+
+# ---------------- DELETE WISHLIST ----------------
+
+@auth_bp.route('/remove_wishlist/<book_id>', methods=['DELETE'])
+@login_required
+def remove_wishlist(book_id):
+    user_id = current_user.id
+    mongo.db.users.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$pull": {"wishlist":book_id}}
+    )
+
+    return jsonify({"message": "Usunięto."}), 200

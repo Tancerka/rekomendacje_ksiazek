@@ -206,3 +206,36 @@ def book():
     book["_id"] = str(book["_id"])
 
     return jsonify(book), 200
+
+# ---------------- RECOMMENDATIONS ----------------
+
+@main_bp.route('/recommendations', methods=['GET'])
+def recommendations(): 
+
+    # 1. Pobierz użytkownika
+    # 2. Jeśli użytkownik nie ma ulubionych książek, to pokaż te najpopularniejsze
+    # 3. Zbierz wszystkie ulubione książki
+    # 4. Zbierz emocje, kategorie i ratingi
+    # 5. Zbierz te emocje, które występują najczęściej w ulubionych książkach (top 3)
+    # 6. Wyszukaj książki, które mają najwięcej pasujących emocji (wyklucz te, które już ma w ulubionych, weź te, które są mniej więcej w średniej ratingu)
+    # 7. Wyszukaj książki, które pasują do emocji i ulubionych kategorii
+    # 8. Zrób tablicę ocen -> dodaj punkty za dopasowanie (3 za emocje, 2 za kategorię, 0-1 za rating w zal. od bliskości)
+    # 9. Dodaj score do wyników
+    # 10. Posortuj i weź pierwsze 10-15
+    try:
+        user_id = current_user.id
+        if not user_id:
+            return jsonify({'error': 'Nie jesteś zalogowany'}), 401
+        user = mongo.db.users.find_one({'_id': ObjectId(user_id)})
+        if not user or 'favorites' not in user or len(user['favorites']) == 0:
+            #jeśli brak ulubionych książek, to zwraca te z największym ratingiem
+            popular_books = list(mongo.db.books.find().sort('rating', -1).limit(10))
+            for book in popular_books:
+                book['_id'] = str(book['_id'])
+            return jsonify({'recommendations': popular_books, 'basedOn': 'popular'})
+        
+        
+    except Exception as e:
+        print(f"Błąd w rekomendacjach: {str(e)}")
+        return jsonify({'error': "Błąd podczas generowania rekomendacji"}), 500
+        
