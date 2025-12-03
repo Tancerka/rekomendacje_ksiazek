@@ -198,12 +198,14 @@ hr.solid {
     height: 35px;
     font-size: 18px;
     border-radius: 4px;
+    background-color: #123458;
+    color: white;
 }
 
 .login:hover{
 
-    background-color: #123458;
-    color: white;
+    background-color: #265587;
+    color: #D4C9BE;
     box-shadow: 0 1px 3px 0 rgba(0,0,0,0.22);
     cursor: pointer;
 }
@@ -244,10 +246,15 @@ hr.solid {
     box-shadow: 0 1px 3px 0 rgba(0,0,0,0.22);
     cursor: pointer;
 }
-
+/* 
 input{
-    background-color: #fdf5ff;
-}
+    width: "15vw";
+    padding: "10px";
+    margin-bottom: "15px";
+    border-radius: "8px";
+    border: "1px solid #ccc";
+
+} */
 
 .book-item{
 

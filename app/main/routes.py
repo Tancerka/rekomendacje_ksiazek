@@ -222,6 +222,7 @@ def recommendations():
     # 8. Zrób tablicę ocen -> dodaj punkty za dopasowanie (3 za emocje, 2 za kategorię, 0-1 za rating w zal. od bliskości)
     # 9. Dodaj score do wyników
     # 10. Posortuj i weź pierwsze 10-15
+    # Tinder reviews -> coś jak 3 pozycje, które użytkownik ocenia, czy podoba mu się wynik; niekoniecznie 10 wyników od razu
     try:
         user_id = current_user.id
         if not user_id:

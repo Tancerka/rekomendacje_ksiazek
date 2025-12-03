@@ -55,6 +55,17 @@ export default function Search() {
     })
   };
 
+  const addWishlist = async (bookId) => {
+    const response = await fetch("/auth/add_wishlist", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ book_id: bookId }),
+    }).then(response => response.json())
+    .then((data) => {
+      alert(data.message);
+    })
+  };
+
   return (
     <Layout pageTitle={emotion ? `Książki dla emocji: „${emotion}”`:`Wyniki wyszukiwania dla „${query}”`}>
       <div className="search-page">
@@ -130,7 +141,7 @@ export default function Search() {
                         backgroundColor: "#123458",
                         width: "20px", 
                         height: "20px"}}
-                        />
+                      />
                   </div>
 
                   </div>
@@ -186,6 +197,10 @@ export default function Search() {
                         height: "7%"}}
                       onMouseOver={(e) => (e.currentTarget.src = "../../img/wishlist_icon_hover.png")}
                       onMouseOut={(e) => (e.currentTarget.src = "../../img/wishlist_icon.png")}
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        await addWishlist(book._id)
+                      }} 
                       />
                   </div>
                 </div>

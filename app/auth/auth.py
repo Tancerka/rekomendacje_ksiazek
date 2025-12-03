@@ -247,7 +247,7 @@ def get_wishlist():
 
 @auth_bp.route('/add_wishlist', methods=['POST'])
 @login_required
-def add_favorite():
+def add_wishlist():
     data = request.json
     book_id = data.get("book_id")
 
@@ -261,14 +261,14 @@ def add_favorite():
     print(user.get('wishlist', []))
 
     if book_id in user.get('wishlist', []): 
-        return jsonify({"message": "Książka jest już w ulubionych."}), 200
+        return jsonify({"message": "Książka jest już na liście życzeń."}), 200
 
     mongo.db.users.update_one(
         {'_id': ObjectId(current_user.id)},
         {'$addToSet': {'wishlist': book_id}}
     )
 
-    return jsonify({"message": "Dodano książkę do ulubionych."}), 200
+    return jsonify({"message": "Dodano książkę do listy życzeń."}), 200
 
 # ---------------- DELETE WISHLIST ----------------
 
