@@ -23,6 +23,10 @@ export default function Profile(){
             const favData = await favRes.json();
             setFavorites(favData.favorites || []);
 
+            const wishRes = await fetch("/auth/wishlist", {credentials: "include"})
+            const wishData = await wishRes.json();
+            setWishlist(wishData.wishlist || []);
+
             const profileRes = await fetch("auth/profile", {credentials: "include"});
             const profileData = await profileRes.json()
             setProfile(profileData);
@@ -73,9 +77,20 @@ export default function Profile(){
         }
     };
 
-    const removeFromWishlist = (bookId) => {
-        setWishlist(wishlist.filter(book => book.id !== bookId));
-    }
+    const removeFromWishlist = async (bookId) => {
+        try{
+        const response = await fetch(`/auth/remove_wishlist/${bookId}`, {
+            method: "DELETE",
+            credentials: "include"
+        });
+
+        if(response.ok){
+            setWishlist(wishlist.filter(book => book._id !== bookId));
+        }
+        } catch(err){
+        alert("Błąd podczas usuwania z listy życzeń.");
+        }
+    };
 
     const addToFavorites = (book) => {
         if(!favorites.find(b => b.id === book.id)){
@@ -155,7 +170,7 @@ export default function Profile(){
                 <StatCard
                     icon="⭐"
                     value={calculateAverageRating()}
-                    label="Średnia ocen"
+                    label="Średnia ocen ulubionych książek"
                     color="#fffadeff"
                 />
             </div>
