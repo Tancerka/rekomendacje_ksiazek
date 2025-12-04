@@ -1,5 +1,6 @@
 from flask import app
 from bson import ObjectId
+from werkzeug.security import check_password_hash
 
 def find_user_by_username(username):
     from app import mongo 
@@ -18,8 +19,9 @@ def find_user_by_email(email):
 def check_password(username, password):
     from app import mongo 
     user = mongo.db.users.find_one({'username': username})
-    if user and (user['password'] == password):
-        return True
+    if not user:
+        return False
+    return check_password_hash(user["password"], password)
     
 def update_user_username(user_id, new_username):
     from app import mongo 

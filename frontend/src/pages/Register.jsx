@@ -16,7 +16,8 @@ export default function Register() {
     if (res.ok) {
       window.location.href = "/login";
     } else {
-      setError("Nieprawidłowe dane rejestracji");
+      const data = await res.json()
+      setError(data.error);
     }
   };
 

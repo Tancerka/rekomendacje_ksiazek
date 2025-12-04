@@ -89,6 +89,16 @@ export default function Profile(){
         }
     }
 
+    const editProfile = async () => {
+        await fetch("/auth/profile", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json"},
+            credentials: "include",
+            body: JSON.stringify(profile)
+        });
+        alert("Zapisano zmiany");
+    }
+
     const inputStyle = {
         width: "100%",
         padding: "10px",
@@ -281,15 +291,7 @@ export default function Profile(){
                                 />
                             <button
                                 style={BtnStyle}
-                                onClick={async () => {
-                                    await fetch("/auth/profile", {
-                                        method: "PUT",
-                                        header: { "Content-Type": "application/json"},
-                                        credentials: "include",
-                                        body: JSON.stringify(profile)
-                                    });
-                                    alert("Zapisano zmiany");
-                                }}
+                                onClick={editProfile}
                                 onMouseOver={(e) => {
                                     e.currentTarget.style.backgroundColor = "#645750ff";
                                 }}

@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user, UserMixin
 from bson import ObjectId
+from werkzeug.security import generate_password_hash
 from app.extensions import mongo, login_manager
 from app.database.users import (
     find_user_by_username,
@@ -47,26 +48,27 @@ def register():
     password = data.get("password")
     repeat_password = data.get("repeat_password")
 
-    # Validate password
+    if len(password) > 255:
+        return jsonify({"error": "Podane hasło jest za długie."}), 400
+    if len(password) < 8: 
+        return jsonify({"error": "Podane hasło jest za krótkie."}), 400
+
     if password != repeat_password:
         return jsonify({"error": "Podane hasła nie są identyczne."}), 400
 
-    # Validate email
     if '@' not in email or '.' not in email.split('@')[1]:
         return jsonify({"error": "Podany email jest niepoprawny."}), 400
 
-    # Check if username/email taken
     if find_user_by_username(username):
         return jsonify({"error": "Taka nazwa użytkownika jest już zajęta."}), 400
 
     if find_user_by_email(email):
         return jsonify({"error": "Taki email jest już zajęty."}), 400
 
-    # Insert user
     mongo.db.users.insert_one({
         "username": username,
         "email": email,
-        "password": password,
+        "password": generate_password_hash(password),
         "favorites": [],
         "wishlist": []
     })
@@ -141,7 +143,7 @@ def get_profile():
 @auth_bp.route("/profile", methods=['PUT'])
 @login_required
 def update_profile():
-    data = request.json()
+    data = request.json
     mongo.db.users.update_one(
         {"_id": ObjectId(current_user.id)},
         {"$set": {
@@ -149,7 +151,7 @@ def update_profile():
             "email": data.get("email")
         }}
     )
-    return jsonify({"message": "updated"}), 200
+    return jsonify({"message": "Zaktualizowano."}), 200
 
 # ---------------- CHANGE PASSWORD ----------------
 
