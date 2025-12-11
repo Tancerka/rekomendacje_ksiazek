@@ -40,16 +40,27 @@ export default function Home(){
         {name: "Optymizm", emoji: "😀", color: "#a6ffdd"},
         {name: "Duma", emoji: "🥹", color: "#c9a287"},
         {name: "Ulga", emoji: "😮‍💨", color: "#d6ffd4"},
-        {name: "Bez recenzji", emoji: "📜", color: "#ffe5d4ff"}
+        {name: "Nieodkryte", emoji: "📜", color: "#ffe5d4ff"},
+        {name: "Szczęśliwy traf", emoji: "🎲", color: "#bf606c"}
     ]
+
+    const pyramidRows = InvertedPyramid(emotions, 8);
 
     return(
 
         <Layout pageTitle = "Strona główna">
                 <p style={{textAlign: "center", fontSize: "24px", color: "#123578"}}> Jak się dziś czujesz?</p>
                 <p style={{textAlign: "center", fontSize: "18px", color: "#7A6A62"}}> Wybierz swoją emocję i odkryj książki idealnie dopasowane do Twojego nastroju! </p>
-                <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "15px", marginBottom: "60px", marginLeft: "10%", marginRight:"10%"}}>
-                {emotions.map((emotion) => (
+                <div style={{display: "flex", flexDirection: "column", gap: "20px"}}>
+                {pyramidRows.map((row, i) => (
+                    <div 
+                    key={i}
+                    style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        gap: "20px"
+                    }}>
+                    {row.map(emotion => (
                     <button
                         key={emotion.name}
                         style={{
@@ -67,11 +78,13 @@ export default function Home(){
                             gap: "8px",
                             boxShadow: selectedEmotion === emotion.name ? "0 4px 8px rgba(0, 0, 0, 0.2)" : "0 2px 4px rgba(0, 0, 0, 0.1)",
                             transform: selectedEmotion === emotion.name ? "translateY(-2px)" : "none",
-                            transition: "all 0.3s ease"
+                            transition: "all 0.3s ease",
+                            width: "170px",
+                            height: "110px"
                         }}
                         onMouseOut={(e) => {
                             if (selectedEmotion !== emotion.name){
-                                e.currentTarget.style.backgroundColor = "#f0f0f0";
+                                e.currentTarget.style.backgroundColor = "#F5F5F0";
                                 e.currentTarget.style.transform = "none";
                                 e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)";
                             }
@@ -86,6 +99,7 @@ export default function Home(){
                         
                         onClick={() => {
                             setSelectedEmotion(emotion.name);
+                            if(emotion.name=="Nieodkryte") emotion.name="neutral"
                             navigate(`/search?emotion=${encodeURIComponent(emotion.name)}`);
                         }}
                     >  
@@ -94,6 +108,8 @@ export default function Home(){
                     </button>
                 ))}
                 </div>
+    ))}
+    </div>
                 
                 <div style={{backgroundColor: "#D4C9BE", padding: "40px", borderRadius: "12px", marginTop:"60px", marginBottom:"40px"}}>
                     <h3 style={{fontSize: "28px", textAlign: "center", color: "#123578", marginBottom: "20px", backgroundColor: "#D4C9BE", fontWeight: "bold"}}> Jak to działa? </h3>
@@ -158,4 +174,18 @@ function Step ({number, title, description}) {
             <p style={{fontSize: "16px", color: "#7A6A62", backgroundColor: "#D4C9BE"}}>{description}</p>
         </div>
     );
+}
+
+function InvertedPyramid(items, topRowSize = 9){
+    let rows = []
+    let index = 0;
+    let size = topRowSize;
+
+    while (index < items.length && size > 0){
+        rows.push(items.slice(index, index +size));
+        index += size;
+        size--;
+    }
+
+    return rows;
 }

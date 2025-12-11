@@ -67,7 +67,7 @@ export default function Search() {
   };
 
   return (
-    <Layout pageTitle={emotion ? `Książki dla emocji: „${emotion}”`:`Wyniki wyszukiwania dla „${query}”`}>
+    <Layout pageTitle={emotion ? (emotion=="neutral" ? `Książki dla emocji: „Nieodkryte”` : `Książki dla emocji: „${emotion}”`) :`Wyniki wyszukiwania dla „${query}”`}>
       <div className="search-page">
         <form id="filter-form" style={{ marginBottom: "2rem", marginLeft: "40%"}}>
           <label>Liczba wyników: {resultsCount}</label><br/>

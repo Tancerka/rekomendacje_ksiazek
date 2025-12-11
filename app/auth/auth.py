@@ -114,6 +114,7 @@ def logout():
     logout_user()
     return jsonify({"message": "Wylogowano."}), 200
 
+
 # ---------------- GET CURRENT USER ----------------
 
 @auth_bp.route("/me", methods=["GET"])
@@ -161,16 +162,23 @@ def change_password():
     data = request.json()
     old_pswd = data.get("oldPassword")
     new_pswd = data.get("newPassword")
+    repeat_pswd = data.get("repeatNewPassword")
+    
+    if new_pswd != repeat_pswd:
+        return jsonify({"error": "Nowe hasło i powtórzone hasło muszą być identyczne."})
+
+    if new_pswd == old_pswd:
+        return jsonify({"error": "Stare i nowe hasło nie mogą być identyczne."})
 
     if not current_user.check_password(old_pswd):
-        return jsonify({"error": "Wrong password"}), 400
+        return jsonify({"error": "Stare hasło jest niepoprawne."}), 400
     
     current_user.set_password(new_pswd)
     mongo.db.users.update_one(
         {"_id": current_user.id},
         {"$set": {"password": current_user.password}}
     )
-    return jsonify({"message": "Password changed"}), 200
+    return jsonify({"message": "Hasło zostało zmienione."}), 200
 
 
 # ---------------- GET FAVORITES ----------------

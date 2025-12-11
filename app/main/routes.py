@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from bson import ObjectId
+from collections import Counter
+import numpy as np
 from app.extensions import mongo
 from app.database.users import (
     update_user_username,
@@ -234,9 +236,109 @@ def recommendations():
             for book in popular_books:
                 book['_id'] = str(book['_id'])
             return jsonify({'recommendations': popular_books, 'basedOn': 'popular'})
-        
-        
+
+        # pobierz ulubione książki
+        favorite_ids = [ObjectId(fav_id) if isinstance(fav_id, str) else fav_id
+                        for fav_id in user['favorites']]
+        favorite_books = list(mongo.db.books.find({'_id': {'$in': favorite_ids}}))
+
+        # zbierz dane z książek
+        emotion_counts = Counter()
+        categories = set()
+        ratings = []
+
+        for book in favorite_books:
+            print(f"Tytuł: {book.get('title')}")
+            print(f"  Emocje: {book.get('dominant_emotion')}")
+            print(f"  Kategoria: {book.get('category')}")
+            print(f"  Rating: {book.get('rating')}")
+            print("---")
+            # emocje
+            if 'dominant_emotion' in book and book['dominant_emotion']:
+                if isinstance(book['dominant_emotion'], list):
+                    for emotion in book['dominant_emotion']:
+                        emotion_counts[emotion.lower()] +=1
+                else:
+                    emotion_counts[book['dominant_emotion'].lower()] +=1
+            # kategorie
+            if 'category' in book and book['category']:
+                cats = [c.strip() for c in book['category'].split(',')]
+                categories.update(cats)
+            # rating
+            if 'rating' in book and book['rating']:
+                ratings.append(float(book['rating']))
+            
+        # statystyki książek użytkownika
+
+        avg_rating = sum(ratings)/len(ratings) if ratings else 6.0
+
+        top_emotions = [emotion for emotion, count in emotion_counts.most_common(3)]
+
+        print(f"Top emocje: {top_emotions}")
+        print(f"Ulubione kategorie: {list(categories)}")
+        print(f"Średni rating: {avg_rating}")
+
+        # wyszukanie podobnych książek
+
+        query = {
+            '_id': {'$nin': favorite_ids},
+            'rating': {'$gte': avg_rating -1.5}
+        }
+
+        if top_emotions or categories: 
+            or_conditions = []
+            if top_emotions:
+                or_conditions.append({'dominant_emotion': {'$in': top_emotions}})
+            if categories:
+                for cat in categories:
+                    or_conditions.append({'category': {'$regex': cat, '$options': 'i'}}) 
+            query['$or'] = or_conditions
+
+        candidate_books = list(mongo.db.books.find(query).limit(100))
+        scored_books = []
+
+        for book in candidate_books:
+            score = 0
+
+            if 'dominant_emotion' in book and book['dominant_emotion']:
+                book_emotions = book['dominant_emotion'] if isinstance (book['dominant_emotion'], list) else [book['dominant_emotion']]
+                for emotion in book_emotions:
+                    if emotion.lower() in top_emotions:
+                        score +=3
+            if 'category' in book and book['category']:
+                book_cats = [c.strip().lower() for c in book['category'].split(',')]    
+                for cat in book_cats:
+                    if any(cat in fav_cat.lower() or fav_cat.lower() in cat 
+                            for fav_cat in categories):
+                        score += 2
+            if 'rating' in book and book['rating']:
+                rating_diff = abs(float(book['rating']) - avg_rating)
+                score += max(0, 1 - rating_diff /5)
+                
+            book['score'] = score
+            book['_id'] = str(book['_id'])
+            scored_books.append(book)
+
+        # sortowanie wyników po ratingu
+        scored_books.sort(key=lambda x: x['score'], reverse=True)
+        top_rec = scored_books[:15]
+        print(f"Aktywny użytkownik: "+str(current_user.username))
+        print(f"Ilość ulubionych książek: "+str(len(favorite_books)))
+        print(f"")
+
+        return jsonify({
+            'recommendations': top_rec,
+            'basedOn': {
+                'topEmotions': top_emotions,
+                'categories': list(categories),
+                'avgRating': round(avg_rating, 2),
+                'totalFavorites': len(favorite_books)
+            }
+        })            
+ 
     except Exception as e:
         print(f"Błąd w rekomendacjach: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return jsonify({'error': "Błąd podczas generowania rekomendacji"}), 500
         

@@ -60,7 +60,7 @@ export default function Wishlist(){
       marginBottom: "40px",
       fontWeight: "500"
     }}>
-      Liczba ulubionych książek: {wishlist.length}
+      Liczba książek na liście życzeń: {wishlist.length}
     </div>
 
     {error && (

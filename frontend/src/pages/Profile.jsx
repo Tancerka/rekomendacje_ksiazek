@@ -40,7 +40,8 @@ export default function Profile(){
         { id: "recommendations", label: "Twoje rekomendacje", count: recommendations.length},
         { id: "favorites", label: "Ulubione książki", count: favorites.length},
         { id: "wishlist", label: "Lista życzeń", count: wishlist.length},
-        { id: "edit", label: "Edycja profilu"}
+        { id: "edit", label: "Edycja profilu"},
+        { id: "password", label: "Zmień hasło"}
     ]
 
     const getCurrentBooks = () => {
@@ -112,6 +113,10 @@ export default function Profile(){
             body: JSON.stringify(profile)
         });
         alert("Zapisano zmiany");
+    }
+
+    const toggleElements = () => {
+        
     }
 
     const inputStyle = {
@@ -194,7 +199,6 @@ export default function Profile(){
                             fontWeight: activeTab === tab.id ? "600" : "400",
                             color: "#5A4A42",
                             borderBottom: activeTab === tab.id ? "3px solid #5A4A42" : "none",
-/*                             transition: "all  0.3s ease", */
                             borderRadius: "8px 8px 0 0"
                         }}
                         onMouseOver={(e) => {
@@ -207,7 +211,7 @@ export default function Profile(){
                                 e.currentTarget.style.backgroundColor = "transparent";
                             }
                         }}>
-                            {(tab.id === "edit" ? tab.label : `${tab.label} (${tab.count})`)}
+                            {(tab.id === "edit" || tab.id==="password" ? tab.label : `${tab.label} (${tab.count})`)}
                         </button>
                 ))}
             </div>
@@ -304,6 +308,7 @@ export default function Profile(){
                                 onChange={(e) => setProfile({...profile, email: e.target.value})}
                                 style={inputStyle}
                                 />
+                                
                             <button
                                 style={BtnStyle}
                                 onClick={editProfile}
@@ -318,6 +323,68 @@ export default function Profile(){
                                 </button>
                                 </div>
                             
+                    )}
+                    {activeTab === "password" && (
+                        <div style= {{
+                            maxWidth: "500px",
+                            margin: "0 auto"
+                        }}>
+
+                            <h3 style={{
+                                color: "#123578",
+                                fontWeight: "600"
+                            }}>
+                                Edytuj hasło
+                            </h3>
+                            <label 
+                                id="label-oldPasswd"
+                                style={{
+                                    color: "#7A6A62"
+                                }}>
+                                Stare hasło
+                            </label>
+                            <input 
+                                id="input-oldPasswd"
+                                type="oldPassword"
+                                value={profile.oldPassword}
+/*                                 onChange={(e) => setProfile({...profile, email: e.target.value})} */
+                                style={inputStyle}
+                                />     
+                            <label 
+                                id="label-newPasswd"
+                                style={{
+                                    color: "#7A6A62"
+                                }}>
+                                Nowe hasło
+                            </label>
+                            <input 
+                                id="input-newPasswd"
+                                type="newPassword"
+                                value={profile.newPassword}
+/*                                 onChange={(e) => setProfile({...profile, email: e.target.value})} */
+                                style={inputStyle}
+                                />
+                            <label 
+                                id="label-repeatPasswd"
+                                style={{
+                                    color: "#7A6A62"
+                                }}>
+                                Powtórz nowe hasło
+                            </label>
+                            <input 
+                                id="input-repeatPasswd"
+                                type="repeatNewPassword"
+                                value={profile.repeatNewPassword}
+/*                                 onChange={(e) => setProfile({...profile, email: e.target.value})} */
+                                style={inputStyle}
+                                />
+                                    <button 
+                                        id="toggle-passwd"
+                                        style={BtnStyle}
+                                        onClick={toggleElements}>
+                                            Zmień hasło
+                                    </button>
+                                </div>
                     )}
                 </div>
                 )}
