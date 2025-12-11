@@ -60,8 +60,8 @@ export default function Recommend(){
     }
     const currentBook = recommendations[currentIndex];
     const hasMore = currentIndex < recommendations.length;
-    const progress = recommendations.length >0 
-    ? ((currentIndex / recommendations.legnth) * 100).toFixed(0) : 0;
+    const progress = recommendations.length > 0 
+    ? ((currentIndex / recommendations.length) * 100).toFixed(0) : 0;
 
     const addToFavorites = async (bookId) => {
         try{
@@ -158,11 +158,12 @@ export default function Recommend(){
             {!loading && hasMore && currentBook && (
                 <div style={{
                     position: "relative",
-                    marginBottom: "30px",
+                    marginTop: "30px",
+                    justifyContent: "center"
                 }}>
                     <BookCard
-                    book={currentBook}
-                    swipeDirection={swipeDirection}
+                        book={currentBook}
+                        swipeDirection={swipeDirection}
             />
             <div style={{
                 display: "flex",
@@ -257,12 +258,13 @@ export default function Recommend(){
                         style={{
                             backgroundColor: "#D4C9BE",
                             border: "2px solid #5A4A42",
-                            borderRadius: "12px",
+                            borderRadius: "8px",
                             padidng: "12px 30px",
                             fontSize: "16px",
                             color: "#5A4A42",
                             cursor: "pointer",
-                            fontWeight: "500"
+                            fontWeight: "500",
+                            height: "2vw"
                         }}
                         onMouseOver={(e) => {
                             e.currentTarget.style.backgroundColor = "#C4B9AE";
@@ -319,8 +321,9 @@ export default function Recommend(){
 function BookCard({book, swipeDirection}){
     return(
         <div style={{
+            display: "flex",
             marginRight: "50%",
-            width: "30vw",
+            width: "50vw",
             backgroundColor: "#F5F5F0",
             borderRadius: "12px",
             overflow: "hidden",
@@ -332,11 +335,14 @@ function BookCard({book, swipeDirection}){
             : swipeDirection === 'right'
             ? "translateX(100%) rotate(10deg)"
             : "none",
-            opacity: swipeDirection ? 0 : 1
+            opacity: swipeDirection ? 0 : 1,
+            margin: "0 auto"
         }}>
             <div style={{
-                width: "30vw",
-                height: "350px",
+/*                 marginTop: "2vw", */
+/*                 width: "1", */
+                 minWidth: "20vw",
+                height: "450px",
                 backgroundColor: "#E0D9D0",
                 backgroundImage: `url(${book.coverImage})`,
                 backgroundSize: "cover",
@@ -366,6 +372,10 @@ function BookCard({book, swipeDirection}){
                     </div>
                 )}
             </div>
+{/*             <div style={{
+                padding: '30px',
+                width: "70%",
+            }}> */}
             <div style={{ padding: "30px" }}>
                 <h2 style={{
                     fontSize: "24px",
@@ -452,7 +462,8 @@ function BookCard({book, swipeDirection}){
                         {book.shortDescription}
                     </p>
                 )}
-            </div>
+                 </div>
+{/*             </div> */}
         </div>
     );
     }
