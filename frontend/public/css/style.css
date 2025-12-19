@@ -155,6 +155,36 @@ hr.solid {
     content: "";
 }
 
+.nav-arrow{
+    position: fixed;
+    top: "50%";
+    left: 0;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 60px;
+    background-color: rgba(12,36,61,0.8);
+    color: white;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 3000;
+    border-radius: 0 8px 8px 0;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+
+}
+
+.nav-arrow:hover{
+    background-color: #123458;
+}
+
+.nav-arrow.open{
+    left: 250px;
+    animation: none;
+}
+
 #search-bar{
 
     width: 700px;

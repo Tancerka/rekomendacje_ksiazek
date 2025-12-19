@@ -63,7 +63,13 @@ export default function Layout({ pageTitle, children}) {
             <hr className="solid" />
             <hr className="line"/>
             <h3 className = "subtitle">{pageTitle}</h3>
-            <hr className="line" style={{width: "25%", marginTop: "2vw"}}/> 
+            <hr className="line" style={{width: "25%", marginTop: "2vw"}}/>
+            <div
+                className={`nav-arrow ${navVisible ? "open": ""}`} 
+                onClick={toggleNav}
+                >
+                    {navVisible ? "<" : ">"}
+                </div>
             <Sidebar active={navVisible} />
             <div className="content" style={{ minHeight: "60vh"}}>
                 {children}
