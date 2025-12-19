@@ -226,6 +226,8 @@ def recommendations():
     # 10. Posortuj i weź pierwsze 10-15
     # Tinder reviews -> coś jak 3 pozycje, które użytkownik ocenia, czy podoba mu się wynik; niekoniecznie 10 wyników od razu
     try:
+        offset = int(request.args.get('offset', 0))
+        limit = int(request.args.get('limit', 15))
         user_id = current_user.id
         if not user_id:
             return jsonify({'error': 'Nie jesteś zalogowany'}), 401
@@ -321,7 +323,7 @@ def recommendations():
 
         # sortowanie wyników po ratingu
         scored_books.sort(key=lambda x: x['score'], reverse=True)
-        top_rec = scored_books[:15]
+        top_rec = scored_books[offset: offset+limit]
         print(f"Aktywny użytkownik: "+str(current_user.username))
         print(f"Ilość ulubionych książek: "+str(len(favorite_books)))
         print(f"")

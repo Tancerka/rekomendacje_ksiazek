@@ -9,6 +9,8 @@ export default function Recommend(){
     const [error, setError] = useState(null);
     const [swipeDirection, setSwipeDirection] = useState(null)
     const [basedOn, setBasedOn] = useState(null)
+    const [offset, setOffset]= useState(0);
+    const limit = 15;
 
     useEffect(() => {
         generateRecommendations();
@@ -19,7 +21,7 @@ export default function Recommend(){
         setError(null);
 
         try{
-            const response = await fetch("/main/recommendations", {
+            const response = await fetch(`/main/recommendations?offset=${offset}&limit=${limit}`, {
                 method: "GET",
                 credentials: "include"
             });
@@ -32,6 +34,7 @@ export default function Recommend(){
             setRecommendations(data.recommendations || []);
             setBasedOn(data.basedOn);
             setCurrentIndex(0);
+            setOffset(prev => prev +15);
         } catch (err){
             setError(err.message);
         } finally {
@@ -45,10 +48,10 @@ export default function Recommend(){
         setSwipeDirection(direction);
         if(direction === "right"){
             try{
-                addToFavorites(currentBook._id);
+                addToWishlist(currentBook._id);
                 
             }catch(err){
-                console.error("Błąd dodawania do ulubionych:", err);
+                console.error("Błąd dodawania do listy życzeń:", err);
             }
         }
 
@@ -63,19 +66,19 @@ export default function Recommend(){
     const progress = recommendations.length > 0 
     ? ((currentIndex / recommendations.length) * 100).toFixed(0) : 0;
 
-    const addToFavorites = async (bookId) => {
+    const addToWishlist = async (bookId) => {
         try{
-        const response = await fetch("/auth/add_favorite", {
+        const response = await fetch("/auth/add_wishlist", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ book_id: bookId }),
         });
 
         if(response.ok){
-            alert("Książka dodana do ulubionych!");
+            alert("Książka dodana do listy życzeń!");
         }
     } catch(err){
-        alert("Błąd podczas dodawania do ulubionych");
+        alert("Błąd podczas dodawania do listy życzeń.");
 
         }    
     }
@@ -233,7 +236,7 @@ export default function Recommend(){
                 fontSize: "14px",
                 color: "#7A6A62"
             }}>
-                <p>x Pomiń • ❤️ Dodaj do ulubionych</p>
+                <p>x Pomiń • ❤️ Dodaj do listy życzeń</p>
             </div>
         </div>
             )}
@@ -254,7 +257,7 @@ export default function Recommend(){
                         Przejrzano {recommendations.length} książek 
                     </p>
                     <button 
-                        onCLick={generateRecommendations}
+                        onClick={generateRecommendations}
                         style={{
                             backgroundColor: "#D4C9BE",
                             border: "2px solid #5A4A42",
