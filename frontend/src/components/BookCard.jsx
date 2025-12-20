@@ -57,7 +57,8 @@ export default function BookCard({book,
             transform: isHovered ? "translateY(-4px)" : "none",
             boxShadow: isHovered ? "0 8px 16px rgba(0,0,0,0.15)" : "none",
             display: "flex",
-            flexDirection: "column"
+            flexDirection: "column",
+            height: "600px"
             
         }}
         onMouseEnter={() => setIsHovered(true)}

@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Layout from "../components/Layout"
 import { useNavigate } from "react-router-dom";
+import BookCarousel from "../components/BookCarousel";
 
 export default function Home(){
 
@@ -45,6 +46,23 @@ export default function Home(){
     ]
 
     const pyramidRows = InvertedPyramid(emotions, 8);
+
+    const getRandomEmotion = () => {
+        const available = emotions.filter(
+            (emotion) => emotion.name !== "Szczęśliwy traf"
+        );
+        return available[Math.floor(Math.random() * available.length)];
+    }
+
+    const [topRated, setTopRated] = useState([]);
+
+    useEffect(() => {
+        fetch("/main/books/top-rated")
+        .then(res => res.json())
+        .then(setTopRated);
+    }, [])
+
+    console.log(topRated)
 
     return(
 
@@ -98,10 +116,15 @@ export default function Home(){
                         }}
                         
                         onClick={() => {
+                            if(emotion.name === "Szczęśliwy traf"){
+                                const randomEmotion = getRandomEmotion();
+                                setSelectedEmotion(randomEmotion.name);
+                                navigate(`/search?emotion=${encodeURIComponent(randomEmotion.name)}`);
+                            } else {
                             setSelectedEmotion(emotion.name);
                             if(emotion.name=="Nieodkryte") emotion.name="neutral"
                             navigate(`/search?emotion=${encodeURIComponent(emotion.name)}`);
-                        }}
+                        }}}
                     >  
                     <span style={{fontSize: "24px", backgroundColor: "transparent"}}>{emotion.emoji}</span> 
                     <span style={{backgroundColor: "transparent"}}>{emotion.name}</span>
@@ -138,11 +161,11 @@ export default function Home(){
                 </div>
 
 
-                <Section title="Najwyżej notowane książki po emocjach" description="Lista książek o najwyższych ocenach w danej emocji." />
+                <Section title="Najwyżej notowane książki po emocjach" description="Lista książek o najwyższych ocenach w danej emocji."/>
 
                 <Section title="Książki na każdy nastrój" description="Wybierz książkę na każdy humor" />
 
-                <Section title="Najwyżej ocenione" description ="Książki o najwyższych ocenach"/>
+                <Section title="Najwyżej ocenione" description ="Książki o najwyższych ocenach"  books={topRated} />
 
                 <Section title="Na zimowy wieczór" description="Książki idealne na długie, zimowe wieczory"/> 
 
@@ -150,17 +173,17 @@ export default function Home(){
     )
 }
 
-function Section({title, description}){
+function Section({title, description, books}){
     return(
         <div style={{marginBottom: "50px", paddingBottom: "30px", borderBottom: "1px solid #ccc", marginLeft: "10%", marginRight:"10%"}}>
             <h3 style={{fontSize: "26px", marginBottom: "10px", color: "#123568"}}>{title}</h3>
             <p style={{fontSize: "16px", marginBottom: "20px", color: "#7A6A62"}}>{description}</p>
             <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "15px"}}>
-                {[1, 2, 3, 4].map((i) => (
-                 <div key = {i} style={{backgroundColor: "#F5F5F0", borderRadius: "8px", height: "220px", border: "2px solid #E0D9D0", display: "flex", alignItems: "center", justifyContent: "center", COLOR: "#b0a599", fontSize:"14px"}}>
-                    Okładka {i}
-                 </div>   
-                ))}
+                <BookCarousel
+                    title={title}
+                    description={description}
+                    books={books}
+                />
             </div>
         </div>
     );

@@ -6,6 +6,8 @@ export default function Book(){
 
     const { id } = useParams();
     const [book, setBook] = useState(null);
+    const [isFavorite, setIsFavorite] = useState(false);
+    const [addingToFavorites, setAddingToFavorites] = useState(false);
 
     useEffect(() =>{
         fetch(`/main/book?id=${id}`)
@@ -14,35 +16,317 @@ export default function Book(){
         .catch((err)=>console.error(err))
     }, [id]);
 
+  const addFavorite = async (bookId) => {
+    const response = await fetch("/auth/add_favorite", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ book_id: bookId }),
+    }).then(response => response.json())
+    .then((data) => {
+      alert(data.message);
+    })
+  };
+
+  const addWishlist = async (bookId) => {
+    const response = await fetch("/auth/add_wishlist", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ book_id: bookId }),
+    }).then(response => response.json())
+    .then((data) => {
+      alert(data.message);
+    })
+  };
+
     if(!book) return <Layout pageTitle = "Ładowanie..."></Layout>  ;
 
     return(
 <Layout pageTitle = {book.title}>
-
-    <div style={{display: "inline-block"}}>
+    <div style={{
+        maxWidth: "1200px",
+        margin: "0 auto",
+        padding: "0 20px 40px"
+    }}>
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "300px 1fr",
+        gap: "40px",
+        marginBottom: "40px"
+      }}>
         <div>
-            <input type="image" src={book.coverImage} style={{width: "10%", height: "10%", marginTop: "3vw", position: "relative", left: "30vw", float: "left"}} ></input>    
-        </div>
-    <div className = "book-details" style={{marginLeft: "18vw"}}>
-        <div style={{marginLeft: "24vw", maxWidth: "800px"}}>
-        <span style={{fontWeight: "bold"/* , display: "inline-block", textIndent: "0", paddingLeft: "60vw" */}}>Autor: </span>{ String(book.authors.map(author=> author.name)).replace(/\[/g, '').replace(/\]/g, '').replace(/'/g, '') }<br/><br/>
-        <span style={{fontWeight: "bold"}}>Wydawnictwo: </span>{ book.publisher } <br/><br/>
-        <span style={{fontWeight: "bold"}}>Kategoria: </span>{String(book.category).replace(/\[/g, '').replace(/\]/g, '').replace(/'/g, '') }<br/><br/>
-        <span style={{fontWeight: "bold"}}>Ilość stron: </span>{ book.pages } str.<br/><br/>
-        <span style={{fontWeight: "bold"}}>Ocena: </span>{ book.rating} <br/><br/>
-        <span style={{fontWeight: "bold"}}>Ilość ocen: </span>{ book.ratingsCount } <br/><br/>
-        <span style={{fontWeight: "bold"}}>Data wydania: </span>{ book.releaseDate ? (typeof book.releaseDate === 'object' && book.releaseDate.$date ? new Date(book.releaseDate.$date).toLocaleDateString() : book.releaseDate) : 'Brak daty'} <br/><br/>
-        </div>
-        <span style={{fontWeight: "bold", marginLeft: "24vw"}}>{(book.longDescription ? "Opis fabuły:" : "")}</span><div/><br/>
+          <div style={{
+            backgroundColor: "#E0D9D0",
+            borderRadius: "12px",
+            overflow: "hidden",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
+            marginBottom: "3px solid #D4C9BE"
+          }}>
+            {book.coverImage ? (
+              <img
+                src={book.coverImage}
+                alt={book.title}
+                style={{
+                  width: "100%",
+                  display: "block"
+                }}
+                />
+              ) : (
+                <div style={{
+                  height: "400px",
+                  display: "flex",
+                  justifyContent: "center",
+                  color: "#B0A599",
+                  fontSize: "16px"
+                }}> 
+                Brak okładki
+                </div>
+
+            )}
+          </div>
+        <button
+          onClick={addFavorite}
+          disabled={isFavorite || addingToFavorites}
+          style={{
+            width: "100%",
+            padding: "15px",
+            backgroundColor: isFavorite ? "#98FB98" : "#FFB6C1",
+            border: "2px solid #5A4A42",
+            borderRadius: "8px",
+            fontSize: "16px",
+            fontWeight: "600",
+            color: "#5A4A42",
+            cursor: isFavorite || addingToFavorites ? "not-allowed" : "pointer",
+            marginBottom: "10px",
+            transition: "all 0.2s ease",
+            marginTop: "15px"
+          }}
+          onMouseOver = {(e) => {
+            if(!isFavorite && !addingToFavorites){
+              e.currentTarget.style.backgroundColor = "#FF9AA2";
+            }
+          }}
+          onMouseOut={(e) => {
+            if(!isFavorite && !addingToFavorites){
+            e.currentTarget.style.backgroundColor = "#FFB6C1"
+            }
+          }}>
+            {isFavorite ? "W ulubionych" : addingToFavorites ? "Dodawanie..." : "Dodaj do ulubionych"}
+          </button>
+          <div>
+              <div style={{
+                display: "flex",
+                gap: "15px",
+                marginBottom: "25px",
+                flexWrap: "wrap"
+              }}>
+              {book.rating &&(
             <div style={{
-                marginLeft: "5vw",
-                marginRight: "14vw"
+              backgroundColor: "#fffadeff",
+              padding: "10px 20px",
+              borderRadius: "25px",
+              fontSize: "18px",
+              fontWeight: "bold",
+              color: "#5A4A42",
+              border: "2px solid #ffdc82ff"
             }}>
-                { book.longDescription }
+              ⭐ {book.rating}
+              {book.ratingsCount && (
+                <span style={{
+                  fontSize: "14px",
+                  marginLeft: "8px"
+                }}>
+                  ({book.ratingsCount} ocen)
+                </span>
+              )}
             </div>
-        
+            )}
+            {book.dominant_emotion && book.dominant_emotion.length > 0 && (
+              book.dominant_emotion.map((emotion, idx) => (
+                <div 
+                key={idx}
+                style={{
+                  backgroundColor: "#bdd4ffff",
+                  padding: "10px 20px",
+                  borderRadius: "25px",
+                  fontSize: "15px",
+                  fontWeight: "600",
+                  color: "#5A4A42",
+                  border: "2px solid #0e005bff"
+                }}>
+                  {emotion}
+                  </div>
+              ))
+            )}
+          </div>
+          
+          <div style={{
+            backgroundColor: "#F9F7F4",
+            padding: "30px",
+            borderRadius: "15px",
+            border: "2px solid #E0D0D0",
+            marginBottom: "30px"
+          }}>
+            <InfoRow label="Autor" value={book.authors.map(a => a.name || a).join(", ")} />  
+              {book.publisher && <InfoRow label="Wydawnictwo" value={book.publisher} /> }
+              {book.category && <InfoRow label="Kategoria" value={book.category} /> }
+              {book.pages && <InfoRow label="Liczba stron" value={book.pages + " str."} />}
+              {book.releaseDate && <InfoRow label="Data wydania" value={book.releaseDate} /> }          
+              {book.isbn && <InfoRow label="ISBN" value={book.isbn} /> }
+              </div>
+              {(book.longDescription || book.shortDescription) && (
+                <div style={{
+                  backgroundColor: "#F9F7F4",
+                  padding: "30px",
+                  borderRadius: "15px",
+                  border: "2px solid #E0D9D0"
+                }}>
+                  <h3 style={{
+                    fontSize: "22px",
+                    color: "#5A4A42",
+                    marginBottom: "15px",
+                    fontWeight: "600"
+                  }}>
+                    Opis fabuły
+                  </h3>
+                  <p style={{
+                    fontSize: "16px",
+                    lineHeight: "1.8",
+                    color: "#5A4A42",
+                    margin: 0
+                  }}>
+                    {book.longDescription || book.shortDescription}
+                  </p>
+                  </div>
+              )}
+      </div>
     </div>
-    </div>
+
+    {book.reviews && book.reviews.length >0 && (
+      <div style={{
+        backgroundColor: "#F9F7F4",
+        padding: "30px",
+        borderRadius: "15px",
+        border: "2px solid #E0D9D0"
+      }}>
+        <h3 style={{
+          fontSize: "22px",
+          color: "#5A4A42",
+          marginBottom: "20px",
+          fontWeight: "600"
+        }}>
+          Recenzje ({book.reviews.length})
+        </h3>
+        <div style={{
+          display: "grid",
+          gap: "20px"
+        }}>
+          {book.reviews.map((review, idx) => (
+            <ReviewCard key={idx} review={review} />
+          ))}
+          </div>
+        </div>
+    )}
+        </div> 
+    </div> 
 </Layout>  
-    )
+    );
+}
+
+function InfoRow({ label, value}) {
+  return (
+    <div style={{
+      marginBottom: "15px"
+    }}>
+      <span style={{
+        fontWeight: "bold",
+        color: "#5A4A42",
+        fontSize: "15px",
+        marginRight: "8px"
+      }}>
+        {label}: 
+      </span>
+      <span style={{
+        color: "#7A6A62",
+        fontSize: "15px"
+      }}>
+        {value}
+      </span>
+    </div>
+  );
+}
+
+function ReviewCard({review}) {
+  return(
+    <div style={{
+      backgroundColor: "white",
+      padding: "20px",
+      borderRadius: "12px",
+      border: "2px solid #E0D9D0",
+    }}>
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: "12px"
+      }}>
+        <div>
+          <span style={{
+            fontWeight: "600",
+            color: "#5A4A42",
+            fontSize: "16px"
+          }}>
+            {review.author}
+          </span>
+          {review.rating && (
+            <span style={{
+              marginLeft: "12px",
+              fontSize: "14px",
+              color: "#FFD700",
+              fontWeight: "bold"
+            }}>
+              ⭐ {review.rating}/10
+            </span>
+          )}
+        </div>
+        {review.date && (
+          <span style={{
+            fontSize: "13px",
+            color: "#B0A599"
+          }}>
+            {review.date}
+          </span>
+        )}
+      </div>
+      <p style={{
+        fontSize: "15px",
+        lineHeight: "1.6",
+        color: "#5A4A42",
+        margin: "0 0 12px 0"
+      }}> 
+        {review.text}
+      </p>
+
+      {review.emotions && review.emotions.length > 0 && (
+        <div style={{
+          display: "flex",
+          gap: "8px",
+          flexWrap: "wrap"
+        }}>
+          {review.emotions.map((emotion, idx) => (
+            <span
+              key={idx}
+              style={{
+                backgroundColor: "#E6E6FA",
+                padding: "4px 12px",
+                borderRadius: "12px",
+                fontSize: "12px",
+                color: "#5A4A42"
+              }}>
+                {emotion}
+              </span>
+          ))}
+          </div>
+      )}
+    </div>
+  )
 }

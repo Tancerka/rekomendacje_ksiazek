@@ -209,6 +209,32 @@ def book():
 
     return jsonify(book), 200
 
+# ---------------- GET TOP RATED BOOKS ----------------
+
+@main_bp.route("/books/top-rated", methods=['GET'])
+def top_rated():
+    books = list(
+        mongo.db.books.find()
+        .sort("rating", -1)
+        .limit(20)
+    )
+    for b in books:
+        b["_id"] = str(b["_id"])
+    return jsonify(books)
+
+# ---------------- GET ALL TOP RATED BOOKS BY EMOTION ----------------
+
+""" @main_bp.route("/books/by-emotion", methods=['GET'])
+def top_rated():
+    books = list(
+        mongo.db.books.find()
+        .sort("rating", -1)
+        .limit(20)
+    )
+    for b in books:
+        b["_id"] = str(b["_id"])
+    return jsonify(books) """
+
 # ---------------- RECOMMENDATIONS ----------------
 
 @main_bp.route('/recommendations', methods=['GET'])
