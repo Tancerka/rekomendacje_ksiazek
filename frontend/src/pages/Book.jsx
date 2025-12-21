@@ -5,6 +5,7 @@ import Layout from "../components/Layout"
 export default function Book(){
 
     const { id } = useParams();
+    const [user, setUser] = useState(null);
     const [book, setBook] = useState(null);
     const [isFavorite, setIsFavorite] = useState(false);
     const [addingToFavorites, setAddingToFavorites] = useState(false);
@@ -23,6 +24,10 @@ export default function Book(){
           setIsFavorite(data.isFavorite);
           setIsWishlist(data.isWishlist)
         })
+
+        fetch("/auth/me", {credentials: "include"})
+        .then(res => res.json())
+        .then(data => setUser(data.user))
     }, [id]);
 
   const addFavorite = async (bookId) => {
@@ -109,6 +114,8 @@ export default function Book(){
 
             )}
           </div>
+          {user && (
+            <>
         <button
           onClick={() => addFavorite(book._id)}
           disabled={isFavorite || addingToFavorites}
@@ -168,12 +175,15 @@ export default function Book(){
           }}>
             {isWishlist ? "Na liście życzeń" : addingToWishlist? "Dodawanie..." : "Dodaj do listy życzeń"}
           </button>
+          </>
+          )}
           <div>
               <div style={{
                 display: "flex",
                 gap: "15px",
                 marginBottom: "25px",
-                flexWrap: "wrap"
+                flexWrap: "wrap",
+                marginTop: "20px"
               }}>
               {book.rating &&(
             <div style={{
