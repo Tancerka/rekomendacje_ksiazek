@@ -21,7 +21,6 @@ def update_profile():
 
     new_username = data.get("username")
     new_email = data.get("email")
-    new_password = data.get("password")
 
     user_id = current_user.id
 
@@ -31,88 +30,33 @@ def update_profile():
     if new_email:
         update_user_email(user_id, new_email)
 
-    if new_password:
-        update_user_password(user_id, new_password)
-
     return jsonify({"message": "Profil zaktualizowany"}), 200
 
 
 
+# ---------------- UPDATE PASSWORD ----------------
+
+@main_bp.route('/change_password', methods=['POST'])
+@login_required
+def change_password():
+    data = request.json
+
+    old_password = data.get("oldPassword")
+    new_password = data.get("newPassword")
+
+    if not old_password or not new_password:
+        return jsonify({"error": "Brak danych"}), 400
+    
+    if not current_user.check_password(old_password):
+        return jsonify({"error": "Nieprawidłowe stare hasło"}), 403
+    
+    update_user_password(current_user.id, new_password)
+
+    return jsonify({"message": "Hasło zmienione"}), 200
+
+
+
 # ---------------- SEARCH ----------------
-
-""" @main_bp.route('/search', methods=['GET'])
-def search():
-    print(f"query")
-    query = request.args.get("q", "").strip()
-    page = int(request.args.get("page", 1))
-    limit = int(request.args.get("limit", 50))
-    skip = (page-1)*limit
-    filter_option = request.args.get("filter", "all")
-    sort_option = request.args.get("sort", "asc")
-
-    if not query:
-        return jsonify({"query": "", "results": []}), 200
-
-    if filter_option == "books":
-        filters = {"Title": {"$regex": query, "$options": "i"}}
-
-    elif filter_option == "authors":
-        filters = {"authors": {"$regex": query, "$options": "i"}}
-
-    elif filter_option == "categories":
-        filters = {"categories": {"$regex": query, "$options": "i"}}
-
-    else: 
-        filters = {
-            "$or": [
-                {"Title": {"$regex": query, "$options": "i"}},
-                {"authors": {"$regex": query, "$options": "i"}},
-                {"categories": {"$regex": query, "$options": "i"}},
-            ]
-        }
-
-    sort_field = "Title"
-    sort_direction = 1
-
-    if sort_option == "desc":
-        sort_direction = -1
-
-    results = mongo.db.books.find(
-            filters,
-            {"Title": 1, "authors": 1, "categories": 1, "image":1}
-        ).sort(sort_field, sort_direction)
-
-    books = list(results.skip(skip).limit(limit))
-    total_count = mongo.db.books.count_documents(filters)
-
-    for book in books:
-        book["_id"] = str(book["_id"])
-
-    return jsonify({
-        "query": query,
-        "results": books,
-        "page":page, 
-        "limit":limit,
-        "total_count": total_count
-    }), 200
-
-
-
-# ---------------- GET BOOK BY ID ----------------
-
-@main_bp.route('/book', methods=['GET'])
-def book():
-    book_id = request.args.get("id")
-    if not book_id:
-        return jsonify({"error": "Brak ID książki"}), 400
-
-    book = mongo.db.books.find_one({"_id": ObjectId(book_id)})
-    if not book:
-        return jsonify({"error": "Nie znaleziono książki"}), 404
-
-    book["_id"] = str(book["_id"])
-
-    return jsonify(book), 200 """
 
 
 @main_bp.route('/search', methods=['GET'])
@@ -300,6 +244,11 @@ def recommendations():
                         for fav_id in user['favorites']]
         favorite_books = list(mongo.db.books.find({'_id': {'$in': favorite_ids}}))
 
+        wishlist_ids = [ObjectId(wish_id) if isinstance(wish_id, str) else wish_id
+                        for wish_id in user['wishlist']]
+        
+        excluded_ids = list(set(favorite_ids+wishlist_ids))
+
         # zbierz dane z książek
         emotion_counts = Counter()
         categories = set()
@@ -339,7 +288,7 @@ def recommendations():
         # wyszukanie podobnych książek
 
         query = {
-            '_id': {'$nin': favorite_ids},
+            '_id': {'$nin': excluded_ids},
             'rating': {'$gte': avg_rating -1.5}
         }
 

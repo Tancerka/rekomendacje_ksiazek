@@ -11,6 +11,11 @@ export default function Profile(){
     const [edit, setEdit] = useState([])
     const [profile, setProfile] = useState({username: "", email: ""});
     const [loading, setLoading] = useState(false);
+    const [passwords, setPasswords] = useState({
+        oldPassword: "",
+        newPassword: "",
+        repeatNewPassword: ""
+    });
 
     useEffect(() => {
         loadData();
@@ -19,21 +24,23 @@ export default function Profile(){
     const loadData = async () => {
         setLoading(true);
         try{
-/*             const recRes = await fetch("/auth/recommendations", {credentials: "include"})
+            
+            const recRes = await fetch(`/main/recommendations?offset=0&limit=10`, {credentials: "include"})
             const recData = await recRes.json();
-            setRecommendations(recData.recommendations || []); */
-
+            setRecommendations(recData.recommendations || []); 
+            
             const favRes = await fetch("/auth/favorites", {credentials: "include"})
             const favData = await favRes.json();
             setFavorites(favData.favorites || []);
-
+            
             const wishRes = await fetch("/auth/wishlist", {credentials: "include"})
             const wishData = await wishRes.json();
             setWishlist(wishData.wishlist || []);
-
+            
             const profileRes = await fetch("auth/profile", {credentials: "include"});
             const profileData = await profileRes.json()
             setProfile(profileData);
+            
         }catch(err){
             console.error("Load error", err)
         }
@@ -119,8 +126,31 @@ export default function Profile(){
         alert("Zapisano zmiany");
     }
 
-    const toggleElements = () => {
+    const changePassword = async () => {
         
+        if(passwords.newPassword !== passwords.repeatNewPassword){
+            alert("Hasła się nie zgadzają.");
+            return;
+        }
+
+        const res = await fetch("/auth/change_password", {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json"},
+            body: JSON.stringify({
+                oldPassword: passwords.oldPassword,
+                newPassword: passwords.newPassword
+            })
+        });
+
+        const data = await res.json();
+
+        if(res.ok){
+            alert("Hasło zmienione.");
+            setPasswords({ oldPassword: "", newPassword: "", repeatNewPassword: ""});
+        } else{
+            alert(data.error || "Błąd zmiany hasła.");
+        }
     }
 
     const inputStyle = {
@@ -349,9 +379,9 @@ export default function Profile(){
                             </label>
                             <input 
                                 id="input-oldPasswd"
-                                type="oldPassword"
-                                value={profile.oldPassword}
-/*                                 onChange={(e) => setProfile({...profile, email: e.target.value})} */
+                                type="password"
+                                value={passwords.oldPassword}
+                                onChange={(e) => setPasswords({...passwords, oldPassword: e.target.value})} 
                                 style={inputStyle}
                                 />     
                             <label 
@@ -363,13 +393,14 @@ export default function Profile(){
                             </label>
                             <input 
                                 id="input-newPasswd"
-                                type="newPassword"
-                                value={profile.newPassword}
-/*                                 onChange={(e) => setProfile({...profile, email: e.target.value})} */
+                                type="password"
+                                value={passwords.newPassword}
+                                onChange={(e) => setPasswords({...passwords, newPassword: e.target.value})}
                                 style={inputStyle}
                                 />
                             <label 
                                 id="label-repeatPasswd"
+                                type="password"
                                 style={{
                                     color: "#7A6A62"
                                 }}>
@@ -377,15 +408,22 @@ export default function Profile(){
                             </label>
                             <input 
                                 id="input-repeatPasswd"
-                                type="repeatNewPassword"
-                                value={profile.repeatNewPassword}
-/*                                 onChange={(e) => setProfile({...profile, email: e.target.value})} */
+                                type="password"
+                                value={passwords.repeatNewPassword}
+                                onChange={(e) => setPasswords({...passwords, repeatNewPassword: e.target.value})}
                                 style={inputStyle}
                                 />
                                     <button 
                                         id="toggle-passwd"
                                         style={BtnStyle}
-                                        onClick={toggleElements}>
+                                        onClick={changePassword}
+                                        onMouseOver={(e) => {
+                                            e.currentTarget.style.backgroundColor = "#645750ff";
+                                        }}
+                                        onMouseOut={(e) => {
+                                            e.currentTarget.style.backgroundColor = "#7A6A62";
+                                        }}
+                                        >
                                             Zmień hasło
                                     </button>
                                 </div>

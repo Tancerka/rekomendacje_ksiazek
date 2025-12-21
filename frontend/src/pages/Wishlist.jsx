@@ -20,7 +20,7 @@ export default function Wishlist(){
           credentials: "include"
         });
         if(!response.ok){
-          throw new Error("Błąd podczas pobierania ulubionych książek");
+          throw new Error("Błąd podczas pobierania listy życzeń");
         }
         const data = await response.json();
         console.debug(data.wishlist);
@@ -45,7 +45,7 @@ export default function Wishlist(){
         setWishlist(wishlist.filter(book => book._id !== bookId));
       }
     } catch(err){
-      alert("Błąd podczas usuwania z ulubionych");
+      alert("Błąd podczas usuwania z listy życzeń");
     }
   };
 
@@ -86,7 +86,7 @@ export default function Wishlist(){
             key={book._id}
             book={book}
             onAction={removeFromWishlist}
-            actionLabel="Usuń z ulubionych"
+            actionLabel="Usuń z listy"
             actionConfirmLabel={"Czy na pewno chcesz usunąć?"}
           />
         ))}

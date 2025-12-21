@@ -41,15 +41,18 @@ export default function BookCarousel({books}){
                                 minWidth: "220px",
                                 cursor: "pointer",
                             }}>
-                            <BookCard book={book} />
-                            <div style={{
-                                fontSize: "24px",
+                            <div
+                                className="montecarlo-regular"                            
+                                style={{
+                                fontSize: "40px",
+                                letterSpacing: "2px",
                                 color: "#123578",
                                 textAlign: "center",
                                 marginTop: "4px"
                             }}>
                                 {book.emotion==="neutral" ? book.emotion="nieodkryte" : book.emotion}
                                 </div>
+                            <BookCard book={book} />
                         </div>
                     ))}
                 </div>

@@ -8,34 +8,60 @@ export default function Book(){
     const [book, setBook] = useState(null);
     const [isFavorite, setIsFavorite] = useState(false);
     const [addingToFavorites, setAddingToFavorites] = useState(false);
+    const [isWishlist, setIsWishlist] = useState(false);
+    const [addingToWishlist, setAddingToWishlist] = useState(false);
 
     useEffect(() =>{
         fetch(`/main/book?id=${id}`)
         .then((res)=>res.json())
         .then((data) => setBook(data))
         .catch((err)=>console.error(err))
+
+        fetch(`/auth/book_status/${id}`, {credentials: "include"})
+        .then(res=>res.json())
+        .then(data=> {
+          setIsFavorite(data.isFavorite);
+          setIsWishlist(data.isWishlist)
+        })
     }, [id]);
 
   const addFavorite = async (bookId) => {
-    const response = await fetch("/auth/add_favorite", {
+    setAddingToFavorites(true);
+    setIsFavorite(true);
+    const res = await fetch("/auth/add_favorite", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ book_id: bookId }),
-    }).then(response => response.json())
-    .then((data) => {
-      alert(data.message);
     })
+    const data = await res.json()
+    if(res.ok){
+      alert(data.message);
+      setIsFavorite(true);
+    }else{
+      setIsFavorite(false);
+      alert(data.error || "Błąd")
+    }
+    setAddingToFavorites(false);
   };
 
   const addWishlist = async (bookId) => {
-    const response = await fetch("/auth/add_wishlist", {
+    setAddingToWishlist(true);
+    setIsWishlist(true);
+    const res = await fetch("/auth/add_wishlist", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ book_id: bookId }),
-    }).then(response => response.json())
-    .then((data) => {
-      alert(data.message);
     })
+    const data = await res.json()
+    if(res.ok){
+      console.debug(data)
+      alert(data.message);
+      setIsWishlist(true);
+    }else{
+      setIsWishlist(false);
+      alert(data.error || "Błąd")
+    }
+    setAddingToWishlist(false);
   };
 
     if(!book) return <Layout pageTitle = "Ładowanie..."></Layout>  ;
@@ -84,12 +110,12 @@ export default function Book(){
             )}
           </div>
         <button
-          onClick={addFavorite}
+          onClick={() => addFavorite(book._id)}
           disabled={isFavorite || addingToFavorites}
           style={{
             width: "100%",
             padding: "15px",
-            backgroundColor: isFavorite ? "#98FB98" : "#FFB6C1",
+            backgroundColor: isFavorite ? "#eaffeaff" : "#FFB6C1",
             border: "2px solid #5A4A42",
             borderRadius: "8px",
             fontSize: "16px",
@@ -111,6 +137,36 @@ export default function Book(){
             }
           }}>
             {isFavorite ? "W ulubionych" : addingToFavorites ? "Dodawanie..." : "Dodaj do ulubionych"}
+          </button>
+
+          <button
+          onClick={() => addWishlist(book._id)}
+          disabled={isWishlist || addingToWishlist}
+          style={{
+            width: "100%",
+            padding: "15px",
+            backgroundColor: isWishlist ? "#eaffeaff" : "#E6E6FA",
+            border: "2px solid #5A4A42",
+            borderRadius: "8px",
+            fontSize: "16px",
+            fontWeight: "600",
+            color: "#5A4A42",
+            cursor: isWishlist || addingToWishlist ? "not-allowed" : "pointer",
+            marginBottom: "10px",
+            transition: "all 0.2s ease",
+            marginTop: "15px"
+          }}
+          onMouseOver = {(e) => {
+            if(!isWishlist && !addingToWishlist){
+              e.currentTarget.style.backgroundColor = "#d3d3ffff";
+            }
+          }}
+          onMouseOut={(e) => {
+            if(!isWishlist && !addingToWishlist){
+            e.currentTarget.style.backgroundColor = "#E6E6FA"
+            }
+          }}>
+            {isWishlist ? "Na liście życzeń" : addingToWishlist? "Dodawanie..." : "Dodaj do listy życzeń"}
           </button>
           <div>
               <div style={{

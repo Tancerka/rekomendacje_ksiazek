@@ -159,7 +159,7 @@ def update_profile():
 @auth_bp.route("/change_password", methods=['POST'])
 @login_required
 def change_password():
-    data = request.json()
+    data = request.json
     old_pswd = data.get("oldPassword")
     new_pswd = data.get("newPassword")
     repeat_pswd = data.get("repeatNewPassword")
@@ -292,3 +292,22 @@ def remove_wishlist(book_id):
     )
 
     return jsonify({"message": "Usunięto."}), 200
+
+# ---------------- CHECK BOOK STATUS ----------------
+
+@auth_bp.route('/book_status/<book_id>', methods=['GET'])
+@login_required
+def book_status(book_id):
+    book_oid = ObjectId(book_id)
+    user_id = current_user.id
+    user = mongo.db.users.find_one({'_id': ObjectId(user_id)})
+    favorite_ids = [ObjectId(fav_id) if isinstance(fav_id, str) else fav_id
+                        for fav_id in user['favorites']]
+
+    wishlist_ids = [ObjectId(wish_id) if isinstance(wish_id, str) else wish_id
+                        for wish_id in user['wishlist']]
+    
+    return jsonify({
+        "isFavorite": book_oid in favorite_ids,
+        "isWishlist": book_oid in wishlist_ids
+    })
