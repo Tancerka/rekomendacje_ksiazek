@@ -44,6 +44,7 @@ export default function BookCard({book,
         }
     }
 
+/*     console.debug(book) */
     return(
         <div 
         onClick={() => window.location.href = `/book/${book._id}`}
@@ -58,7 +59,8 @@ export default function BookCard({book,
             boxShadow: isHovered ? "0 8px 16px rgba(0,0,0,0.15)" : "none",
             display: "flex",
             flexDirection: "column",
-            height: "600px"
+            height: "600px",
+            width: "220px"
             
         }}
         onMouseEnter={() => setIsHovered(true)}

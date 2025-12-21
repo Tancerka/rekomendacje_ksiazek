@@ -6,8 +6,6 @@ import BookCarousel from "../components/BookCarousel";
 export default function Home(){
 
 
-    const [query, setQuery] = useState("");
-
     const navigate = useNavigate();
 
     const [selectedEmotion, setSelectedEmotion] = useState(null);
@@ -55,14 +53,36 @@ export default function Home(){
     }
 
     const [topRated, setTopRated] = useState([]);
+    const [happyBooks, setHappyBooks] = useState([]);
+    const [topEmotionBooks, setTopEmotionBooks] = useState([]);
 
     useEffect(() => {
         fetch("/main/books/top-rated")
         .then(res => res.json())
         .then(setTopRated);
+
+        fetch("/main/books/by-emotion/Radość")
+        .then(res => res.json())
+        .then(setHappyBooks);
+
+        fetch("/main/books/top-by-emotion")
+        .then(res => res.json())
+        .then(setTopEmotionBooks)
+        
     }, [])
 
-    console.log(topRated)
+    console.debug(topEmotionBooks)
+
+    const flatTopEmotionBooks = Array.isArray(topEmotionBooks) ? topEmotionBooks.flatMap(section => {
+        const booksArray = Array.isArray(section.book) 
+        ? section.book : section.book 
+        ? [section.book] : [];
+        return booksArray.map(book => ({
+            ...book,
+            emotion: section.emotion
+        }))
+    }) : [];
+    console.debug(flatTopEmotionBooks)
 
     return(
 
@@ -122,7 +142,7 @@ export default function Home(){
                                 navigate(`/search?emotion=${encodeURIComponent(randomEmotion.name)}`);
                             } else {
                             setSelectedEmotion(emotion.name);
-                            if(emotion.name=="Nieodkryte") emotion.name="neutral"
+                            if(emotion.name==="Nieodkryte") emotion.name="neutral"
                             navigate(`/search?emotion=${encodeURIComponent(emotion.name)}`);
                         }}}
                     >  
@@ -161,13 +181,13 @@ export default function Home(){
                 </div>
 
 
-                <Section title="Najwyżej notowane książki po emocjach" description="Lista książek o najwyższych ocenach w danej emocji."/>
+                <Section title="Najwyżej notowane książki po emocjach" description="Lista książek o najwyższych ocenach w danej emocji." books={flatTopEmotionBooks}/>
 
-                <Section title="Książki na każdy nastrój" description="Wybierz książkę na każdy humor" />
+                <Section title="Książki na poprawę humoru" description="Pozytywne emocje, radość i ekscytacja :>" books={happyBooks} />
 
                 <Section title="Najwyżej ocenione" description ="Książki o najwyższych ocenach"  books={topRated} />
 
-                <Section title="Na zimowy wieczór" description="Książki idealne na długie, zimowe wieczory"/> 
+                <Section title="Na zimowy wieczór" description="Książki idealne na długie, zimowe wieczory" books={[]}/> 
 
         </Layout>
     )
@@ -180,10 +200,9 @@ function Section({title, description, books}){
             <p style={{fontSize: "16px", marginBottom: "20px", color: "#7A6A62"}}>{description}</p>
             <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "15px"}}>
                 <BookCarousel
-                    title={title}
-                    description={description}
                     books={books}
                 />
+
             </div>
         </div>
     );

@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import BookCard from "../components/BookCard.jsx"
 
-export default function BookCarousel({title, description , books}){
+export default function BookCarousel({books}){
 
     const ref = useRef(null);
     const navigate = useNavigate();
@@ -15,6 +15,8 @@ export default function BookCarousel({title, description , books}){
     }
 
     if(!books || books.length === 0 ) return null;
+
+    console.debug(books);
 
     return(
         <div style={{position: "relative"}}>
@@ -40,6 +42,14 @@ export default function BookCarousel({title, description , books}){
                                 cursor: "pointer",
                             }}>
                             <BookCard book={book} />
+                            <div style={{
+                                fontSize: "24px",
+                                color: "#123578",
+                                textAlign: "center",
+                                marginTop: "4px"
+                            }}>
+                                {book.emotion==="neutral" ? book.emotion="nieodkryte" : book.emotion}
+                                </div>
                         </div>
                     ))}
                 </div>

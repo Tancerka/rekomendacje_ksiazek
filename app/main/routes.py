@@ -222,18 +222,48 @@ def top_rated():
         b["_id"] = str(b["_id"])
     return jsonify(books)
 
-# ---------------- GET ALL TOP RATED BOOKS BY EMOTION ----------------
+# ---------------- GET BOOKS BY EMOTION ----------------
 
-""" @main_bp.route("/books/by-emotion", methods=['GET'])
-def top_rated():
+@main_bp.route("/books/by-emotion/<emotion>", methods=['GET'])
+def by_emotion(emotion):
     books = list(
-        mongo.db.books.find()
-        .sort("rating", -1)
+        mongo.db.books.find({"dominant_emotion": {"$regex": emotion, "$options": "i"}})
         .limit(20)
     )
     for b in books:
         b["_id"] = str(b["_id"])
-    return jsonify(books) """
+    return jsonify(books)
+
+# ---------------- GET ALL TOP RATED BOOKS BY EMOTION ----------------
+
+@main_bp.route("/books/top-by-emotion")
+def top_by_emotion():
+    try: 
+        emotions = mongo.db.books.distinct("dominant_emotion")
+        result = []
+
+        for emotion in emotions:  
+            books = list(
+                mongo.db.books.find(
+                    {
+                        "dominant_emotion": emotion,
+                        "rating": {"$exists":True}
+                    }
+                )
+            .sort("rating", -1)
+            )
+            for book in books:
+                book["_id"] = str(book["_id"])
+
+            if books:
+                result.append({
+                    "emotion": emotion,
+                    "book": book    
+                })
+        return jsonify(result)
+    except Exception as e:
+        print("Błąd:", e)
+        return jsonify({"error": "Nie udało się pobrać książek"}), 500
 
 # ---------------- RECOMMENDATIONS ----------------
 
