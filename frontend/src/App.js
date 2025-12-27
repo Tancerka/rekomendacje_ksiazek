@@ -11,6 +11,7 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Recommend from "./pages/Recommend.jsx";
 import Wishlist from "./pages/Wishlist.jsx";
+import Admin from "./pages/Admin.jsx";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/recommend" element={<Recommend />} />
           <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
     </Router>
   );

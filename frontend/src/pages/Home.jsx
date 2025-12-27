@@ -71,8 +71,6 @@ export default function Home(){
         
     }, [])
 
-    console.debug(topEmotionBooks)
-
     const flatTopEmotionBooks = Array.isArray(topEmotionBooks) ? topEmotionBooks.flatMap(section => {
         const booksArray = Array.isArray(section.book) 
         ? section.book : section.book 
@@ -82,7 +80,6 @@ export default function Home(){
             emotion: section.emotion
         }))
     }) : [];
-    console.debug(flatTopEmotionBooks)
 
     return(
 
@@ -118,7 +115,7 @@ export default function Home(){
                             transform: selectedEmotion === emotion.name ? "translateY(-2px)" : "none",
                             transition: "all 0.3s ease",
                             width: "170px",
-                            height: "110px"
+                            height: "110px",
                         }}
                         onMouseOut={(e) => {
                             if (selectedEmotion !== emotion.name){

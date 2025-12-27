@@ -16,8 +16,6 @@ export default function BookCarousel({books}){
 
     if(!books || books.length === 0 ) return null;
 
-    console.debug(books);
-
     return(
         <div style={{position: "relative"}}>
                 <Arrow 

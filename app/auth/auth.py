@@ -15,10 +15,11 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 # ---------------- USER CLASS ----------------
 
 class User(UserMixin):
-    def __init__(self, user_id, username, email, favorites, wishlist):
+    def __init__(self, user_id, username, email, role, favorites, wishlist):
         self.id = user_id
         self.username = username
         self.email = email
+        self.role = role
         self.favorites = favorites
         self.wishlist = wishlist
 
@@ -31,6 +32,7 @@ def load_user(user_id):
             str(user_data['_id']),
             user_data['username'],
             user_data['email'],
+            user_data['role'],
             user_data.get('favorites', []),
             user_data.get('wishlist', [])
         )
@@ -68,6 +70,7 @@ def register():
     mongo.db.users.insert_one({
         "username": username,
         "email": email,
+        "role": "user",
         "password": generate_password_hash(password),
         "favorites": [],
         "wishlist": []
@@ -94,6 +97,7 @@ def login():
         str(user_data['_id']),
         user_data['username'],
         user_data['email'],
+        user_data['role'],
         user_data.get('favorites', []),
         user_data.get('wishlist', [])
     )
@@ -125,7 +129,8 @@ def get_current_user():
         "user": {
             "id": current_user.id,
             "username": current_user.username, 
-            "email": current_user.email
+            "email": current_user.email,
+            "role": current_user.role
         }
     })
 

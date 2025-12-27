@@ -71,6 +71,8 @@ export default function Book(){
 
     if(!book) return <Layout pageTitle = "Ładowanie..."></Layout>  ;
 
+    console.debug(book.rating);
+
     return(
 <Layout pageTitle = {book.title}>
     <div style={{
