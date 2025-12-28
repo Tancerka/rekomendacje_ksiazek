@@ -64,7 +64,6 @@ export default function Admin(){
 
     const deleteBook = async(bookId) => {
 /*         if(!confirm(`Czy na pewno chcesz usunąć tę książkę?`)) return; */
-
         try{
             const response = await fetch(`/admin/books/${bookId}`, {
                 method: "DELETE",
@@ -581,7 +580,7 @@ function BooksList({ books, onDelete}){
                 <BookRow
                     key={book._id}
                     book={book}
-                    onDelete={() => onDelete(book._id)}
+                    onDelete={() => onDelete(book._id.$oid/*  || book._id */)}
                     />
             ))}
         </div>

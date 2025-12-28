@@ -58,6 +58,19 @@ def get_all_books():
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@admin_bp.route('/books/<book_id>', methods=['DELETE'])
+@admin_required
+def delete_book(book_id):
+    try:
+        result = mongo.db.books.delete_one({"_id": ObjectId(book_id)})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    if result.deleted_count == 0:
+        return jsonify({"error": "Nie znaleziono książki"}), 404
+    return jsonify({"success": True})
+    
+
 
 def normalize(text):
     return text.lower().replace(",", "").strip()
