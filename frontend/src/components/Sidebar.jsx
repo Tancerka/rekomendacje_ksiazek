@@ -41,7 +41,7 @@ return(
                     className="sidebar-btn"
                     onClick={() => window.location.href='/admin'}
                     >
-                    Panel Admina
+                    Panel admina
                     </button>
             </>
         )}
