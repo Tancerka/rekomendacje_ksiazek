@@ -117,6 +117,7 @@ export default function Admin(){
                             setTitle={setTitle}
                             setAuthors={setAuthors}
                             onSubmit={scrapeBook}
+                            loading={loading}
                             />
 
                         {scrapedBook && <BookPreview book={scrapedBook} setMessage={setMessage} setScrapedBook={setScrapedBook} />}
@@ -247,6 +248,7 @@ function AddBookForm({title, authors, setTitle, setAuthors, loading, onSubmit}){
                 />
                 <button
                     onClick={onSubmit}
+                    disabled={loading}
                     onKeyPress={(e) => e.key === 'Enter' && onSubmit()}
                     style={{
                         padding: "15px 40px",
@@ -258,11 +260,15 @@ function AddBookForm({title, authors, setTitle, setAuthors, loading, onSubmit}){
                         fontWeight: "600",
                     }}
                     onMouseOver={(e) => {
+                        if(!loading){
                             e.currentTarget.style.backgroundColor= "#72625aff";
+                        }
                         }
                     }
                     onMouseOut={(e) => {
+                        if(!loading){
                             e.currentTarget.style.backgroundColor= "#5A4A42";
+                        }
                         }
                     }
                     >
@@ -274,6 +280,7 @@ function AddBookForm({title, authors, setTitle, setAuthors, loading, onSubmit}){
 }
 
 function BookPreview({book, setMessage, setScrapedBook}){
+    console.debug(book)
     return(
         <>
         <div style={{
@@ -312,7 +319,7 @@ function BookPreview({book, setMessage, setScrapedBook}){
                     <p style={{
                         color: "#7A6A62",
                         marginBottom: "10px"
-                    }}>
+                    }}> <span style={{ fontWeight: "800"}}> Autor: </span>
                         {book.authors?.map(a => a.name).join(", ")}
                     </p>
                     <p style={{
@@ -343,7 +350,7 @@ function BookPreview({book, setMessage, setScrapedBook}){
                         color: "#7A6A62",
                         marginBottom: "10px",
                     }}> <span style={{ fontWeight: "800"}}> Liczba stron: </span>
-                        {book.pages != null ? `${book.pages}+str.` : "Brak"}
+                        {book.pages != null ? `${book.pages} str.` : "Brak"}
                     </p>
                     <p style={{
                         color: "#7A6A62",
@@ -388,7 +395,7 @@ function BookPreview({book, setMessage, setScrapedBook}){
                     }}> <span style={{ fontWeight: "800"}}> Liczba recenzji: </span>
                         {book.reviews.length}
                     </p>
-                    {book.reviews.map(rev => {
+                    {book.reviews.map(rev => (
                         <div style={{
                             backgroundColor: "#FAF8F6",
                             borderRadius: "12px",
@@ -418,7 +425,7 @@ function BookPreview({book, setMessage, setScrapedBook}){
                                 color: "#7A6A62",
                                 marginBottom: "10px",
                             }}> <span style={{ fontWeight: "800"}}> Data: </span>
-                                {rev.author}
+                                {rev.date}
                             </p>
                             <div style={{
                                 display: "flex",
@@ -429,7 +436,7 @@ function BookPreview({book, setMessage, setScrapedBook}){
                                     <span
                                         key={i}
                                         style={{
-                                            backgroundColor: "#FFB6C1",
+                                            backgroundColor: "#E6E6FA",
                                             padding: "6px 12px",
                                             borderRadius: "15px",
                                             fontSize: "13px",
@@ -441,7 +448,7 @@ function BookPreview({book, setMessage, setScrapedBook}){
                                 ))}
                             </div>
                         </div>
-                    })}
+                    ))}
                     <div style={{
                         display: "flex",
                         gap: "8px",
@@ -519,7 +526,7 @@ function BookPreview({book, setMessage, setScrapedBook}){
                 type="text"
                 value={value}
                 onChange={(e) => onChange(e.target.value)} 
-                onKeyPress={(e) => e.key === 'Enter' && onSearch()}
+/*                 onKeyPress={(e) => e.key === 'Enter' && onSearch()} */
                 placeholder="Szukaj po tytule lub autorze..."
                 style={{
                     flex:1,

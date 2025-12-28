@@ -139,30 +139,37 @@ def scrape_book():
     })
 
 def scrape_book_page(book_url, max_reviews: int = 10):
-    r = requests.get(book_url, headers={"User-Agent": "Mozilla/5/0"}, timeout=10)
+    print("Aaaaaaaa")
+    r = requests.get(book_url, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
     r.raise_for_status()
     soup = BeautifulSoup(r.text, "html.parser")
 
     book_id_match = re.search(r'/ksiazka/(\d+)', book_url)
     book_id = book_id_match.group(1) if book_id_match else None
+    print("book id")
 
     title = soup.select_one('meta[property="og:title"]')
     title = title["content"].split("|")[0].strip() if title else None
+    print("title")
 
     short_description = soup.select_one('meta[name="description"]')
     short_description = short_description["content"] if short_description else None
+    print("short description")
 
     long_desc_elem = soup.select_one('#book-description .collapse-content p')
     long_description = long_desc_elem.get_text(strip=True) if long_desc_elem else short_description
+    print("long description")
 
     isbn_elem = soup.select_one('meta[property="books:isbn"]')
     isbn = isbn_elem["content"] if isbn_elem else None
+    print("isbn")
 
     publisher_elem = soup.select_one('a[href*="/wydawnictwo/"]')
     publisher = publisher_elem.get_text(strip=True) if publisher_elem else None
+    print("publisher")
 
     authors = []
-    for a in soup.select('.book__author a[href*="/autor/"]'):
+    for a in soup.select('a.link-name'):
         name = a.get_text(strip=True)
         href=a.get("href")
         author_id_match = re.search(r'/autor/(\d+)', href)
@@ -176,9 +183,7 @@ def scrape_book_page(book_url, max_reviews: int = 10):
         })
 
     category = None
-    publisher = None
     release_date = None
-    pages = None
 
     for dt, dd in zip(soup.select("dt"), soup.select("dd")):
         label = dt.get_text(strip=True)
@@ -187,34 +192,37 @@ def scrape_book_page(book_url, max_reviews: int = 10):
         if "Gatunek" in label or "Kategoria" in label:
             category = value
 
-        if "Wydawnictwo" in label:
-            publisher = value
-
         if "Data wydania" in label:
             release_date = value
 
-        elif "Stron" in label: 
-            pages = int(re.search(r'\d+', value).group())
+    pages_elem = soup.select_one('span.book__pages')
+    pages = int(re.search(r'\d+', pages_elem.get_text()) .group()) if pages_elem else None
+    print("pages")
 
     rating_elem = soup.select_one('meta[property="books:rating:value"]')
     rating = float(rating_elem["content"]) if rating_elem else None
+    print("rating")
 
-    ratings_count_meta = soup.select_one('meta[property="books:rating:count"]')
-    ratings_count = int(ratings_count_meta["content"]) if ratings_count_meta else None
+    ratings_count_meta = soup.select_one('a.btn-details.book-pages')
+    ratings_count = int(re.search(r'\d+', ratings_count_meta.get_text().replace(',', '')) .group()) if ratings_count_meta else None
+    print("rating count")
 
     cover = soup.select_one('meta[property="og:image"]')
     cover_image = cover["content"] if cover else None
+    print("cover")
 
     canonical = soup.select_one('link[rel="canonical"]')
     url = canonical["href"] if canonical else book_url
+    print("url")
 
     reviews = []
-    reviews_url = f"htpps://lubimyczytac.pl/ksiazka/{book_id}/recenzje"
+    reviews_url = f"https://lubimyczytac.pl/ksiazka/{book_id}/recenzje"
     try:
         rr = requests.get(reviews_url, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
         rr.raise_for_status()
         soup_r = BeautifulSoup(rr.text, "html.parser")
-        reviews_elements = soup_r.select('.comment-cloud')[:max_reviews]
+        reviews_elements = soup_r.select('.comment-cloud, .comment_cloud')[:max_reviews]
+        print("reviews")
 
         for r_elem in reviews_elements:
             author = r_elem.select_one('.reviewer-nick a') or r_elem.select_one('.reviewer-nick')
@@ -249,6 +257,8 @@ def scrape_book_page(book_url, max_reviews: int = 10):
         ] or ["neutralne"]
     else: 
         dominant_emotion = ["neutral"]
+
+    print("Aaaaaaaa")
 
 
     return{
