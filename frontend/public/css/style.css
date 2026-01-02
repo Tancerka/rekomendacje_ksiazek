@@ -396,6 +396,30 @@ footer > *, footer{
     background-color: #D4C9BE   ;
 }
 
+.book-grid{
+    grid-template-columns: minmax(0, 300px) 1fr;
+}
+
+.book-grid > *{
+    min-width: 0;
+}
+
+.book-cover{
+    width: 100%; 
+    max-width: 100%;
+    aspect-ratio: 2/3;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.book-cover img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    max-width: 100%;
+    display: block;
+}
+
 /* ---------------- M O B I L E ----------------*/
 
 @media(max-width: 768px){
@@ -425,9 +449,18 @@ footer > *, footer{
         justify-content: center;
         flex-wrap: wrap;
     }
-
-/*     .emotion-btn{
-        width: clamp(100px, 30%, 150px);
-        padding: 15px;
-    } */
+    .book-cover{
+        max-height: 220px;
+        margin: 0 auto;
+        width: 100%;
+        max-width: 100%;
+        aspect-ratio: 2/3;
+        max-height: 260px;
+        overflow: hidden;
+        margin: 0 auto;
+    }
+    .book-grid{
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
 }

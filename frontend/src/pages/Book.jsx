@@ -71,8 +71,6 @@ export default function Book(){
 
     if(!book) return <Layout pageTitle = "Ładowanie..."></Layout>  ;
 
-    console.debug(book.rating);
-
     return(
 <Layout pageTitle = {book.title}>
     <div style={{
@@ -82,10 +80,10 @@ export default function Book(){
     }}>
       <div style={{
         display: "grid",
-        gridTemplateColumns: "300px 1fr",
         gap: "40px",
         marginBottom: "40px"
-      }}>
+      }}
+      className="book-grid">
         <div>
           <div style={{
             backgroundColor: "#E0D9D0",
@@ -94,14 +92,11 @@ export default function Book(){
             boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
             marginBottom: "3px solid #D4C9BE"
           }}>
+            <div className="book-cover">
             {book.coverImage ? (
               <img
                 src={book.coverImage}
                 alt={book.title}
-                style={{
-                  width: "100%",
-                  display: "block"
-                }}
                 />
               ) : (
                 <div style={{
@@ -115,6 +110,7 @@ export default function Book(){
                 </div>
 
             )}
+            </div>
           </div>
           {user && (
             <>
@@ -187,7 +183,7 @@ export default function Book(){
                 flexWrap: "wrap",
                 marginTop: "20px"
               }}>
-              {book.rating &&(
+              
             <div style={{
               backgroundColor: "#fffadeff",
               padding: "10px 20px",
@@ -195,19 +191,20 @@ export default function Book(){
               fontSize: "18px",
               fontWeight: "bold",
               color: "#5A4A42",
-              border: "2px solid #ffdc82ff"
+              border: "2px solid #ffdc82ff",
+              display: "inline-block"
             }}>
-              ⭐ {book.rating}
-              {book.ratingsCount && (
+              ⭐ {book.rating ?? 0}
+              {book.ratingsCount ? (
                 <span style={{
                   fontSize: "14px",
                   marginLeft: "8px"
                 }}>
                   ({book.ratingsCount} ocen)
                 </span>
-              )}
+              ) : null}
             </div>
-            )}
+            
             {book.dominant_emotion && book.dominant_emotion.length > 0 && (
               book.dominant_emotion.map((emotion, idx) => (
                 <div 
@@ -269,7 +266,7 @@ export default function Book(){
       </div>
     </div>
 
-    {book.reviews && book.reviews.length >0 && (
+    {book.reviews && book.reviews.length >0 ? (
       <div style={{
         backgroundColor: "#F9F7F4",
         padding: "30px",
@@ -286,13 +283,30 @@ export default function Book(){
         </h3>
         <div style={{
           display: "grid",
-          gap: "20px"
+          gap: "20px",
+          minWidth: 0
         }}>
           {book.reviews.map((review, idx) => (
             <ReviewCard key={idx} review={review} />
           ))}
           </div>
         </div>
+    ) : (
+    <div style={{
+        backgroundColor: "#F9F7F4",
+        padding: "30px",
+        borderRadius: "15px",
+        border: "2px solid #E0D9D0"
+      }}>
+      <h3 style={{
+          fontSize: "22px",
+          color: "#5A4A42",
+          marginBottom: "20px",
+          fontWeight: "600"
+      }}>
+        Ta książka nie ma jeszcze recenzji.
+      </h3>
+      </div>
     )}
         </div> 
     </div> 
@@ -327,15 +341,20 @@ function ReviewCard({review}) {
   return(
     <div style={{
       backgroundColor: "white",
-      padding: "20px",
+      padding: "15px 10px",
       borderRadius: "12px",
       border: "2px solid #E0D9D0",
+      width: "100%",
+      boxSizing: "border-box",
+      overflow: "hidden"
     }}>
       <div style={{
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: "12px"
+        marginBottom: "12px",
+        minWidth: 0,
+        flexWrap: "wrap"
       }}>
         <div>
           <span style={{
@@ -347,7 +366,7 @@ function ReviewCard({review}) {
           </span>
           {review.rating && (
             <span style={{
-              marginLeft: "12px",
+              paddingLeft: "8px", 
               fontSize: "14px",
               color: "#FFD700",
               fontWeight: "bold"
@@ -369,7 +388,9 @@ function ReviewCard({review}) {
         fontSize: "15px",
         lineHeight: "1.6",
         color: "#5A4A42",
-        margin: "0 0 12px 0"
+        margin: "0 0 12px 0",
+        overflowWrap: "break-word",
+        wordBreak: "break-word"
       }}> 
         {review.text}
       </p>

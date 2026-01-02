@@ -43,8 +43,6 @@ export default function BookCard({book,
             e.currentTarget.style.color = "#D4C9BE";
         }
     }
-
-/*     console.debug(book) */
     return(
         <div 
         onClick={() => window.location.href = `/book/${book._id}`}
@@ -106,7 +104,7 @@ export default function BookCard({book,
                 }}>
                     {book.authors.map(a => a.name || a).join(", ")}
                 </p>
-                {book.rating && (
+                {book.rating !== undefined && (
                     <span style={{
                         fontSize: "14px",
                         fontWeight: "600",
@@ -114,8 +112,7 @@ export default function BookCard({book,
                         marginBottom: "30px"
                     }}>
                         Ocena: {book.rating}
-                    </span>
-                    
+                    </span> 
                   )}
                   <br/>
 
