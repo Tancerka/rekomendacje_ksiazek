@@ -420,6 +420,23 @@ footer > *, footer{
     display: block;
 }
 
+.book-row {
+    display: "grid";
+    grid-template-columns: 80px 1fr auto;
+    gap: 20px;
+    align-items: center;
+}
+
+.book-preview-grid {
+    grid-template-columns: 150px 1fr;
+}
+
+.book-preview-grid img{
+    width: 100%;
+    height: auto;
+    max-width: 100%
+}
+
 /* ---------------- M O B I L E ----------------*/
 
 @media(max-width: 768px){
@@ -462,5 +479,41 @@ footer > *, footer{
     .book-grid{
         grid-template-columns: 1fr;
         gap: 20px;
+    }
+
+    .book-preview-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .book-preview-grid img{
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .book-preview-grid > div {
+        min-width: 0;
+        overflow-wrap: break-word;
+    }
+
+    .book-row{
+        grid-template-columns: 1fr;
+        gap: 10px;
+        display: grid;
+        align-items: center;
+    }
+
+    .book-row img{
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .book-row div:nth-child(2){
+        min-width: 0;
+        overflow-wrap: break-word;
+    }
+    
+    .book-row div:last-child{
+        display: flex;
+        justify-content: flex-end;
     }
 }

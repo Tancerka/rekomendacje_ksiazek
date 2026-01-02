@@ -83,13 +83,16 @@ export default function Admin(){
             <div style={{ 
                 maxWidth: "1400px",
                 margin: "0 auto",
-                padding: "0 20px 40px"
+                padding: "0 15px 40px",
+                width: "100%",
+                boxSizing: "border-box"
             }}>
                 <div style={{
                     display: "flex",
                     gap: "10px",
                     marginBottom: "30px",
-                    borderBottom: "2px solid #E0D9D0"
+                    borderBottom: "2px solid #E0D9D0",
+                    flexWrap: "wrap"
                 }}>
                     <Tab 
                         active={activeTab === 'add'}
@@ -211,7 +214,8 @@ function AddBookForm({title, authors, setTitle, setAuthors, loading, onSubmit}){
             <div style={{
                 display: "flex",
                 gap: "15px",
-                marginBottom: "15px"
+                marginBottom: "15px",
+                flexWrap: "wrap"
             }}>
                 <input 
                     type="text"
@@ -221,12 +225,14 @@ function AddBookForm({title, authors, setTitle, setAuthors, loading, onSubmit}){
                     placeholder="Tytuł książki..."
                     disabled={loading}
                     style={{
-                        flex:1,
+                        flex: "1 1 0",
+                        minWidth: 0,
                         padding: "15px 20px",
                         fontSize: "16px",
                         border: "2px solid #D4C9BE",
                         borderRadius: "12px",
-                        outline: "none"
+/*                         outline: "none", */
+                        boxSizing: "border-box"
                     }}
                 />
 
@@ -238,12 +244,14 @@ function AddBookForm({title, authors, setTitle, setAuthors, loading, onSubmit}){
                     placeholder="Autor książki..."
                     disabled={loading}
                     style={{
-                        flex:1,
+                        flex: "1 1 0",
+                        minWidth: 0,
                         padding: "15px 20px",
                         fontSize: "16px",
                         border: "2px solid #D4C9BE",
                         borderRadius: "12px",
-                        outline: "none"
+/*                         outline: "none" */
+                        boxSizing: "border-box"
                     }}
                 />
                 <button
@@ -251,6 +259,7 @@ function AddBookForm({title, authors, setTitle, setAuthors, loading, onSubmit}){
                     disabled={loading}
                     onKeyPress={(e) => e.key === 'Enter' && onSubmit()}
                     style={{
+                        flex: "0 0 auto",
                         padding: "15px 40px",
                         backgroundColor: loading ? '#B8ADA3': '#5A4A42',
                         color: "white",
@@ -258,6 +267,7 @@ function AddBookForm({title, authors, setTitle, setAuthors, loading, onSubmit}){
                         borderRadius: "8px",
                         fontSize: "16px",
                         fontWeight: "600",
+                        boxSizing: "border-box"
                     }}
                     onMouseOver={(e) => {
                         if(!loading){
@@ -287,16 +297,20 @@ function BookPreview({book, setMessage, setScrapedBook}){
             backgroundColor: "white",
             padding: "30px",
             borderRadius: "15px",
-            border: "2px solid #aecaaeff"
+            border: "2px solid #aecaaeff",
+            boxSizing: "border-box"
         }}>
             <h3 style={{fontSize: "20px", color: "#aecaaeff", marginBottom: "20px"}}>
                 Szczegóły książki, którą chcesz dodać do bazy
             </h3>
             <div style={{
                 display:"grid",
-                gridTemplateColumns: "150px 1fr",
-                gap: "20px"
-            }}>
+/*                 gridTemplateColumns: "150px 1fr", */
+                gap: "20px",
+                width: "100%",
+                boxSizing: "border-box"
+            }} 
+            className="book-preview-grid">
                 {book.coverImage && (
                     <img 
                         src={book.coverImage}
@@ -312,13 +326,15 @@ function BookPreview({book, setMessage, setScrapedBook}){
                     <h4 style={{ 
                         fontSize: "23px", 
                         marginBottom: "12px",
-                        color: "#5A4A42"
+                        color: "#5A4A42",
+                        wordWrap: "break-word"
                     }}>
                         {book.title}
                     </h4>
                     <p style={{
                         color: "#7A6A62",
-                        marginBottom: "10px"
+                        marginBottom: "10px",
+                        wordWrap: "break-word"
                     }}> <span style={{ fontWeight: "800"}}> Autor: </span>
                         {book.authors?.map(a => a.name).join(", ")}
                     </p>
@@ -367,12 +383,14 @@ function BookPreview({book, setMessage, setScrapedBook}){
                     <p style={{
                         color: "#7A6A62",
                         marginBottom: "10px",
+                        wordWrap: "break-word"
                     }}> <span style={{ fontWeight: "800"}}> URL: </span>
                         {book.url ?? "Brak"}
                     </p>
                     <p style={{
                         color: "#7A6A62",
                         marginBottom: "10px",
+                        wordWrap: "break-word"
                     }}> <span style={{ fontWeight: "800"}}> Opis: </span>
                         {book.longDescription ?? "Brak"}
                     </p>
@@ -401,7 +419,8 @@ function BookPreview({book, setMessage, setScrapedBook}){
                             borderRadius: "12px",
                             padding: "16px",
                             marginBottom: "16px",
-                            boxShadow: "0 2px 6px rgba(0,0,0,0.05)"
+                            boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+                            wordWrap: "break-word"
                         }}>
                             <p style={{
                                 color: "#7A6A62",
@@ -482,8 +501,8 @@ function BookPreview({book, setMessage, setScrapedBook}){
                     color: "#5A4A42",
                     cursor: "pointer",
                     borderRadius: "8px",
-                    marginTop: "20px",
-                    marginLeft: "38%"
+                    margin: "20px auto 0",
+                    display: "block",
                 }}
                 onMouseOver={(e) => {
                     e.currentTarget.style.backgroundColor= "#dac2a9ff'";
@@ -520,7 +539,8 @@ function BookPreview({book, setMessage, setScrapedBook}){
         <div style={{
             display: "flex",
             gap: "15px",
-            marginBottom: "25px"
+            marginBottom: "25px",
+            flexWrap: "wrap"
         }}>
             <input
                 type="text"
@@ -601,11 +621,12 @@ function BookRow({book, onDelete}){
             padding: "20px",
             borderRadius: "12px",
             border: "2px solid #E0D9D0",
-            display: "grid",
+             display: "grid",
             gridTemplateColumns: "80px 1fr auto",
             gap: "20px",
-            alignItems: "center"
+            alignItems: "center" 
         }}
+        className="book-row"
         onMouseOver={(e) => {
             e.currentTarget.style.backgroundColor= "#ccc1b2ff";
             }
@@ -674,7 +695,7 @@ function BookRow({book, onDelete}){
                         border: "none",
                         borderRadius: "8px",
                         cursor: "pointer",
-                        fontSize: "14px"
+                        fontSize: "14px",
                     }}
                     onMouseOver={(e) => {
                             e.currentTarget.style.backgroundColor= "#da2b2bff";
