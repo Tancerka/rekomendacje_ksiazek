@@ -12,6 +12,8 @@ from collections import Counter
 import torch.nn as nn
 
 # ---------- TRANSLATION ----------
+
+
 pl_en_model_name = "Helsinki-NLP/opus-mt-pl-en"
 pl_en_tokenizer = MarianTokenizer.from_pretrained(pl_en_model_name)
 pl_en_model = MarianMTModel.from_pretrained(pl_en_model_name)
@@ -27,6 +29,8 @@ def translate_pl_to_en(texts, batch_size=16):
 
 
 # ---------- MODEL ----------
+
+
 class RobertaForMultiLabelClassification(nn.Module):
     def __init__(self, model_name, num_labels, dropout_rate=0.3, use_mean_pooling=True):
         super().__init__()
@@ -50,6 +54,8 @@ class RobertaForMultiLabelClassification(nn.Module):
 
 
 # ---------- LOAD ONCE ----------
+
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model_name = "Lakssssshya/roberta-large-goemotions"
 
@@ -109,7 +115,9 @@ eng2pl = {
 }
 
 
-# ---------- PUBLIC API ----------
+# ---------- ANALYZE REVIEWS ----------
+
+
 def analyze_reviews(text: str, top_n=5):
     if not text:
         return ["neutral"]

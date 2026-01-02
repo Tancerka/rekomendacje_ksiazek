@@ -162,7 +162,7 @@ export default function Profile(){
     }
 
     const BtnStyle = {
-        width: "10vw",
+        width: "100%",
         padding: "12px",
         borderRadius: "8px",
         backgroundColor: "#7A6A62",
@@ -443,7 +443,7 @@ function StatCard({icon, value, label, color}){
             borderRadius: "8px",
             textAlign: "center",
             border: "2px solid #E0D9D0",
-            width: "15vw",
+            width: "100%",
             position: "flex"
         }}> 
             <div style={{

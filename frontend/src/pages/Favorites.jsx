@@ -24,8 +24,6 @@ export default function Favorites() {
           throw new Error("Błąd podczas pobierania ulubionych książek");
         }
         const data = await response.json();
-        console.debug(data.favorites);
-        console.debug(data.favorites.length);
         setFavorites(data.favorites);
     } catch (err){
         setError(err.message);

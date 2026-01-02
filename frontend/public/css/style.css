@@ -3,6 +3,7 @@
     font-family: Lexend Giga, sans-serif;
 /*     background-color: #F1EFEC; */
     font-weight: 450;
+    box-sizing: border-box;
 }
 
 body{
@@ -18,6 +19,11 @@ h1, p{
     font-family: Lexend Giga, sans-serif;
 }
 
+/* button{
+    white-space: nowrap;
+    flex-shrink: 0;
+} */
+
 .title{
 
     margin-top: 20px;
@@ -26,7 +32,7 @@ h1, p{
     text-align: center;
     color: #123458;
     border: none;
-    margin: auto;
+    margin: 0 auto;
     background-color: transparent;
 }
 
@@ -126,15 +132,47 @@ hr.solid {
 
 
 .top-bar{
-
+    width: 100%;
+    box-sizing: border-box;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 10px 40px;
-    position: relative;
-    z-index: 1001;
+/*      justify-content: space-between; */
+    padding: 0.75rem 2rem;
+/*     position: relative;
+    z-index: 1001; */
+    gap: 1rem;
+     flex-wrap: wrap; 
+    background-color: #D4C9BE;
+    min-height: fit-content;
+    overflow: visible;
 }
 
+.search{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex:1;
+    justify-content: center;
+    max-width: 500px;
+}
+
+.auth{
+    display: flex;
+    gap: 0.5rem;
+/*     flex: 0 0 auto; */
+}
+
+.search-btn{
+    background:none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.search-btn img {
+    width: 27px;
+    height: 24px;
+}
 
 .menu:hover{
     background-color: #123458;
@@ -157,7 +195,7 @@ hr.solid {
 
 .nav-arrow{
     position: fixed;
-    top: "50%";
+    top: 50%;
     left: 0;
     transform: translateY(-50%);
     width: 30px;
@@ -187,7 +225,7 @@ hr.solid {
 
 #search-bar{
 
-    width: 700px;
+    width: clamp(180px, 30vw, 300px);
     margin: 0 20px;
     padding: 5px;
     font-size: 20px;
@@ -224,12 +262,13 @@ hr.solid {
 }
 
 .login{
-    width: 12vw; 
+/*     width: 12vw;  */
     height: 35px;
     font-size: 18px;
     border-radius: 4px;
     background-color: #123458;
     color: white;
+    margin-top: 2vw;
 }
 
 .login:hover{
@@ -259,7 +298,7 @@ hr.solid {
 
 .logout{
 
-    width: 10vw; 
+/*     width: 10vw;  */
     margin: 0; 
     margin-top: 2vw; 
     height: 35px;
@@ -267,14 +306,21 @@ hr.solid {
     border: 2px solid #630913;
      border-radius: 4px;
 /*     border-color: #630913;  */
-    color: #630913;
+    background-color: #630913;
+    color: white;
 }
 
 .logout:hover{
-    background-color: #630913;
+    background-color: #8f0c1c;
     color: white;
     box-shadow: 0 1px 3px 0 rgba(0,0,0,0.22);
     cursor: pointer;
+}
+
+.login, .logout{
+    width: auto;
+    padding: 0.4rem 1rem;
+    white-space: nowrap;
 }
 /* 
 input{
@@ -348,4 +394,40 @@ footer{
 
 footer > *, footer{
     background-color: #D4C9BE   ;
+}
+
+/* ---------------- M O B I L E ----------------*/
+
+@media(max-width: 768px){
+    .top-bar{
+        justify-content: center;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+        padding: 1rem;
+        flex-wrap: wrap;
+
+    }
+    .title{
+        text-align: center;
+        font-size: 40px;
+        letter-spacing: 2px;
+        margin: 0;
+    }
+    .search{
+        width: 100%;
+        max-width: 100%;
+        flex: none;
+        justify-content: center;
+    }
+    .auth{
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+/*     .emotion-btn{
+        width: clamp(100px, 30%, 150px);
+        padding: 15px;
+    } */
 }

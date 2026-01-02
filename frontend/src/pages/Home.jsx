@@ -9,6 +9,13 @@ export default function Home(){
     const navigate = useNavigate();
 
     const [selectedEmotion, setSelectedEmotion] = useState(null);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 1440);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 1440);
+        window.addEventListener("resize", handleResize);
+        return() => window.removeEventListener("resize", handleResize);
+    }, []);
 
     const emotions = [
         {name: "Ciekawość", emoji: "🤔", color: "#FFE584"},
@@ -87,7 +94,63 @@ export default function Home(){
                 <p style={{textAlign: "center", fontSize: "24px", color: "#123578"}}> Jak się dziś czujesz?</p>
                 <p style={{textAlign: "center", fontSize: "18px", color: "#7A6A62"}}> Wybierz swoją emocję i odkryj książki idealnie dopasowane do Twojego nastroju! </p>
                 <div style={{display: "flex", flexDirection: "column", gap: "20px"}}>
-                {pyramidRows.map((row, i) => (
+                    {isMobile ? (
+                        <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(90px, max-content))", gap: "10px", justifyContent: "center"}}>
+                            {emotions.map((emotion) => (
+                                <button
+                                    key={emotion.name}
+                                    style={{
+                                        fontSize: "11px",
+                                        fontWeight: selectedEmotion === emotion.name ? "600" : "400",
+                                        padding: "20px 20px",
+                                        cursor: "pointer",
+                                        backgroundColor: selectedEmotion === emotion.name ? emotion.color : "#F5F5F0",
+                                        color: "#5A4A42",
+                                        border: selectedEmotion === emotion.name ? `3px solid ${emotion.color}` : "2px solid #ccc",
+                                        borderRadius: "12px",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        alignItems: "center",
+                                        gap: "8px",
+                                        boxShadow: selectedEmotion === emotion.name ? "0 4px 8px rgba(0, 0, 0, 0.2)" : "0 2px 4px rgba(0, 0, 0, 0.1)",
+                                        transform: selectedEmotion === emotion.name ? "translateY(-2px)" : "none",
+                                        transition: "all 0.3s ease",
+/*                                         width: "clamp(120px, 20%, 170px)", */
+                                        height: "110px",
+                                    }}
+                                    onMouseOut={(e) => {
+                                        if (selectedEmotion !== emotion.name){
+                                            e.currentTarget.style.backgroundColor = "#F5F5F0";
+                                            e.currentTarget.style.transform = "none";
+                                            e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)";
+                                        }
+                                    }}
+                                    onMouseOver={(e) => {
+                                        if (selectedEmotion !== emotion.name){
+                                            e.currentTarget.style.backgroundColor = emotion.color;
+                                            e.currentTarget.style.transform = "none";
+                                            e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
+                                        }
+                                    }}
+                                    
+                                    onClick={() => {
+                                        if(emotion.name === "Szczęśliwy traf"){
+                                            const randomEmotion = getRandomEmotion();
+                                            setSelectedEmotion(randomEmotion.name);
+                                            navigate(`/search?emotion=${encodeURIComponent(randomEmotion.name)}`);
+                                        } else {
+                                        setSelectedEmotion(emotion.name);
+                                        if(emotion.name==="Nieodkryte") emotion.name="neutral"
+                                        navigate(`/search?emotion=${encodeURIComponent(emotion.name)}`);
+                                    }}}
+                                >  
+                    <span style={{fontSize: "24px", backgroundColor: "transparent"}}>{emotion.emoji}</span> 
+                    <span style={{backgroundColor: "transparent"}}>{emotion.name}</span>
+                    </button>
+                            ))}
+                </div>
+                        ) : (
+                pyramidRows.map((row, i) => (
                     <div 
                     key={i}
                     style={{
@@ -97,6 +160,7 @@ export default function Home(){
                     }}>
                     {row.map(emotion => (
                     <button
+                        className="emotion-btn"
                         key={emotion.name}
                         style={{
                             fontSize: "16px",
@@ -114,7 +178,7 @@ export default function Home(){
                             boxShadow: selectedEmotion === emotion.name ? "0 4px 8px rgba(0, 0, 0, 0.2)" : "0 2px 4px rgba(0, 0, 0, 0.1)",
                             transform: selectedEmotion === emotion.name ? "translateY(-2px)" : "none",
                             transition: "all 0.3s ease",
-                            width: "170px",
+                            width: "clamp(120px, 20%, 170px)",
                             height: "110px",
                         }}
                         onMouseOut={(e) => {
@@ -148,7 +212,8 @@ export default function Home(){
                     </button>
                 ))}
                 </div>
-    ))}
+    ))
+)}
     </div>
                 
                 <div style={{backgroundColor: "#D4C9BE", padding: "40px", borderRadius: "12px", marginTop:"60px", marginBottom:"40px"}}>

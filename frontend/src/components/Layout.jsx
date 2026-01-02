@@ -20,8 +20,10 @@ export default function Layout({ pageTitle, children}) {
 
     useEffect(() => {
         const handleMouseMove = (event) => {
-            if (event.clientX <= 10 && !navVisible) setNavVisible(true);
-            else if (event.clientX > 150 && navVisible) setNavVisible(false);
+            if(window.innerWidth > 768){
+                if (event.clientX <= 10 && !navVisible) setNavVisible(true);
+                else if (event.clientX > 150 && navVisible) setNavVisible(false);
+            }
         };
         document.addEventListener("mousemove", handleMouseMove);
         return () => {
@@ -40,13 +42,19 @@ export default function Layout({ pageTitle, children}) {
 
     return (
         <div>
-            <div className = "top-bar" style={{ backgroundColor: "#D4C9BE"}}>
-            <button className="title montecarlo-regular title" onClick={() => window.location.pathname = '/'} style={{ marginLeft: "5%", marginRight: "10%"}}>Rekomendacje książek</button>
-                    <input type="text" style={{width: "300px", marginTop: "1%", backgroundColor: "transparent"}} placeholder="Wyszukaj książkę..." id="search-bar" value={query} onChange={(e)=>setQuery(e.target.value)} onKeyDown={(e)=> e.key === "Enter" && searchBook()} />
-                    <input id="search-icon" type="image" onClick={searchBook} src="../img/search_icon.png" style={{backgroundColor: "transparent", width: "3%", height: "2%", marginTop: "1vw", marginRight: "5vw"}} onMouseOver={(e)=> (e.target.src = "../img/search_icon_hover.png")} onMouseOut={(e)=>(e.target.src = "/img/search_icon.png")} />
+            <div className = "top-bar">
+            <button className="title montecarlo-regular title" onClick={() => window.location.pathname = '/'} /* style={{ marginLeft: "5%", marginRight: "10%"}} */>Rekomendacje książek</button>
+            <div className="search">
+                    <input type="text" style={{/* width: "300px", marginTop: "1%", */ backgroundColor: "transparent"}} placeholder="Wyszukaj książkę..." id="search-bar" value={query} onChange={(e)=>setQuery(e.target.value)} onKeyDown={(e)=> e.key === "Enter" && searchBook()} />
+                    <button className="search-btn" onClick={searchBook}>
+                        <img src="../img/search_icon.png" alt="Szukaj" onMouseOver={(e)=> (e.target.src = "../img/search_icon_hover.png")} onMouseOut={(e)=>(e.target.src = "/img/search_icon.png")} />
+                    </button>
+            </div>
+            <div className="auth">
+
                     { user ? (
                         <>
-                            <button className="login" style={{width: "10vw", margin: "0", marginTop: "2vw"}} onClick={() => navigate('/profile')}>{user.username}</button>
+                            <button className="login" onClick={() => navigate('/profile')}>{user.username}</button>
                             <button className="logout" onClick={async () => {
                                 const data = await fetch("/auth/logout", {
                                     method: "POST", 
@@ -59,6 +67,7 @@ export default function Layout({ pageTitle, children}) {
                     ) : (
                         <button className="login" onClick={() => navigate('/login')}>Zaloguj się</button>
                     )}
+                    </div>
             </div>
             <hr className="solid" />
             <hr className="line"/>

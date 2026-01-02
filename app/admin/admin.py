@@ -12,6 +12,9 @@ from collections import Counter
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
+# ---------------- ADMIN REQUIRED ----------------
+
+
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -23,6 +26,9 @@ def admin_required(f):
             return jsonify({"error": "Brak uprawnień administratora."}), 403
         return f(*args, **kwargs)
     return decorated_function
+
+# ---------------- ALL BOOKS ----------------
+
 
 @admin_bp.route('/books', methods=['GET'])
 @admin_required
@@ -59,6 +65,9 @@ def get_all_books():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+    # ---------------- DELETE BOOK ----------------
+
+
 @admin_bp.route('/books/<book_id>', methods=['DELETE'])
 @admin_required
 def delete_book(book_id):
@@ -71,9 +80,14 @@ def delete_book(book_id):
     return jsonify({"success": True})
     
 
+# ---------------- NORMALIZE AUTHORS ----------------
+
 
 def normalize(text):
     return text.lower().replace(",", "").strip()
+
+# ---------------- SEARCH ON LUBIMYCZYTAC.PL ----------------
+
 
 def search_book_on_lc(title, author_query):
     search_url = f"https://lubimyczytac.pl/szukaj/ksiazki?phrase={quote(title)}"
@@ -111,6 +125,9 @@ def search_book_on_lc(title, author_query):
             })
     return results
 
+# ---------------- SCRAPE BOOK MAIN FUNCTION ----------------
+
+
 @admin_bp.route('/scrape_book', methods=['POST'])
 @admin_required
 def scrape_book():
@@ -138,8 +155,10 @@ def scrape_book():
         "book": book_data
     })
 
+# ---------------- SCRAPE BOOK DATA FUNCTION ----------------
+
+
 def scrape_book_page(book_url, max_reviews: int = 10):
-    print("Aaaaaaaa")
     r = requests.get(book_url, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
     r.raise_for_status()
     soup = BeautifulSoup(r.text, "html.parser")
@@ -258,8 +277,6 @@ def scrape_book_page(book_url, max_reviews: int = 10):
     else: 
         dominant_emotion = ["neutral"]
 
-    print("Aaaaaaaa")
-
 
     return{
         "id": book_id,
@@ -280,6 +297,8 @@ def scrape_book_page(book_url, max_reviews: int = 10):
         "dominant_emotion": dominant_emotion
     }
 
+
+# ---------------- SAVE TO DATABASE ----------------
 
 
 @admin_bp.route('/scrape_confirm', methods=['POST'])

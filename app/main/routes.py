@@ -79,7 +79,7 @@ def search():
                 {
                     "$or": [
                         {"title": {"$regex": query, "$options": "i"}},
-                        {"authors": {"$regex": query, "$options": "i"}},
+                        {"authors.name": {"$regex": query, "$options": "i"}},
                         {"category": {"$regex": query, "$options": "i"}},
                     ]
                 },
@@ -90,7 +90,7 @@ def search():
         filters = {"title": {"$regex": query, "$options": "i"}}
 
     elif filter_option == "authors":
-        filters = {"authors": {"$regex": query, "$options": "i"}}
+        filters = {"authors.name": {"$regex": query, "$options": "i"}}
 
     elif filter_option == "category":
         filters = {"category": {"$regex": query, "$options": "i"}}
@@ -99,7 +99,7 @@ def search():
         filters = {
             "$or": [
                 {"title": {"$regex": query, "$options": "i"}},
-                {"authors": {"$regex": query, "$options": "i"}},
+                {"authors.name": {"$regex": query, "$options": "i"}},
                 {"category": {"$regex": query, "$options": "i"}},
             ]
         }
@@ -118,7 +118,7 @@ def search():
 
     results = mongo.db.books.find(
             filters,
-            {"title": 1, "authors": 1, "category": 1, "coverImage":1, "rating":1, "shortDescription":1 }
+            {"title": 1, "authors.name": 1, "category": 1, "coverImage":1, "rating":1, "shortDescription":1 }
         ).sort(sort_field, sort_direction)
 
     books = list(results.skip(skip).limit(limit))

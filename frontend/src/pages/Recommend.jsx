@@ -250,8 +250,11 @@ export default function Recommend(){
                     border: "2px solid #E0D9D0"
                 }}>
                     <div style={{
-                        fontSize: "48px",
-                        marginBottom: "20px"
+                        fontSize: "35px",
+                        marginBottom: "20px",
+                        overflowWrap: "break-word",
+                        wordBreak: "break-word"
+
                     }}>Przejrzałeś wszystkie rekomendacje</div>
                     <p style={{fontSize: "16px", color: "#7A6A62", marginBottom: "30px"}}>
                         Przejrzano {recommendations.length} książek 
@@ -267,7 +270,7 @@ export default function Recommend(){
                             color: "#5A4A42",
                             cursor: "pointer",
                             fontWeight: "500",
-                            height: "2vw"
+                            height: "auto",
                         }}
                         onMouseOver={(e) => {
                             e.currentTarget.style.backgroundColor = "#C4B9AE";
@@ -325,8 +328,7 @@ function BookCard({book, swipeDirection}){
     return(
         <div style={{
             display: "flex",
-            marginRight: "50%",
-            width: "50vw",
+            width: "100%",
             backgroundColor: "#F5F5F0",
             borderRadius: "12px",
             overflow: "hidden",
@@ -339,12 +341,13 @@ function BookCard({book, swipeDirection}){
             ? "translateX(100%) rotate(10deg)"
             : "none",
             opacity: swipeDirection ? 0 : 1,
-            margin: "0 auto"
+            margin: "0 auto",
+            minWidth: "0",
+            flex: 1
         }}>
             <div style={{
-/*                 marginTop: "2vw", */
-/*                 width: "1", */
-                 minWidth: "20vw",
+                flex: "0 0 40%",
+                minWidth: "20vw",
                 height: "450px",
                 backgroundColor: "#E0D9D0",
                 backgroundImage: `url(${book.coverImage})`,
@@ -375,22 +378,19 @@ function BookCard({book, swipeDirection}){
                     </div>
                 )}
             </div>
-{/*             <div style={{
-                padding: '30px',
-                width: "70%",
-            }}> */}
             <div style={{ padding: "30px" }}>
                 <h2 style={{
                     fontSize: "24px",
                     color: "#123578",
                     marginBottom: "10px",
                     fontWeight: "600",
-                    overflow: "hidden",
-/*                     textOverflow: "ellipsis",
                     display: "-webkit-box",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
                     WebkitLineClamp: 2,
                     WebkitBoxOrient: "vertical",
-                    minHeight: "40px" */
+/*                     overflowWrap: "break-word",
+                    wordBreak: "break-word" */
                 }}>
                     {book.title}
                 </h2>
@@ -398,9 +398,8 @@ function BookCard({book, swipeDirection}){
                     fontSize: "16px",
                     color: "#7A6A62",
                     marginBottom: "15px",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap"
+                    overflowWrap: "break-word",
+                    wordBreak: "break-word",
                 }}>
                     {book.authors.map(a => a.name || a).join(", ")}
                 </p>
@@ -412,14 +411,14 @@ function BookCard({book, swipeDirection}){
                 }}>
                     {book.rating && (
                         <span style={{
-                        backgroundColor: "#FFD700",
+                        backgroundColor: "#fffadeff",
                         padding: "6px 12px",
                         borderRadius: "15px",
                         fontSize: "14px",
                         fontWeight: "600",
                         color: "#5A4A42"
                         }}>
-                            {book.rating}
+                            {book.rating} ⭐
                         </span>
                     )}
                     {book.dominant_emotion && book.dominant_emotion.length > 0 && (
@@ -450,7 +449,9 @@ function BookCard({book, swipeDirection}){
                         fontSize: "14px",
                         color: "#7A6A62",
                         fontStyle: "italic",
-                        marginBottom: "15px"
+                        marginBottom: "15px",
+                        overflowWrap: "break-word",
+                        wordBreak: "break-word"
                     }}>
                         <strong>Kategoria: </strong> {book.category}
                     </p>
@@ -460,7 +461,9 @@ function BookCard({book, swipeDirection}){
                         fontSize: "15px",
                         color: "#7A6A62",
                         lineHeight: "1.6",
-                        marginTop: "15px"
+                        marginTop: "15px",
+                        overflowWrap: "break-word",
+                        wordBreak: "break-word"
                     }}>
                         {book.shortDescription}
                     </p>
