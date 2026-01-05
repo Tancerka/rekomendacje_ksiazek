@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
 import AnimatedList from "../components/AnimatedList";
+import BookTile from "../components/BookTile";
 
 export default function Search() {
   const [results, setResults] = useState([]);
@@ -98,121 +99,19 @@ export default function Search() {
             onItemSelect={(book, index) => navigate(`/book/${book._id}`)}
             renderItem={
               (book, index, selected) => (
-              <div style={{ 
-                display: "flex", 
-                gap: "1rem", 
-                backgroundColor: "#123458", 
-                alignItems: "flex-start", 
-                padding: "1rem",
-                justifyContent: "space-between", }}>
-              <div style={{ display: "flex", gap: "1rem", alignItems: "flex-start", flex:1, backgroundColor: "#123458", textAlign: "center"}}>
-                <div style={{
-                  display: "flex", 
-                  flexDirection: "column",
-                  alignItems: "center",
-                  backgroundColor: "#123458",
-                  gap: "0.5rem",
-                  justifyContent: "center",
-                  }}>
-
-                <img
-                  src={book.coverImage}
-                  alt={book.Title}
-                  style={{
-                    width: "100px",
-                    height: "150px",
-                    objectFit: "cover",
-                    borderRadius: "6px", 
-                    /*                     paddingRight: "1rem" */
-                  }}
+                <BookTile
+                  book={book}
+                  selected={selected}
+                  onAddToFavorites={addFavorite}
+                  onAddToWishlist={addWishlist}
+                  onClick={() => navigate(`/book/${book._id}`)}
                   />
-                  <div style={{ 
-                    color: "white",
-                    backgroundColor: "#123458",
-                    fontSize: "18px",
-                    textAlign: "center"}}>
-                    {book.rating}
-                    <img
-                      src="../img/wishlist_icon_hover.png"
-                      alt="wishlist"
-                      style={{ 
-                        paddingLeft: "8px",
-                        cursor: "pointer", 
-                        backgroundColor: "#123458",
-                        width: "20px", 
-                        height: "20px"}}
-                      />
-                  </div>
-
-                  </div>
-                <div>
-
-                  <div style={{color: "white", backgroundColor: "#123458", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "flex-start", flex:1}}>
-
-                  <p className="item-text" style={{ whiteSpace: "pre-line", backgroundColor: "#123458", textAlign: "center", fontSize: "20px", paddingBottom: "20px", width: "100%"}}>
-                    {book.title + "\n"}
-                  </p>
-                  <p className="item-text" style={{ whiteSpace: "pre-line", backgroundColor: "#123458", textAlign: "center", width: "100%"  }}>
-                    {
-                    "Autor: " + book.authors.map(author => author.name)+ "\n\n" +
-                    "Kategoria: " + String(book.category).replace(/\[/g, '').replace(/\]/g, '').replace(/'/g, '') + "\n\n"+
-                    (book.shortDescription ? "Krótki opis: " + book.shortDescription + "\n\n": "")
-                    }
-                  </p>
-                  </div>
-                </div>
-
-                  <div style={{ 
-                    display: "flex", 
-                    backgroundColor: "#123458", 
-                    flexDirection: "column", 
-                    gap: "0.5rem",
-                    alignItems: "center"
-                    }}>
-
-                    <img
-                      src="../img/favorites_icon.png"
-                      alt="favorites"
-                      style={{
-                        cursor: "pointer", 
-                        backgroundColor: "#123458", 
-                        width: "45px", 
-                        height: "7%"}}
-                      onMouseOver={(e) => (e.currentTarget.src = "../../img/favorites_icon_hover.png")}
-                      onMouseOut={(e) => (e.currentTarget.src = "../../img/favorites_icon.png")}
-                      onClick={async (e) => {
-                        e.stopPropagation();
-                        await addFavorite(book._id)
-                      }}
-                      
-                      />
-
-                    <img
-                      src="../img/wishlist_icon.png"
-                      alt="wishlist"
-                      style={{ 
-                        cursor: "pointer", 
-                        backgroundColor: "#123458",
-                        width: "45px", 
-                        height: "7%"}}
-                      onMouseOver={(e) => (e.currentTarget.src = "../../img/wishlist_icon_hover.png")}
-                      onMouseOut={(e) => (e.currentTarget.src = "../../img/wishlist_icon.png")}
-                      onClick={async (e) => {
-                        e.stopPropagation();
-                        await addWishlist(book._id)
-                      }} 
-                      />
-                  </div>
-                </div>
-
-              </div>
+              )}
+              />
+            ) : (
+              <p>Brak wyników dla podanego zapytania.</p>
             )}
-          />
-
-        ) : (
-          <p>Brak wyników dla podanego zapytania.</p>
-        )}
-      </div>
+            </div>
 
       <div style={{ marginTop: "2rem", textAlign: "center" }}>
         {totalPages > 1 && Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
