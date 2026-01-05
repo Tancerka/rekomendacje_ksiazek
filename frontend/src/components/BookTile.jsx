@@ -5,7 +5,9 @@ const BookTile = ({
     onAddToFavorites,
     onAddToWishlist,
     onClick,
-    selected = false
+    selected = false,
+    isFavorite, 
+    isWishlist
 }) => {
     const [isHovered, setIsHovered] = useState(false);
 
@@ -253,10 +255,11 @@ const BookTile = ({
                     <ActionButton
                         icon="🩷"
                         label="Ulubione"
-                        onCLick={(e) => {
+                        onClick={(e) => {
                             e.stopPropagation();
                             onAddToFavorites(book._id);
                         }}
+                        disabled={isFavorite}
                         color="#FF6B9D"
                         />
                         <ActionButton
@@ -266,6 +269,7 @@ const BookTile = ({
                                 e.stopPropagation();
                                 onAddToWishlist(book._id);
                             }}
+                            disabled={isWishlist}
                             color="#4A90E2"
                             />
                 </div>
@@ -274,24 +278,27 @@ const BookTile = ({
     )
 }
 
-const ActionButton = ({ icon, label, onClick, color}) => {
+const ActionButton = ({ icon, label, onClick, color, disabled}) => {
     const [hover, setisHover] = useState(false);
 
     return(
         <button
-            onClick={onClick}
-            onMouseEnter={() => setisHover(true)}
+            disabled={disabled}
+            onClick={!disabled ? onClick : undefined}
+            onMouseEnter={() => !disabled && setisHover(true)}
             onMouseLeave={() => setisHover(false)}
-            title={label}
+            title={disabled ? `${label} (już dodane)` : label}
             style={{
                 width: "56px",
                 height: "56px",
                 borderRadius: "50%",
-                border: `2px solid ${hover ? color : "rgba(255, 255, 255, 0.2)"}`,
-                background: hover
+                border: `2px solid ${disabled ? color : hover ? color : "rgba(255, 255, 255, 0.2)"}`,
+                background: disabled
+                ? "rgba(255, 255, 255, 0.05)"
+                : hover
                 ? `linear-gradient(135deg, ${color}40 0%, ${color}20 100%)`
                 : "rgba(255, 255, 255, 0.05)",
-                cursor: "pointer",
+                cursor: disabled ? "not-allowed" : "pointer",
                 fontSize: "24px",
                 display: "flex",
                 alignItems: "center",

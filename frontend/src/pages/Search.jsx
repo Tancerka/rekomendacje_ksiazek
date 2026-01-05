@@ -12,11 +12,17 @@ export default function Search() {
   const [totalPages, setTotalPages] = useState(1);
   const [resultsCount, setCount] = useState(0);
   const navigate = useNavigate();
+  const [favorites, setFavorites] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
 
   const query = queryParams.get("q") || "";
   const emotion = queryParams.get("emotion") || "";
   const filter = queryParams.get("filter") || "all";
   const sort = queryParams.get("sort") || "asc";
+
+  const visiblePages = 5;
+  const start = Math.max(1, page-2);
+  const end = Math.min(totalPages, start+visiblePages-1)
 
   useEffect(() => {
     if (query.trim() !== "" || emotion) {
@@ -34,6 +40,25 @@ export default function Search() {
         .catch((err) => console.error(err));
     }
   }, [query, emotion, filter, sort, page]);
+
+  useEffect(() => {
+      loadBooks();
+  }, []);
+
+  const loadBooks = async() =>{
+    try{
+
+      const favRes = await fetch("/auth/favorites", {credentials: "include"})
+      const favData = await favRes.json();
+      setFavorites(favData.favorites || []);
+      
+      const wishRes = await fetch("/auth/wishlist", {credentials: "include"})
+      const wishData = await wishRes.json();
+      setWishlist(wishData.wishlist || []);
+    } catch(err){
+      console.error("Load error", err)
+    }
+  } 
 
   const handleFilterChange = (e) => {
     queryParams.set("filter", e.target.value);
@@ -67,20 +92,32 @@ export default function Search() {
     })
   };
 
+  const btnStyle = {
+    padding: "12px 20px",
+    fontSize: "15px",
+    border: "2px solid #D4C9BE",
+    borderRadius: "10px",
+  }
+
   return (
     <Layout pageTitle={emotion ? (emotion=="neutral" ? `Książki dla emocji: „Nieodkryte”` : `Książki dla emocji: „${emotion}”`) :`Wyniki wyszukiwania dla „${query}”`}>
       <div className="search-page">
         <form id="filter-form" style={{ marginBottom: "2rem", marginLeft: "40%"}}>
           <label>Liczba wyników: {resultsCount}</label><br/>
           <br />
-          <label>Filtry: </label>
+          <div className="filter-controls">
+          <div>
+
+          <label style={{ marginLeft: "2rem" }}>Filtry: </label>
           <select value={filter} onChange={handleFilterChange}>
             <option value="all">Wszystko</option>
             <option value="books">Książki</option>
             <option value="authors">Autorzy</option>
             <option value="categories">Kategorie</option>
           </select>
+          </div>
 
+          <div>
           <label style={{ marginLeft: "2rem" }}>Sortuj: </label>
           <select value={sort} onChange={handleSortChange}>
             <option value="asc">A-Z</option>
@@ -88,6 +125,8 @@ export default function Search() {
             <option value="score_desc">Od najlepszych</option>
             <option value="score_asc">Od najgorszych</option>
           </select>
+          </div>
+          </div>
         </form>
 
         {results.length > 0 ? (
@@ -104,6 +143,8 @@ export default function Search() {
                   selected={selected}
                   onAddToFavorites={addFavorite}
                   onAddToWishlist={addWishlist}
+                  isFavorite={favorites.some(f => f._id === book._id)}
+                  isWishlist={wishlist.some(w => w._id === book._id)}
                   onClick={() => navigate(`/book/${book._id}`)}
                   />
               )}
@@ -113,30 +154,31 @@ export default function Search() {
             )}
             </div>
 
-      <div style={{ marginTop: "2rem", textAlign: "center" }}>
-        {totalPages > 1 && Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
-          <button
-            key={num}
-            onClick={() => setPage(num)}
-            style={{
-              margin: "0 5px",
-              padding: "5px 10px",
-              backgroundColor: num === page ? "#5555ff" : "#eee",
-              color: num === page ? "white" : "black",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer"
-            }}
-    >
-      {num}
-    </button>
-  ))}
-</div>
+        <div className="pagination">
+          {Array.from({ length: end-start +1}, (_, i) => start +i).map(num => (
+            <button
+              key={num}
+              onClick={() => setPage(num)}
+              className={num === page ? "active" : ""}>
+                {num}
+              </button>
+          ))}
+        </div>
 
-<div style={{ marginTop: "1rem", textAlign: "center" }}>
-  <button onClick={() => setPage(p => Math.max(p - 1, 1))} disabled={page === 1} class="light-btn" style={{marginRight: "20px"}}>Poprzednia</button>
-  <button onClick={() => setPage(p => Math.min(p + 1, totalPages))} disabled={page === totalPages} class="light-btn">Następna</button>
-</div>
+        <div className="pagination-nav">
+          <button 
+            disabled={page===1}
+            onClick={()=> setPage(p => p-1)}
+            style={btnStyle}>
+              Poprzednia
+            </button>
+            <button 
+              disabled={page===totalPages}
+              onClick={() => setPage(p=> p+1)}
+              style={btnStyle}>
+                Następna
+              </button>
+        </div>
     </Layout>
   );
 }

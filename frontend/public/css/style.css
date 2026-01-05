@@ -362,6 +362,18 @@ input{
     margin-left: 30%;
 }
 
+.filter-controls{
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-controls div {
+    display: flex;
+    flex-direction: column;
+    min-width: 150px;
+}
+
 /****************** Animated list *******************/
 
 .scroll-list-container {
@@ -436,6 +448,26 @@ footer > *, footer{
     height: auto;
     max-width: 100%
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.pagination button.active{
+    background: #D4C9BE;
+    color: white;
+}
+
+.pagination-nav{
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
 
 /* ---------------- M O B I L E ----------------*/
 
@@ -515,5 +547,13 @@ footer > *, footer{
     .book-row div:last-child{
         display: flex;
         justify-content: flex-end;
+    }
+
+    .filter-controls{
+        flex-direction: column;
+    }
+
+    .pagination-nav{
+        flex-direction: column;
     }
 }
