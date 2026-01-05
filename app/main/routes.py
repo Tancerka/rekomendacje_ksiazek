@@ -255,11 +255,6 @@ def recommendations():
         ratings = []
 
         for book in favorite_books:
-            print(f"Tytuł: {book.get('title')}")
-            print(f"  Emocje: {book.get('dominant_emotion')}")
-            print(f"  Kategoria: {book.get('category')}")
-            print(f"  Rating: {book.get('rating')}")
-            print("---")
             # emocje
             if 'dominant_emotion' in book and book['dominant_emotion']:
                 if isinstance(book['dominant_emotion'], list):
@@ -280,10 +275,6 @@ def recommendations():
         avg_rating = sum(ratings)/len(ratings) if ratings else 6.0
 
         top_emotions = [emotion for emotion, count in emotion_counts.most_common(3)]
-
-        print(f"Top emocje: {top_emotions}")
-        print(f"Ulubione kategorie: {list(categories)}")
-        print(f"Średni rating: {avg_rating}")
 
         # wyszukanie podobnych książek
 
@@ -329,9 +320,6 @@ def recommendations():
         # sortowanie wyników po ratingu
         scored_books.sort(key=lambda x: x['score'], reverse=True)
         top_rec = scored_books[offset: offset+limit]
-        print(f"Aktywny użytkownik: "+str(current_user.username))
-        print(f"Ilość ulubionych książek: "+str(len(favorite_books)))
-        print(f"")
 
         return jsonify({
             'recommendations': top_rec,

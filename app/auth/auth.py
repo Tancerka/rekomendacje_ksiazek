@@ -6,7 +6,8 @@ from app.extensions import mongo, login_manager
 from app.database.users import (
     find_user_by_username,
     find_user_by_email,
-    check_password
+    check_password,
+    update_user_password
 )
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -175,14 +176,13 @@ def change_password():
     if new_pswd == old_pswd:
         return jsonify({"error": "Stare i nowe hasło nie mogą być identyczne."})
 
-    if not current_user.check_password(old_pswd):
+    if not check_password(current_user.username, old_pswd):
         return jsonify({"error": "Stare hasło jest niepoprawne."}), 400
     
-    current_user.set_password(new_pswd)
-    mongo.db.users.update_one(
-        {"_id": current_user.id},
-        {"$set": {"password": current_user.password}}
-    )
+    success = update_user_password(current_user.id, new_pswd)
+    if not success:
+        return jsonify({"error": "Nie udało się zmienić hasła."}), 500
+    
     return jsonify({"message": "Hasło zostało zmienione."}), 200
 
 
@@ -272,8 +272,6 @@ def add_wishlist():
     user = mongo.db.users.find_one(
         {'_id': ObjectId(current_user.id)}
     )
-    print(book_id)
-    print(user.get('wishlist', []))
 
     if book_id in user.get('wishlist', []): 
         return jsonify({"message": "Książka jest już na liście życzeń."}), 200

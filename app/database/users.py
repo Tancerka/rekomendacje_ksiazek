@@ -1,6 +1,6 @@
 from flask import app
 from bson import ObjectId
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 def find_user_by_username(username):
     from app import mongo 
@@ -32,5 +32,11 @@ def update_user_email(user_id, new_email):
     mongo.db.users.update_one({'_id': ObjectId(user_id)}, {'$set': {'email': new_email}})
 
 def update_user_password(user_id, new_password):
+    hashed = generate_password_hash(new_password)
+    try:
+        oid = ObjectId(user_id) if not isinstance(user_id, ObjectId) else user_id
+    except Exception:
+        return False
     from app import mongo 
-    mongo.db.users.update_one({'_id': ObjectId(user_id)}, {'$set': {'password': new_password}})
+    result = mongo.db.users.update_one({'_id': oid}, {'$set': {'password': hashed}})
+    return result.modified_count == 1

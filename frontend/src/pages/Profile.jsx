@@ -139,7 +139,8 @@ export default function Profile(){
             headers: { "Content-Type": "application/json"},
             body: JSON.stringify({
                 oldPassword: passwords.oldPassword,
-                newPassword: passwords.newPassword
+                newPassword: passwords.newPassword,
+                repeatNewPassword: passwords.repeatNewPassword
             })
         });
 
