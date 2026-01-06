@@ -4,6 +4,8 @@ const BookTile = ({
     book,
     onAddToFavorites,
     onAddToWishlist,
+    onRemoveFromFavorites, 
+    onRemoveFromWishlist,
     onClick,
     selected = false,
     isFavorite, 
@@ -253,24 +255,28 @@ const BookTile = ({
                     borderLeft: "1px solid rgba(255, 255, 255, 0.1)"
                 }}>
                     <ActionButton
-                        icon="🩷"
-                        label="Ulubione"
+                        icon={ isFavorite ? "💔" : "🩷"}
+                        label={isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
                         onClick={(e) => {
                             e.stopPropagation();
-                            onAddToFavorites(book._id);
+                            isFavorite 
+                            ? onRemoveFromFavorites(book._id)
+                            : onAddToFavorites(book._id);
                         }}
-                        disabled={isFavorite}
-                        color="#FF6B9D"
+/*                         disabled={isFavorite} */
+                        color={isFavorite ? "#ff0000ff" : "#FF6B9D"}
                         />
                         <ActionButton
-                            icon="📖"
-                            label="Lista życzeń"
+                            icon={ isWishlist ? "❌": "📖"}
+                            label={isWishlist ? "Usuń z listy życzeń":"Dodaj do listy życzeń"}
                             onClick={(e)=> {
                                 e.stopPropagation();
-                                onAddToWishlist(book._id);
+                                isWishlist
+                                ? onRemoveFromWishlist(book._id)
+                                : onAddToWishlist(book._id);
                             }}
-                            disabled={isWishlist}
-                            color="#4A90E2"
+/*                             disabled={isWishlist} */
+                            color={isWishlist ? "#ff0000ff": "#4A90E2"}
                             />
                 </div>
             </div>
@@ -278,27 +284,24 @@ const BookTile = ({
     )
 }
 
-const ActionButton = ({ icon, label, onClick, color, disabled}) => {
+const ActionButton = ({ icon, label, onClick, color}) => {
     const [hover, setisHover] = useState(false);
 
     return(
         <button
-            disabled={disabled}
-            onClick={!disabled ? onClick : undefined}
-            onMouseEnter={() => !disabled && setisHover(true)}
+            onClick={onClick}
+            onMouseEnter={() => setisHover(true)}
             onMouseLeave={() => setisHover(false)}
-            title={disabled ? `${label} (już dodane)` : label}
+            title={label}
             style={{
                 width: "56px",
                 height: "56px",
                 borderRadius: "50%",
-                border: `2px solid ${disabled ? color : hover ? color : "rgba(255, 255, 255, 0.2)"}`,
-                background: disabled
-                ? "rgba(255, 255, 255, 0.05)"
-                : hover
+                border: `2px solid ${hover ? color : "rgba(255, 255, 255, 0.2)"}`,
+                background: hover
                 ? `linear-gradient(135deg, ${color}40 0%, ${color}20 100%)`
                 : "rgba(255, 255, 255, 0.05)",
-                cursor: disabled ? "not-allowed" : "pointer",
+                cursor: "pointer",
                 fontSize: "24px",
                 display: "flex",
                 alignItems: "center",

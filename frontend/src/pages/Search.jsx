@@ -77,6 +77,7 @@ export default function Search() {
       body: JSON.stringify({ book_id: bookId }),
     }).then(response => response.json())
     .then((data) => {
+      setFavorites(prev => [...prev, {_id: bookId}])
       alert(data.message);
     })
   };
@@ -88,9 +89,40 @@ export default function Search() {
       body: JSON.stringify({ book_id: bookId }),
     }).then(response => response.json())
     .then((data) => {
+      setWishlist(prev=>[...prev, {_id: bookId}])
       alert(data.message);
     })
   };
+
+  const removeFromFavorites = async (bookId) => {
+        try{
+        const response = await fetch(`/auth/remove_favorite/${bookId}`, {
+            method: "DELETE",
+            credentials: "include"
+        });
+
+        if(response.ok){
+            setFavorites(favorites.filter(book => book._id !== bookId));
+        }
+        } catch(err){
+        alert("Błąd podczas usuwania z ulubionych");
+        }
+    };
+
+  const removeFromWishlist = async (bookId) => {
+        try{
+        const response = await fetch(`/auth/remove_wishlist/${bookId}`, {
+            method: "DELETE",
+            credentials: "include"
+        });
+
+        if(response.ok){
+            setWishlist(wishlist.filter(book => book._id !== bookId));
+        }
+        } catch(err){
+        alert("Błąd podczas usuwania z listy życzeń.");
+        }
+    };
 
   const btnStyle = {
     padding: "12px 20px",
@@ -113,7 +145,7 @@ export default function Search() {
             <option value="all">Wszystko</option>
             <option value="books">Książki</option>
             <option value="authors">Autorzy</option>
-            <option value="categories">Kategorie</option>
+            <option value="category">Kategorie</option>
           </select>
           </div>
 
@@ -143,6 +175,8 @@ export default function Search() {
                   selected={selected}
                   onAddToFavorites={addFavorite}
                   onAddToWishlist={addWishlist}
+                  onRemoveFromFavorites={removeFromFavorites}
+                  onRemoveFromWishlist={removeFromWishlist}
                   isFavorite={favorites.some(f => f._id === book._id)}
                   isWishlist={wishlist.some(w => w._id === book._id)}
                   onClick={() => navigate(`/book/${book._id}`)}
@@ -150,7 +184,11 @@ export default function Search() {
               )}
               />
             ) : (
-              <p>Brak wyników dla podanego zapytania.</p>
+              <p style={{
+                textAlign: "center",
+                fontSize: "20px",
+                fontWeight: "600"
+              }}>Brak wyników dla podanego zapytania.</p>
             )}
             </div>
 

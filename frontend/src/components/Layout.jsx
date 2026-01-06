@@ -43,18 +43,19 @@ export default function Layout({ pageTitle, children}) {
     return (
         <div>
             <div className = "top-bar">
-            <button className="title montecarlo-regular title" onClick={() => window.location.pathname = '/'} /* style={{ marginLeft: "5%", marginRight: "10%"}} */>Rekomendacje książek</button>
+            <button className="title montecarlo-regular title" onClick={() => window.location.pathname = '/'} >Rekomendacje książek</button>
             <div className="search">
-                    <input type="text" style={{/* width: "300px", marginTop: "1%", */ backgroundColor: "transparent"}} placeholder="Wyszukaj książkę..." id="search-bar" value={query} onChange={(e)=>setQuery(e.target.value)} onKeyDown={(e)=> e.key === "Enter" && searchBook()} />
+                    <input type="text" style={{ backgroundColor: "transparent"}} placeholder="Wpisz tytuł, autora, kategorię lub frazę..." id="search-bar" value={query} onChange={(e)=>setQuery(e.target.value)} onKeyDown={(e)=> e.key === "Enter" && searchBook()} />
                     <button className="search-btn" onClick={searchBook}>
                         <img src="../img/search_icon.png" alt="Szukaj" onMouseOver={(e)=> (e.target.src = "../img/search_icon_hover.png")} onMouseOut={(e)=>(e.target.src = "/img/search_icon.png")} />
                     </button>
             </div>
             <div className="auth">
-
                     { user ? (
                         <>
-                            <button className="login" onClick={() => navigate('/profile')}>{user.username}</button>
+                            <button className="user-profile-btn" onClick={() => navigate('/profile')}>
+                                {user.username}
+                                    </button>
                             <button className="logout" onClick={async () => {
                                 const data = await fetch("/auth/logout", {
                                     method: "POST", 
@@ -84,8 +85,12 @@ export default function Layout({ pageTitle, children}) {
                 {children}
             </div>
             <footer>
-                <p style={{marginBottom: "0"}}>&copy; 2025 Rekomendacje książek</p>
-                <br/>
+                <p style={{
+                    marginBottom: "0",
+                    backgroundColor: "#D4C9BE",
+                    padding: "1rem 0",
+                    textAlign: "center"
+                }}>&copy; 2025 Rekomendacje książek</p>
             </footer>
         </div>
     );
