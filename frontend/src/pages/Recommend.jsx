@@ -265,7 +265,7 @@ export default function Recommend(){
                             backgroundColor: "#D4C9BE",
                             border: "2px solid #5A4A42",
                             borderRadius: "8px",
-                            padidng: "12px 30px",
+                            padding: "15px 30px",
                             fontSize: "16px",
                             color: "#5A4A42",
                             cursor: "pointer",
@@ -389,8 +389,6 @@ function BookCard({book, swipeDirection}){
                     textOverflow: "ellipsis",
                     WebkitLineClamp: 2,
                     WebkitBoxOrient: "vertical",
-/*                     overflowWrap: "break-word",
-                    wordBreak: "break-word" */
                 }}>
                     {book.title}
                 </h2>
@@ -422,15 +420,17 @@ function BookCard({book, swipeDirection}){
                         </span>
                     )}
                     {book.dominant_emotion && book.dominant_emotion.length > 0 && (
-                        <span style={{
-                            backgroundColor: "#FFB6C1",
-                            padding: "6px 12px",
-                            borderRadius: "15px",
-                            fontSize: "14px",
-                            color: "#5A4A42"
-                        }}>
-                            {book.dominant_emotion[0]}
+                        book.dominant_emotion.map(emotion=> (
+                            <span style={{
+                                backgroundColor: "#FFB6C1",
+                                padding: "6px 12px",
+                                borderRadius: "15px",
+                                fontSize: "14px",
+                                color: "#5A4A42"
+                            }}>
+                            {emotion}
                         </span>
+                        ))
                     )}
                     {book.pages && (
                         <span style={{
@@ -469,7 +469,6 @@ function BookCard({book, swipeDirection}){
                     </p>
                 )}
                  </div>
-{/*             </div> */}
         </div>
     );
     }

@@ -30,44 +30,45 @@ export default function Book(){
         .then(data => setUser(data.user))
     }, [id]);
 
-  const addFavorite = async (bookId) => {
-    setAddingToFavorites(true);
-    setIsFavorite(true);
-    const res = await fetch("/auth/add_favorite", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ book_id: bookId }),
-    })
-    const data = await res.json()
-    if(res.ok){
-      alert(data.message);
-      setIsFavorite(true);
-    }else{
+  const toggleFavorite = async() => {
+    if(isFavorite){
+      await fetch(`/auth/remove_favorite/${book._id}`, {
+        method: "DELETE",
+        credentials: "include"
+      });
       setIsFavorite(false);
-      alert(data.error || "Błąd")
+    
+    } else{
+      setAddingToFavorites(true);
+      const res = await fetch("/auth/add_favorite", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({book_id: book._id})
+      });
+      if(res.ok) setIsFavorite(true);
+      setAddingToFavorites(false)
     }
-    setAddingToFavorites(false);
-  };
+  }
 
-  const addWishlist = async (bookId) => {
-    setAddingToWishlist(true);
-    setIsWishlist(true);
-    const res = await fetch("/auth/add_wishlist", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ book_id: bookId }),
-    })
-    const data = await res.json()
-    if(res.ok){
-      console.debug(data)
-      alert(data.message);
-      setIsWishlist(true);
-    }else{
+  const toggleWishlist = async() => {
+    if(isWishlist){
+      await fetch(`/auth/remove_wishlist/${book._id}`, {
+        method: "DELETE",
+        credentials: "include"
+      });
       setIsWishlist(false);
-      alert(data.error || "Błąd")
+    
+    } else{
+      setAddingToWishlist(true);
+      const res = await fetch("/auth/add_wishlist", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({book_id: book._id})
+      });
+      if(res.ok) setIsWishlist(true);
+      setAddingToWishlist(false)
     }
-    setAddingToWishlist(false);
-  };
+  }
 
     if(!book) return <Layout pageTitle = "Ładowanie..."></Layout>  ;
 
@@ -115,8 +116,8 @@ export default function Book(){
           {user && (
             <>
         <button
-          onClick={() => addFavorite(book._id)}
-          disabled={isFavorite || addingToFavorites}
+          onClick={toggleFavorite}
+          disabled={addingToFavorites}
           style={{
             width: "100%",
             padding: "15px",
@@ -126,7 +127,7 @@ export default function Book(){
             fontSize: "16px",
             fontWeight: "600",
             color: "#5A4A42",
-            cursor: isFavorite || addingToFavorites ? "not-allowed" : "pointer",
+            cursor: addingToFavorites ? "wait" : "pointer",
             marginBottom: "10px",
             transition: "all 0.2s ease",
             marginTop: "15px"
@@ -141,12 +142,12 @@ export default function Book(){
             e.currentTarget.style.backgroundColor = "#FFB6C1"
             }
           }}>
-            {isFavorite ? "W ulubionych" : addingToFavorites ? "Dodawanie..." : "Dodaj do ulubionych"}
+            {addingToFavorites ? "Dodawanie..." : isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
           </button>
 
           <button
-          onClick={() => addWishlist(book._id)}
-          disabled={isWishlist || addingToWishlist}
+          onClick={toggleWishlist}
+          disabled={addingToWishlist}
           style={{
             width: "100%",
             padding: "15px",
@@ -156,7 +157,7 @@ export default function Book(){
             fontSize: "16px",
             fontWeight: "600",
             color: "#5A4A42",
-            cursor: isWishlist || addingToWishlist ? "not-allowed" : "pointer",
+            cursor: addingToWishlist ? "wait" : "pointer",
             marginBottom: "10px",
             transition: "all 0.2s ease",
             marginTop: "15px"
@@ -171,7 +172,7 @@ export default function Book(){
             e.currentTarget.style.backgroundColor = "#E6E6FA"
             }
           }}>
-            {isWishlist ? "Na liście życzeń" : addingToWishlist? "Dodawanie..." : "Dodaj do listy życzeń"}
+            {addingToWishlist? "Dodawanie..." : isWishlist ? "Usuń z listy życzeń" : "Dodaj do listy życzeń"}
           </button>
           </>
           )}

@@ -292,7 +292,7 @@ def recommendations():
                     or_conditions.append({'category': {'$regex': cat, '$options': 'i'}}) 
             query['$or'] = or_conditions
 
-        candidate_books = list(mongo.db.books.find(query).limit(100))
+        candidate_books = list(mongo.db.books.find(query))
         scored_books = []
 
         for book in candidate_books:
