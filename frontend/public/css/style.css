@@ -18,6 +18,16 @@ h1, p{
     font-family: Lexend Giga, sans-serif;
 }
 
+.page-wrapper{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.content{
+    flex:1;
+}
+
 .title{
 
     font-size: 42px;

@@ -9,7 +9,8 @@ const BookTile = ({
     onClick,
     selected = false,
     isFavorite, 
-    isWishlist
+    isWishlist,
+    isAuthenticated
 }) => {
     const [isHovered, setIsHovered] = useState(false);
 
@@ -244,6 +245,7 @@ const BookTile = ({
                     )}
                 </div>
 
+                {isAuthenticated == true &&(
                 <div style={{
                     display: "flex",
                     flexDirection: "column",
@@ -279,6 +281,7 @@ const BookTile = ({
                             color={isWishlist ? "#ff0000ff": "#4A90E2"}
                             />
                 </div>
+                        )}
             </div>
         </div>
     )

@@ -14,6 +14,7 @@ export default function Search() {
   const navigate = useNavigate();
   const [favorites, setFavorites] = useState([]);
   const [wishlist, setWishlist] = useState([]);
+  const [user, setUser] = useState(null);
 
   const query = queryParams.get("q") || "";
   const emotion = queryParams.get("emotion") || "";
@@ -23,6 +24,17 @@ export default function Search() {
   const visiblePages = 5;
   const start = Math.max(1, page-2);
   const end = Math.min(totalPages, start+visiblePages-1)
+
+  useEffect(() => {
+    const response = fetch("/auth/me", {
+      credentials: "include"
+    })
+    .then(res => res.json())
+    .then(data => setUser(data.user))
+
+  }, [])
+
+  const isAuthenticated = !!user;
 
   useEffect(() => {
     if (query.trim() !== "" || emotion) {
@@ -180,6 +192,7 @@ export default function Search() {
                   isFavorite={favorites.some(f => f._id === book._id)}
                   isWishlist={wishlist.some(w => w._id === book._id)}
                   onClick={() => navigate(`/book/${book._id}`)}
+                  isAuthenticated={isAuthenticated}
                   />
               )}
               />

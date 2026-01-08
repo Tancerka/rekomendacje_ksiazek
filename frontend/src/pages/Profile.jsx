@@ -16,7 +16,6 @@ export default function Profile(){
         newPassword: "",
         repeatNewPassword: ""
     });
-
     useEffect(() => {
         loadData();
     }, []);

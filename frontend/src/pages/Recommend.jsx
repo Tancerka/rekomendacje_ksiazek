@@ -97,7 +97,8 @@ export default function Recommend(){
                         fontSize: "20px",
                         color: "#7A6A62"
                     }}>
-                        Rekomendacje na podstawie: {basedOn.topEmotions?.length > 0 && (
+                        Rekomendacje na podstawie: {basedOn === "popular" ? "najpopularniejszych książek. Jeśli chcesz otrzymać bardziej spersonalizowane rekomendacje, dodaj książki do ulubionych." 
+                        : basedOn.topEmotions?.length > 0 && (
                             <><strong>{basedOn.topEmotions.join(", ")}</strong><br/></>
                         )}
                         {basedOn.avgRating && `Średni rating: ${basedOn.avgRating}`}

@@ -41,7 +41,7 @@ export default function Layout({ pageTitle, children}) {
     }, []);
 
     return (
-        <div>
+        <div className="page-wrapper">
             <div className = "top-bar">
             <button className="title montecarlo-regular title" onClick={() => window.location.pathname = '/'} >Rekomendacje książek</button>
             <div className="search">
@@ -86,7 +86,7 @@ export default function Layout({ pageTitle, children}) {
             </div>
             <footer>
                 <p style={{
-                    marginBottom: "0",
+/*                     marginBottom: "0", */
                     backgroundColor: "#D4C9BE",
                     padding: "1rem 0",
                     textAlign: "center"
