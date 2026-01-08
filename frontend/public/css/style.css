@@ -276,24 +276,26 @@ hr.solid {
     font-family: Lexend Giga, sans-serif;
 }
 
-.login{
-/*     width: 12vw;  */
-    height: 35px;
+ .login{
+    transition: all 0.3s ease; 
+    font-weight: 500;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(99, 9, 19, 0.2);
     font-size: 18px;
-    border-radius: 4px;
+    border-radius: 25px; 
     background-color: #123458;
     color: white;
     margin-top: 2vw;
+    align-items: center;
 }
 
 .login:hover{
 
     background-color: #265587;
-    color: #D4C9BE;
     box-shadow: 0 1px 3px 0 rgba(0,0,0,0.22);
     cursor: pointer;
-}
-
+    transform: translateY(-1px);
+} 
 .light-btn{
     width: 12vw; 
     height: 35px;

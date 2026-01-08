@@ -46,7 +46,11 @@ export default function BookCarousel({books}){
                                 letterSpacing: "2px",
                                 color: "#123578",
                                 textAlign: "center",
-                                marginTop: "4px"
+                                marginTop: "4px",
+                                height: "48px",
+                                lineHeight: "48px",
+                                overflow: "visible",
+                                whiteSpace: "nowrap",
                             }}>
                                 {book.emotion==="neutral" ? book.emotion="nieodkryte" : book.emotion}
                                 </div>

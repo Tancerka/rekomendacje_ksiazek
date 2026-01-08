@@ -21,23 +21,47 @@ export default function Login() {
   };
 
       const inputStyle = {
+        fontSize: "14px",
+        
         width: "15vw",
         padding: "10px",
         marginBottom: "15px",
         borderRadius: "8px",
-        border: "1px solid #ccc"
+        border: "1px solid #ccc",
+        transition: "all 0.3s ease"
     }
 
   return (
   <Layout pageTitle = "Logowanie">
-    <form onSubmit={handleLogin} style={{ textAlign: "center" }}>
+    <form onSubmit={handleLogin} style={{ textAlign: "center"}}>
       <span style={{ color: "crimson" }}>{error}</span><br/><br/>
       <label>Nazwa użytkownika</label><br/><br/>
-      <input style={inputStyle} type="text" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} /><br/><br/>
+      <input 
+          style={inputStyle} 
+          type="text" value={form.username} 
+          onChange={(e) => setForm({ ...form, username: e.target.value })}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.border="1px solid #1e4a7a"
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.border="1px solid #ccc"
+          }}
+           /><br/><br/>
       <label>Hasło</label><br/><br/>
-      <input style={inputStyle} type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /><br/><br/>
+      <input 
+          style={inputStyle} 
+          type="password" 
+          value={form.password} 
+          onChange={(e) => setForm({ ...form, password: e.target.value })} 
+          onMouseEnter={(e) => {
+            e.currentTarget.style.border="1px solid #1e4a7a"
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.border="1px solid #ccc"
+          }}
+          /><br/><br/>
       <span>Nie masz konta? <a href='/register'>Zarejestruj się</a></span><br></br>
-      <button className="login" style={{marginTop: "2vw"}}type="submit">Zaloguj się</button>
+      <button className="login" type="submit">Zaloguj się</button>
     </form>
   </Layout>
   );

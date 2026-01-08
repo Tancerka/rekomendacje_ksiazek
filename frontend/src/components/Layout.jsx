@@ -66,7 +66,7 @@ export default function Layout({ pageTitle, children}) {
                             }}>Wyloguj się</button>
                         </>
                     ) : (
-                        <button className="login" onClick={() => navigate('/login')}>Zaloguj się</button>
+                        <button className="user-profile-btn" onClick={() => navigate('/login')}>Zaloguj się</button>
                     )}
                     </div>
             </div>

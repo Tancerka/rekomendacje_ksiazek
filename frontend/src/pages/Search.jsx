@@ -78,7 +78,7 @@ export default function Search() {
     }).then(response => response.json())
     .then((data) => {
       setFavorites(prev => [...prev, {_id: bookId}])
-      alert(data.message);
+/*       alert(data.message); */
     })
   };
 
@@ -90,7 +90,7 @@ export default function Search() {
     }).then(response => response.json())
     .then((data) => {
       setWishlist(prev=>[...prev, {_id: bookId}])
-      alert(data.message);
+/*       alert(data.message); */
     })
   };
 

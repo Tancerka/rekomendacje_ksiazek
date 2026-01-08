@@ -30,7 +30,8 @@ export default function Register() {
     padding: "10px",
     marginBottom: "15px",
     borderRadius: "8px",
-    border: "1px solid #ccc"
+    border: "1px solid #ccc",
+    transition: "all 0.3s ease"
   }
 
   return (
@@ -39,19 +40,74 @@ export default function Register() {
         <div><br/>
             {error && <span style={{color:"crimson"}}> {error} </span>}<br/>
             <label for="username" className="form-label" style={{marginTop: "2vw"}}>Nazwa użytkownika</label><br/>
-            <input style= {inputStyle} type="text" className="form-control" id="username" name="username" value={form.username} onChange={handleChange} required/>
+            <input 
+                style= {inputStyle} 
+                type="text" 
+                className="form-control" 
+                id="username" 
+                name="username" 
+                value={form.username} 
+                onChange={handleChange} required
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.border="1px solid #1e4a7a"
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.border="1px solid #ccc"
+                }}/>
         </div>
         <div>
             <label for="email" className="form-label">Email</label><br/>
-            <input style= {inputStyle} type="text" className="form-control" id="email" name="email" value={form.email} onChange={handleChange} required/>
+            <input 
+                style= {inputStyle} 
+                type="text" 
+                className="form-control" 
+                id="email" 
+                name="email" 
+                value={form.email} 
+                onChange={handleChange} required
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.border="1px solid #1e4a7a"
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.border="1px solid #ccc"
+                }}
+                />
         </div>
         <div>
             <label for="password" className="form-label">Hasło</label><br/>
-            <input style= {inputStyle} type="password" className="form-control" id="password" name="password" value = {form.password} onChange={handleChange} required/>
+            <input 
+                style= {inputStyle} 
+                type="password" 
+                className="form-control" 
+                id="password" 
+                name="password" 
+                value = {form.password} 
+                onChange={handleChange} required
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.border="1px solid #1e4a7a"
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.border="1px solid #ccc"
+                }}
+                />
         </div>    
         <div>
             <label for="repeatPassword" className="form-label">Powtórz hasło</label><br/>
-            <input style= {inputStyle} type="password" className="form-control" id="repeat-password" name="repeat_password" value={form.repeat_password} onChange={handleChange} required/>
+            <input 
+                style= {inputStyle} 
+                type="password" 
+                className="form-control" 
+                id="repeat-password" 
+                name="repeat_password" 
+                value={form.repeat_password} 
+                onChange={handleChange} required
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.border="1px solid #1e4a7a"
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.border="1px solid #ccc"
+                }}
+                />
         </div><br/>
         <button type="submit" className="btn login">Zarejestruj</button>
     </form>
