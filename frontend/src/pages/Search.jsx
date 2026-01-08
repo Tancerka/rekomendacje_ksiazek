@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
 import AnimatedList from "../components/AnimatedList";
@@ -15,6 +15,7 @@ export default function Search() {
   const [favorites, setFavorites] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [user, setUser] = useState(null);
+  const [detectedEmotions, setDetectedEmotions] = useState([]);
 
   const query = queryParams.get("q") || "";
   const emotion = queryParams.get("emotion") || "";
@@ -48,6 +49,7 @@ export default function Search() {
           setResults(data.results || [])
           setTotalPages(Math.ceil(data.total_count / limit))
           setCount(data.total_count)
+          setDetectedEmotions(data.detected_emotions || [])
         })
         .catch((err) => console.error(err));
     }
@@ -90,7 +92,6 @@ export default function Search() {
     }).then(response => response.json())
     .then((data) => {
       setFavorites(prev => [...prev, {_id: bookId}])
-/*       alert(data.message); */
     })
   };
 
@@ -102,7 +103,6 @@ export default function Search() {
     }).then(response => response.json())
     .then((data) => {
       setWishlist(prev=>[...prev, {_id: bookId}])
-/*       alert(data.message); */
     })
   };
 
@@ -143,8 +143,31 @@ export default function Search() {
     borderRadius: "10px",
   }
 
+  const pageTitle = useMemo(() => {
+    if (emotion) {
+      return emotion === "neutral"
+        ? `Książki dla emocji: „Nieodkryte”`
+        : `Książki dla emocji: „${emotion}”`;
+    }
+
+    if(detectedEmotions.length > 0 && filter === "all"){
+      return `Książki w dla frazy: „${query}” - wykryte emocje: ${detectedEmotions.join(", ")}`;
+    }
+
+    if (query) {
+      const filterLabels={
+        "books": "tytule",
+        "authors": "autorze",
+        "category": "kategorii",
+        "all": "wszystkich polach"
+      };
+      return `Książki wyszukiwania dla „${query}” w ${filterLabels[filter] || "wszystkich polach"}`;
+      }
+    return "Wyniki wyszukiwania";
+  }, [emotion, detectedEmotions, query, filter]);
+
   return (
-    <Layout pageTitle={emotion ? (emotion=="neutral" ? `Książki dla emocji: „Nieodkryte”` : `Książki dla emocji: „${emotion}”`) :`Wyniki wyszukiwania dla „${query}”`}>
+    <Layout pageTitle={pageTitle}>
       <div className="search-page">
         <form id="filter-form" style={{ marginBottom: "2rem", marginLeft: "40%"}}>
           <label>Liczba wyników: {resultsCount}</label><br/>

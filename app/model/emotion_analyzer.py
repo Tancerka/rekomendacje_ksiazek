@@ -137,3 +137,33 @@ def analyze_reviews(text: str, top_n=5):
 
     return emotions or ["neutralne"]
 
+def analyze_query_phrase(query: str, top_n=3):
+    if not query:
+        return ["neutral"]
+
+    query_en = translate_pl_to_en([query])[0]
+    extended_query = (
+        "I am looking for a book."
+        "The book should evoke feelings of:"
+        f" {query_en}"
+    )
+    inputs = tokenizer(extended_query, return_tensors="pt", truncation=True, padding=True).to(device)
+
+    with torch.no_grad():
+        logits = model(**inputs)
+        probs = torch.sigmoid(logits).cpu().numpy()[0]
+
+    detected = [
+        eng2pl[emotion_labels[i]]
+        for i, p in enumerate(probs)
+        if p >= thresholds[i]
+    ]
+    if not detected:
+        top_indices = np.argsort(probs)[-top_n:][::-1]
+        detected = [eng2pl[emotion_labels[i]] for i in top_indices]
+
+    unique = list(dict.fromkeys(detected))
+
+    return unique[:top_n]
+
+
