@@ -62,21 +62,28 @@ export default function Home(){
     const [topRated, setTopRated] = useState([]);
     const [happyBooks, setHappyBooks] = useState([]);
     const [topEmotionBooks, setTopEmotionBooks] = useState([]);
+    const [loveBooks, setLoveBooks] = useState([]);
 
     useEffect(() => {
         fetch("/main/books/top-rated")
         .then(res => res.json())
         .then(setTopRated);
 
-        fetch("/main/books/by-emotion/Radość")
+        fetch(`/main/search?q=${encodeURIComponent("optymistyczna")}`)
         .then(res => res.json())
-        .then(setHappyBooks);
+        .then(data =>setHappyBooks(data.results));
 
         fetch("/main/books/top-by-emotion")
         .then(res => res.json())
         .then(setTopEmotionBooks)
-        
+
+         fetch(`/main/search?q=${encodeURIComponent("lekkie, przyjemne, do zakochania się")}&filter=all&sort=asc&page=1&limit=50`)
+        .then(res => res.json())
+        .then(data=> setLoveBooks(data.results || [])); 
     }, [])
+
+    console.debug(loveBooks)
+    console.debug(happyBooks)
 
     const flatTopEmotionBooks = Array.isArray(topEmotionBooks) ? topEmotionBooks.flatMap(section => {
         const booksArray = Array.isArray(section.book) 
@@ -245,11 +252,11 @@ export default function Home(){
 
                 <Section title="Najwyżej notowane książki po emocjach" description="Lista książek o najwyższych ocenach w danej emocji." books={flatTopEmotionBooks}/>
 
-                <Section title="Książki na poprawę humoru" description="Pozytywne emocje, radość i ekscytacja :>" books={happyBooks} />
+                <Section title="Książki na poprawę humoru" description="Optymistyczne, pozytywne emocje, radość i ekscytacja :>" books={happyBooks} />
 
                 <Section title="Najwyżej ocenione" description ="Książki o najwyższych ocenach"  books={topRated} />
 
-                <Section title="Na zimowy wieczór" description="Książki idealne na długie, zimowe wieczory" books={[]}/> 
+                <Section title="Książki do zakochania się" description="Lekkie, przyjemne, do zakochania się w nich" books={loveBooks}/> 
 
         </Layout>
     )
