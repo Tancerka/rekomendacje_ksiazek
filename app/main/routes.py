@@ -78,10 +78,47 @@ def search():
     text_filters = {}
     combined_results = False
 
-    if emotion:
+    sort_field = "title"
+    sort_direction = 1
+
+    if sort_option == "desc":
+        sort_direction = -1
+    elif sort_option == 'score_desc':
+        sort_field = 'rating'
+        sort_direction = -1
+    elif sort_option == 'score_asc':
+        sort_field = 'rating'
+        sort_direction = 1
+
+    if emotion and not query:
+        emotion = emotion.lower().strip()
         detected_emotions = [emotion]
         filters = {"dominant_emotion": {"$in": [emotion]}}
         emotion_search = True
+
+        filters = {"dominant_emotion": {"$in": [emotion]}}
+
+        results = list(mongo.db.books.find(
+            filters,
+            {"title": 1, "authors.name": 1, "category": 1, "coverImage":1, "rating":1, "shortDescription":1, "dominant_emotion":1}        
+        ).sort(sort_field, sort_direction).skip(skip).limit(limit))
+
+        total_count = mongo.db.books.count_documents(filters)
+
+        for book in results:
+            book["_id"] = str(book["_id"])
+            book["result_type"] = "emotion_match"
+
+        return jsonify({
+            "query": query,
+            "results": results,
+            "page":page, 
+            "limit":limit,
+            "total_count": total_count,
+            "detected_emotions": [emotion],
+            "emotion_search": True,
+            "combined_results": False
+        }), 200
     
     elif query:
         if filter_option == "books":
@@ -102,26 +139,58 @@ def search():
                 ]
             }
 
-        if emotion_filter:
-            filters = {
-                "$and":[
-                    text_filters,
-                    {"dominant_emotion":{"$in":[emotion_filter]}}
-                ]
-            }
-            emotion_search = True
-            detected_emotions = [emotion_filter]
-        else:
-            filters = text_filters
-            emotion_search = False
-
-        if query and not emotion:
+        if filter_option == "all":
             detected_emotions = analyze_query_phrase(query)
             should_analyze_emotions = True
-#            emotion_search = True
-#            filters = {"dominant_emotion": {"$in": detected_emotions}}
 
-    elif not query and not emotion:
+        text_results = list(mongo.db.books.find(
+            text_filters,
+            {"title": 1, "authors.name": 1, "category": 1, "coverImage":1, "rating":1, "shortDescription":1, "dominant_emotion":1}        
+        ).sort(sort_field, sort_direction).skip(skip).limit(limit))
+
+        for book in text_results:
+            book["_id"] = str(book["_id"])
+            book["result_type"] = "text_match"
+
+        if len(text_results) < limit and detected_emotions:
+            emotion_limit = limit - len(text_results)
+            existing_ids = [ObjectId(book["_id"]) for book in text_results]
+
+            emotion_query = {
+                "dominant_emotion":{"$in": detected_emotions},
+                "_id":{"$nin": existing_ids}
+            }
+            
+            emotion_results = list(mongo.db.books.find(
+            emotion_query,
+                {"title": 1, "authors.name": 1, "category": 1, "coverImage":1, "rating":1, "shortDescription":1, "dominant_emotion":1}
+            ).sort(sort_field, sort_direction).limit(emotion_limit))
+
+            for book in emotion_results:
+                book["_id"] = str(book["_id"])
+                book["result_type"] = "emotion_match"
+
+            results = text_results + emotion_results
+            combined_results = True
+
+            text_total = mongo.db.books.count_documents(text_filters) if text_filters else 0
+            emotions_total = mongo.db.books.count_documents(emotion_query)
+            total_count = text_total + emotions_total
+        else:
+            results = text_results
+            total_count = mongo.db.books.count_documents(text_filters) if text_filters else 0
+
+        return jsonify({
+            "query": query,
+            "results": results,
+            "page":page, 
+            "limit":limit,
+            "total_count": total_count,
+            "detected_emotions": detected_emotions if should_analyze_emotions else [],
+            "emotion_search": bool(detected_emotions and combined_results),
+            "combined_results": combined_results
+        }), 200
+    else:
         return jsonify({
             "query": query,
             "results": [],
@@ -131,87 +200,6 @@ def search():
             "detected_emotions": [],
             "emotion_search": False
         }), 200
-
-    sort_field = "title"
-    sort_direction = 1
-
-    if sort_option == "desc":
-        sort_direction = -1
-    elif sort_option == 'score_desc':
-        sort_field = 'rating'
-        sort_direction = -1
-    elif sort_option == 'score_asc':
-        sort_field = 'rating'
-        sort_direction = 1
-    results = []
-    total_count = 0
-
-    if query and detected_emotions and not emotion_filter and not emotion:
-        text_results = list(mongo.db.books.find(
-            filters,
-            {"title": 1, "authors.name": 1, "category": 1, "coverImage":1, "rating":1, "shortDescription":1, "dominant_emotion":1}        
-        ).sort(sort_field, sort_direction).skip(skip).limit(limit))
-
-        text_count = len(text_results)
-
-        for book in text_results:
-            book["result_type"] = "text_match"
-            book["_id"] = str(book.get("_id", ""))
-
-        if len(text_results) < limit:
-            emotion_limit = limit - text_count
-            existing_ids = {book["_id"] for book in text_results}
-
-            emotion_query = {
-                "dominant_emotion":{"$in": detected_emotions},
-                "_id":{"$nin": [ObjectId(bid) for bid in existing_ids]}
-            }
-            
-            emotion_results = list(mongo.db.books.find(
-            emotion_query,
-                {"title": 1, "authors.name": 1, "category": 1, "coverImage":1, "rating":1, "shortDescription":1, "dominant_emotion":1}
-            ).sort(sort_field, sort_direction).limit(emotion_limit))
-
-            for book in emotion_results:
-                book["result_type"] = "emotion_match"
-                book["_id"] = str(book.get("_id", ""))
-
-            results = text_results + emotion_results
-            combined_results = True
-
-            text_total = mongo.db.books.count_documents(text_filters) if text_filters else 0
-            emotions_total = mongo.db.books.count_documents(
-                {"dominant_emotion": {"$in": detected_emotions}}
-            ) if detected_emotions else 0
-            total_count = text_total + emotions_total
-        else:
-            results = text_results
-            total_count = mongo.db.books.count_documents(text_filters) if text_filters else 0
-    else:
-        results = list(mongo.db.books.find(
-            filters,
-                {"title": 1, "authors.name": 1, "category": 1, "coverImage":1, "rating":1, "shortDescription":1, "dominant_emotion":1}
-            ).sort(sort_field, sort_direction).limit(emotion_limit))
-
-        total_count = mongo.db.books.count_documents(filters) if filters else 0
-
-        for book in results:
-            book["_id"] = str(book["_id"])
-            if emotion_search:
-                book["result_type"] = "emotion_match"
-            else:
-                book["result_type"] = "text_match"
-
-    return jsonify({
-        "query": query,
-        "results": results,
-        "page":page, 
-        "limit":limit,
-        "total_count": total_count,
-        "detected_emotions": detected_emotions if should_analyze_emotions else ([emotion] if emotion else []),
-        "emotion_search": emotion_search,
-        "combined_results": combined_results
-    }), 200
 
 
 
