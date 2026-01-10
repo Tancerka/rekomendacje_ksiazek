@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from flask_login import login_user, logout_user, login_required, current_user, UserMixin
+from flask_login import current_user
 from bson import ObjectId
 from app.extensions import mongo
 from functools import wraps

@@ -169,7 +169,7 @@ export default function Search() {
   return (
     <Layout pageTitle={pageTitle}>
       <div className="search-page">
-        <form id="filter-form" style={{ marginBottom: "2rem", marginLeft: "40%"}}>
+        <form id="filter-form" style={{ marginBottom: "2rem", display: "flex", flexDirection: "column", alignItems: "center"}}>
           <label>Liczba wyników: {resultsCount}</label><br/>
           <br />
           <div className="filter-controls">

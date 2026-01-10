@@ -69,12 +69,10 @@ def search():
     filter_option = request.args.get("filter", "all")
     sort_option = request.args.get("sort", "asc")
     emotion = request.args.get("emotion", None)
-    emotion_filter = request.args.get("emotion_filter", None)
     
     detected_emotions = []
     should_analyze_emotions = False
     filters = {}
-    emotion_search = bool(emotion)
     text_filters = {}
     combined_results = False
 
@@ -94,7 +92,6 @@ def search():
         emotion = emotion.lower().strip()
         detected_emotions = [emotion]
         filters = {"dominant_emotion": {"$in": [emotion]}}
-        emotion_search = True
 
         filters = {"dominant_emotion": {"$in": [emotion]}}
 
@@ -143,28 +140,34 @@ def search():
             detected_emotions = analyze_query_phrase(query)
             should_analyze_emotions = True
 
+        text_total = mongo.db.books.count_documents(text_filters)
+        text_skip = min(skip, text_total)
+        text_limit = max(0, limit)
+
         text_results = list(mongo.db.books.find(
             text_filters,
             {"title": 1, "authors.name": 1, "category": 1, "coverImage":1, "rating":1, "shortDescription":1, "dominant_emotion":1}        
-        ).sort(sort_field, sort_direction).skip(skip).limit(limit))
+        ).sort(sort_field, sort_direction).skip(text_skip).limit(text_limit))
 
         for book in text_results:
             book["_id"] = str(book["_id"])
             book["result_type"] = "text_match"
+        
+        remaining = limit - len(text_results)
+        emotion_results = []
 
-        if len(text_results) < limit and detected_emotions:
-            emotion_limit = limit - len(text_results)
-            existing_ids = [ObjectId(book["_id"]) for book in text_results]
+        if remaining > 0 and detected_emotions:
+            emotion_skip = max(0, skip - text_total)
 
             emotion_query = {
                 "dominant_emotion":{"$in": detected_emotions},
-                "_id":{"$nin": existing_ids}
+                "_id":{"$nin": [ObjectId(b["_id"]) for b in text_results]}
             }
             
             emotion_results = list(mongo.db.books.find(
             emotion_query,
                 {"title": 1, "authors.name": 1, "category": 1, "coverImage":1, "rating":1, "shortDescription":1, "dominant_emotion":1}
-            ).sort(sort_field, sort_direction).limit(emotion_limit))
+            ).sort(sort_field, sort_direction).skip(emotion_skip).limit(remaining))
 
             for book in emotion_results:
                 book["_id"] = str(book["_id"])
@@ -174,8 +177,13 @@ def search():
             combined_results = True
 
             text_total = mongo.db.books.count_documents(text_filters) if text_filters else 0
-            emotions_total = mongo.db.books.count_documents(emotion_query)
+            emotions_total = mongo.db.books.count_documents({
+                "dominant_emotion":{"$in": detected_emotions}
+            }) if detected_emotions else 0
+
             total_count = text_total + emotions_total
+
+
         else:
             results = text_results
             total_count = mongo.db.books.count_documents(text_filters) if text_filters else 0
@@ -289,8 +297,7 @@ def recommendations():
     # 7. Wyszukaj książki, które pasują do emocji i ulubionych kategorii
     # 8. Zrób tablicę ocen -> dodaj punkty za dopasowanie (3 za emocje, 2 za kategorię, 0-1 za rating w zal. od bliskości)
     # 9. Dodaj score do wyników
-    # 10. Posortuj i weź pierwsze 10-15
-    # Tinder reviews -> coś jak 3 pozycje, które użytkownik ocenia, czy podoba mu się wynik; niekoniecznie 10 wyników od razu
+    # 10. Posortuj i weź pierwsze 10 , ale coś jak 3 pozycje, które użytkownik ocenia, czy podoba mu się wynik; niekoniecznie 10 wyników od razu
     try:
         offset = int(request.args.get('offset', 0))
         limit = int(request.args.get('limit', 15))

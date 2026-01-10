@@ -90,7 +90,6 @@ hr.solid {
     z-index: 2000;
     border:  1px solid  transparent; 
     background-image: linear-gradient(to bottom,  #0c243d, 70%, rgba(212, 201, 190, 0));
-
     transform: translateX(-100%);
 }    
 
@@ -388,6 +387,7 @@ hr.solid {
     display: flex;
     gap: 1.5rem;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .filter-controls div {
