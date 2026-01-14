@@ -11,20 +11,27 @@ export default function Admin(){
     const [message, setMessage] = useState(null);
     const [scrapedBook, setScrapedBook] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalBooks, setTotalBooks] = useState(0);
+    const booksPerPage = 100;
+    const [deleteModal, setDeleteModal] = useState( { show: false, bookId: null, bookTitle: "" } );
 
     useEffect(() => {
         if(activeTab === "manage"){
             loadBooks();
         }
-    }, [activeTab])
+    }, [activeTab, currentPage, searchQuery])
 
     const loadBooks = async() => {
         try{
-            const response = await fetch(`/admin/books?search=${searchQuery}`, {
+            const response = await fetch(`/admin/books?search=${searchQuery}&page=${currentPage}&per_page=${booksPerPage}`, {
                 credentials: "include"
             });
             const data = await response.json()
             setBooks(data.books || []);
+            setTotalPages(data.pages || 1);
+            setTotalBooks(data.total || 0);
         }catch(err){
             console.error(err);
         }
@@ -62,20 +69,32 @@ export default function Admin(){
         }
     }
 
-    const deleteBook = async(bookId) => {
-/*         if(!confirm(`Czy na pewno chcesz usunąć tę książkę?`)) return; */
+    const confirmDeleteBook = (bookId, bookTitle) => {
+        setDeleteModal({ show: true, bookId, bookTitle });
+    }
+
+    const deleteBook = async() => {
         try{
-            const response = await fetch(`/admin/books/${bookId}`, {
+            const response = await fetch(`/admin/books/${deleteModal.bookId}`, {
                 method: "DELETE",
                 credentials: "include"
             });
             if(response.ok){
                 setMessage({ type: "success", text: "Książka usunięta"});
+                setDeleteModal({ show: false, bookId: null, bookTitle: "" });
                 loadBooks();
+            }else{
+                const data = await response.json();
+                setMessage({ type: "error", text: data.error || "Błąd podczas usuwania książki"});
             }
         } catch(err){
             console.error(err);
         }
+    }
+
+    const handleSearch = () => {
+        setCurrentPage(1);
+        loadBooks();
     }
 
     return(
@@ -104,7 +123,7 @@ export default function Admin(){
                         active={activeTab==='manage'}
                         onClick={() => setActiveTab('manage')}
                         icon="※"
-                        label={`Zarządzaj (${books.length})`}
+                        label={`Zarządzaj (${totalBooks})`}
                         />
                 </div>
 
@@ -134,15 +153,249 @@ export default function Admin(){
                             onChange={setSearchQuery}
                             onSearch={loadBooks}
                             />
-                        <BooksList
-                            books={books}
-                            onDelete={deleteBook}
-                            />  
+                        <div style={{
+                            marginBottom: "20px",
+                            color: "#7A6A62",
+                            fontSize: "16px"
+                        }}>
+                            Pokazano {books.length} z {totalBooks} książek. Strona {currentPage} z {totalPages}.
                         </div>
+                        {loading ? (
+                            <div style={{
+                                textAlign: "center",
+                                padding: "60px",
+                                color: "#7A6A62"
+                            }}>
+                                <div style={{ 
+                                    fontSize: "48px", 
+                                    marginBottom: "20px"
+                                }}>
+                                    <p>
+                                        Ładowanie...
+                                    </p>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                <BooksList
+                                    books={books}
+                                    onDeleteConfirm={confirmDeleteBook}
+                                    />  
+                                    {totalPages > 1 && (
+                                        <Pagination 
+                                        currentPage = {currentPage}
+                                        totalPages = {totalPages}
+                                        onPageChange = {setCurrentPage}
+                                        />
+                                    )}
+                            </>
+                        )}
+                </div>
                 )}
-
             </div>
+            {deleteModal.show && (
+                <DeleteModal 
+                bookTitle={deleteModal.bookTitle}
+                onConfirm={deleteBook}
+                onCancel={() => setDeleteModal({ show: false, bookId: null, bookTitle: "" })}
+                />
+            )}
         </Layout>
+    );
+}
+
+function DeleteModal({ bookTitle, onConfirm, onCancel}){
+    return(
+        <div style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 9999
+
+        }}>
+            <div style={{
+                backgroundColor: "white",
+                padding: "30px",
+                borderRadius: "12px",
+                maxWidth: "500px",
+                width: "90%",
+                boxShadow: "0 10px 40px rgba(0,0,0.3)"
+            }}>
+                <h3 style={{
+                    fontSize: "22px",
+                    color: "#FF6B6B",
+                    marginBottom: "15px"
+                }}>
+                    Potwierdź usunięcie książki
+                </h3>
+                <p style={{
+                    fontSize: "16px",
+                    color: "#5A4A42",
+                    marginBottom: "25px",
+                    lineHeight: "1.5"
+                }}>
+                    Czy na pewno chcesz usunąć książkę <strong>"{bookTitle}"</strong>? Ta operacja jest nieodwracalna.
+                </p>
+                <div style={{
+                    display: "flex",
+                    gap: "15px",
+                    justifyContent: "flex-end"
+                }}>
+                    <button
+                        onClick={onCancel}
+                        style={{
+                            padding: "12px 24px",
+                            backgroundColor: "#E0D9D0",
+                            color: "#5A4A42",
+                            border: "none",
+                            borderRadius: "8px",
+                            fontSize: "15px",
+                            cursor: "pointer",
+                            fontWeight: "600"
+                        }}
+                        onMouseOver={(e) => {
+                            e.currentTarget.style.backgroundColor = "#D4C9BE";
+                        }}
+                        onMouseOut={(e) => {
+                            e.currentTarget.style.backgroundColor = "#E0D9D0";
+                        }}> Anuluj
+                        </button>
+                        <button 
+                            onClick={onConfirm}
+                            style={{
+                                padding: "12px 24px",
+                                backgroundColor: "#FF6B6B",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "8px",
+                                fontSize: "15px",
+                                cursor: "pointer",
+                                fontWeight: "600"
+                            }}
+                            onMouseOver={(e) => {
+                                e.currentTarget.style.backgroundColor="#da2b2b";
+                            }}
+                            onMouseOut={(e)=> {
+                                e.currentTarget.style.backgroundColor = "#FF6B6B";
+                            }}
+                            > Usuń książkę
+                            </button>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+function Pagination({ currentPage, totalPages, onPageChange}){
+    const pages = [];
+    const maxVisible = 7;
+
+    let start = Math.max(1, currentPage - 3);
+    let end = Math.min(totalPages, start + maxVisible - 1);
+
+    if(end - start < maxVisible - 1){
+        start = Math.max(1, end - maxVisible +1);
+    }
+
+    for(let i = start; i <= end; i++){
+        pages.push(i);
+    }
+
+    return(
+        <div style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "10px",
+            marginTop: "30px",
+            flexWrap: "wrap"
+        }}>
+            <button
+                onClick={() => onPageChange(currentPage - 1)}
+                disabled = {currentPage === 1}
+                style={{
+                    padding: "10px 20px",
+                    backgroundColor: currentPage === 1 ? "#E0D9D0" : "#5A4A42",
+                    color: currentPage === 1 ? "#B0A599" : "white",
+                    border: "none",
+                    borderRadius: "8px",
+                    cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                    fontWeight: "600"
+                }}>
+                    ← Poprzednia
+                </button>
+                {start > 1 && (
+                    <>
+                        <PageButton page={1} currentPage={currentPage} onClick={onPageChange} />
+                        {start > 2 && <span style={{ color: "#7A6A62"}}>...</span>}
+                    </>
+                )}
+                {pages.map(page => (
+                    <PageButton 
+                        key={page}
+                        page={page}
+                        currentPage={currentPage}
+                        onClick={onPageChange}
+                        />
+                ))}
+                {end < totalPages && (
+                    <>
+                        {end < totalPages - 1 && <span style={{ color: "#7A6A62"}}> ... </span>}
+                        <PageButton page={totalPages} currentPage={currentPage} onClick={onPageChange} />
+                    </>
+                )}
+                <button
+                    onClick={() => onPageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    style={{
+                        padding: "10px 20px",
+                        backgroundColor: currentPage === totalPages ? "#B0A599" : "white",
+                        border: "none",
+                        borderRadius: "8px",
+                        cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+                        fontWeight: "600"
+                    }}>
+                        Następna →
+                    </button>
+        </div>
+    )
+}
+
+function PageButton({ page, currentPage, onClick}){
+    const isActive = page === currentPage;
+
+    return(
+       <button
+            onClick={() => onClick(page)}
+            style={{
+                padding: "10px 15px",
+                backgroundColor: isActive ? "#5A4A42" : "#e0d9d0",
+                color: isActive ? "white" : "#5A4A42",
+                border: `2px solid ${isActive ? "#5A4A42" : "#E0D9D0"}`,
+                borderRadius: "8px",
+                cursor: "pointer",
+                fontWeight: isActive ? "600" : "400",
+                minWidth: "45px"
+            }}
+            onMouseOver={(e) => {
+                if(!isActive){
+                    e.currentTarget.style.backgroundColor = "#F9F7F4";
+                }
+            }}
+            onMouseOut={(e) => {
+                if(!isActive){
+                    e.currentTarget.style.backgroundColor = "white";
+                }
+            }}>
+                {page}
+            </button>
     )
 }
 
@@ -581,7 +834,7 @@ function BookPreview({book, setMessage, setScrapedBook}){
     )
 }
 
-function BooksList({ books, onDelete}){
+function BooksList({ books, onDeleteConfirm}){
     if(books.length === 0){
         return(
             <div style={{
@@ -607,7 +860,7 @@ function BooksList({ books, onDelete}){
                 <BookRow
                     key={book._id}
                     book={book}
-                    onDelete={() => onDelete(book._id.$oid/*  || book._id */)}
+                    onDelete={() => onDeleteConfirm(book._id.$oid, book.title/*  || book._id */)}
                     />
             ))}
         </div>

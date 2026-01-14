@@ -48,7 +48,7 @@ def get_all_books():
                     {'authors.name': {'$regex': search, '$options': "i"}}
                 ]
             }
-        books = list(mongo.db.books.find(query))
+        books = list(mongo.db.books.find(query).sort('title', 1).skip(skip).limit(per_page))
 
         total = mongo.db.books.count_documents(query)
 

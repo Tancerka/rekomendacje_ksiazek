@@ -74,9 +74,6 @@ export default function Recommend(){
             body: JSON.stringify({ book_id: bookId }),
         });
 
-        if(response.ok){
-            alert("Książka dodana do listy życzeń!");
-        }
     } catch(err){
         alert("Błąd podczas dodawania do listy życzeń.");
 
